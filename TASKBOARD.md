@@ -199,6 +199,7 @@ Reporting
 `09:53 Manu claimed T-V1`
 `09:57 Saurabh claimed T06`
 `10:13 Manu claimed T02`
+`10:24 Avanthik claimed T06-boot-seam (index.html router script line — flagged Avanthik/static in T06 DONE note)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
