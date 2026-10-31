@@ -263,3 +263,30 @@ suite stayed 175/175.
   why silently keeping stale data is a UX/grading risk (user trusts a number that's actually
   frozen). These are frontend-only (`frontend/pages/`), my module; pytest doesn't execute JS
   so TEST_CMD stays 183/183. Verified each with `node --check`.
+
+## 15:35 — live end-to-end smoke of my demo pages (stabilization, no task)
+- No open task of mine remained (all DONE; the unbuilt pages belong to Avanthik/Karthik via
+  the 12:50 ABSORB), and every T36 audit finding in my modules was already closed. Near the
+  15:45 feature freeze the right move was to PROVE my demo-critical pages render against the
+  now-live real APIs — a verification/docs cycle, no code change.
+- **What I booted:** uvicorn on a throwaway `CADENCE_DB`, then checked each of my page/
+  component modules serves 200 and each API my pages read. Result: products.js / plans.js /
+  login.js / subscriptions.js / router.js / table.js / pill.js all 200; `/api/products`,
+  `/api/plans`, `/api/invoices` all 200; `/api/subscriptions` 404 (T17 still unbuilt — my
+  T18 page is designed to sit in error+Retry until it lands, which is the correct state).
+- **Contract parity confirmed against LIVE payloads** (not just my documented contract):
+  `/api/products` row keys = `{id,name,type,sales_price,cost_price,notes}` exactly; `/api/plans`
+  row keys = `{name,billing_frequency,price,min_quantity,available_from,available_to,close_policy}`
+  exactly — these are the precise field names my table column accessors read (plans.js:104-108,
+  259-264). No drift between Karthik's T10/T14 APIs and my pages.
+- **Create flow end-to-end (graded dynamic-data + validation):** POST a valid product → 201,
+  and it is instantly the TOP list row (newest-first is why a just-created item appears at the
+  top — I must be able to explain that). POST an empty name → 400 `{"detail":"Enter a product
+  name."}`, BYTE-IDENTICAL to the sentence my client shows via `required('a product name')` —
+  live proof of the client-AND-server parity graded must-have, on a real HTTP round trip.
+- **Q&A takeaway:** products and plans are the two catalog screens the demo walks and both are
+  verified LIVE (DB-backed table + working create + mirrored validation). Subscriptions shows
+  a deliberate, honest error+Retry state because its API (T17) was never funded — that is the
+  documented endgame trade in the 14:16 TRIAGE, not a bug in my page.
+- TEST_CMD on arrival 194/194 (up from the 183 I last noted — T27 payments tests added,
+  nothing lost). No files changed this cycle; smoke DB removed after.
