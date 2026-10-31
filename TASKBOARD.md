@@ -53,6 +53,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 
 - [ ] **T00** (P0, owner: each member, ~5m) dry-run micro-task per member: add one tiny
   utility function + its test in YOUR module. Used ONLY by the 11:15 dry-runs.
+  [Saurabh: CLAIMED @11:15]
 - [x] **T-V1** (P1, owner: Manu, ~15m) DONE @10:07 by Manu — **`scripts/make-demo-video.mjs`** video
   recorder (spec: VIDEO-SCRIPT.md): 7 captioned scenes (captions injected INTO the page,
   styled only with DESIGN tokens), explicit waits on data counters (no sleeps on live data),
