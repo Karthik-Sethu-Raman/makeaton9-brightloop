@@ -82,7 +82,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   discount) + __init__ exports ensure_db/seed_if_empty for T01/T03. Cycle-2 fix:
   discounts INSERT had 11 placeholders for 12 cols (never ran), INV-0003 GST
   corrected to 2525.58. tests/test_models.py + test_seed.py; TEST_CMD 12/12.
-- [ ] **T03** (P1, owner: Manu, ~15m) `backend/livefeed`: simulator thread (started in app
+- [ ] **T03** (P1, owner: Manu, ~15m) CLAIMED @10:52 by Manu — `backend/livefeed`: simulator thread (started in app
   lifespan) mutating DB every ~3s (payment lands, sub state advances) +
   `backend/livefeed/router.py` → `GET /api/live/summary` reading DB (never static JSON).
   GROOM(integrator 10:40): T01's lifespan now imports `start()`/`stop()` from
@@ -256,6 +256,7 @@ Reporting
 `10:24 Avanthik claimed T06-boot-seam (index.html router script line — flagged Avanthik/static in T06 DONE note)`
 `10:42 Karthik claimed T01`
 `10:42 Avanthik claimed T44`
+`10:52 Manu claimed T03`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
