@@ -362,10 +362,13 @@ export function render(mount) {
       if (focusIt) el.focus(); // repaint may remove the button that was focused
     }
 
-    function paint(inv) {
+    // T49(c): opts.loading — paint the detail from the list-row stub WITHOUT
+    // claiming its empties: skeleton for lines, grey dash for every total.
+    // False-empty ('No lines yet') and false-zero (₹0.00) never render again.
+    function paint(inv, opts) {
+      const loading = !!(opts && opts.loading);
       body.innerHTML = '';
       flashSlot = null;
-
       const info = stateInfo(inv);
 
       const title = document.createElement('div');
@@ -427,7 +430,9 @@ export function render(mount) {
         { key: 'tax_percent', label: 'Tax', num: true, render: (l) => pct(num(l.tax_percent)) },
         { key: 'amount', label: 'Amount', num: true, render: (l) => inr(num(l.amount)) },
       ];
-      if (lines.length === 0) {
+      if (loading) {
+        body.appendChild(renderTableSkeleton(lineCols, 3));
+      } else if (lines.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'cad-stateblock';
         empty.textContent = 'No lines on this invoice yet.';
@@ -437,16 +442,17 @@ export function render(mount) {
       }
 
       // ---- totals: server figures preferred; else computed from lines/payments ----
+      // While LOADING: all null -> grey dashes (T49(c)); never fake ₹0.00.
       const pays = Array.isArray(inv.payments) ? inv.payments : [];
-      const subtotal = num(inv.subtotal) != null ? num(inv.subtotal)
-        : lines.reduce((a, l) => a + (num(l.amount) || 0), 0);
-      const discount = num(inv.discount_total) != null ? num(inv.discount_total) : 0;
-      const taxTotal = num(inv.tax_total) != null ? num(inv.tax_total)
-        : lines.reduce((a, l) => a + (num(l.amount) || 0) * (num(l.tax_percent) || 0) / 100, 0);
-      const total = num(inv.total) != null ? num(inv.total) : subtotal - discount + taxTotal;
-      const paid = num(inv.amount_paid) != null ? num(inv.amount_paid)
-        : pays.reduce((a, p) => a + (num(p.amount) || 0), 0);
-      const balance = outstandingOf(Object.assign({}, inv, { total }));
+      const subtotal = loading ? null : (num(inv.subtotal) != null ? num(inv.subtotal)
+        : lines.reduce((a, l) => a + (num(l.amount) || 0), 0));
+      const discount = loading ? null : (num(inv.discount_total) != null ? num(inv.discount_total) : 0);
+      const taxTotal = loading ? null : (num(inv.tax_total) != null ? num(inv.tax_total)
+        : lines.reduce((a, l) => a + (num(l.amount) || 0) * (num(l.tax_percent) || 0) / 100, 0));
+      const total = loading ? null : (num(inv.total) != null ? num(inv.total) : subtotal - discount + taxTotal);
+      const paid = loading ? null : (num(inv.amount_paid) != null ? num(inv.amount_paid)
+        : pays.reduce((a, p) => a + (num(p.amount) || 0), 0));
+      const balance = loading ? null : outstandingOf(Object.assign({}, inv, { total }));
 
       const totals = document.createElement('div');
       totals.className = 'cad-totals';
@@ -454,7 +460,8 @@ export function render(mount) {
         const row = document.createElement('div');
         row.className = 'cad-totline' + (cls ? ' ' + cls : '');
         const l = document.createElement('span'); l.textContent = label;
-        const v = document.createElement('span'); v.className = 'num'; v.textContent = inr(value);
+        const v = document.createElement('span'); v.className = 'num';
+        if (value == null) v.appendChild(dash()); else v.textContent = inr(value);
         row.append(l, v); return row;
       };
       totals.append(
@@ -520,8 +527,9 @@ export function render(mount) {
     }
 
     async function loadDetail() {
-      // Paint the list-row stub immediately (no blank wait), then enrich.
-      paint(rowStub);
+      // Paint the list-row stub immediately (no blank wait), then enrich —
+      // flagged as LOADING so the stub's empties never show as facts (T49(c)).
+      paint(rowStub, { loading: true });
       if (rowStub.id == null) return;
       try {
         const res = await fetch(`${LIST_URL}/${encodeURIComponent(rowStub.id)}`,
