@@ -201,7 +201,7 @@ Products & plans
   name/price client-validated via validators.js (server mirrors T10). All 4 states ship;
   renders live once T10 (/api/products) lands, error+Retry until then. node --check OK,
   TEST_CMD 8/8.
-- [ ] **T13** (P2, owner: Manu, ~10m) Plans model: billing frequency daily/weekly/monthly/
+- [ ] **T13** (P2, owner: Manu, ~10m) CLAIMED @13:10 by Manu — Plans model: billing frequency daily/weekly/monthly/
   yearly, min quantity, available from/to, close policy (auto-close on end / early close /
   pause / renew) per plan.
 - [x] **T14** (P2, owner: Karthik, ~10m) DONE @13:05 by Karthik (integrator cycle) —
@@ -446,6 +446,7 @@ Reporting
 `12:41 Avanthik claimed T53`
 
 `13:05 Avanthik claimed T22 (absorbed module per integrator 12:50 ABSORB enactment)``12:51 Karthik claimed T14 (integrator cycle â€” executor for Karthik-owned tasks)`
+`13:10 Manu claimed T13`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
