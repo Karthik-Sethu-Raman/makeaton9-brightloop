@@ -21,7 +21,7 @@
 //
 // Page-module API (router contract): export render(mount) -> cleanup().
 
-import { inr, DASH } from '../components/fmt.js';
+import { inr, istTime, DASH } from '../components/fmt.js';
 import { renderTable, renderTableSkeleton } from '../components/table.js';
 import { statusPill } from '../components/pill.js';
 
@@ -117,6 +117,7 @@ export function render(mount) {
   mount.innerHTML = '';
   let alive = true;
   let lastRows = null;     // last good list (survives a failed refresh)
+  let lastGoodAt = null;   // when lastRows landed — quoted if a refresh fails (T49 law)
   let filterState = 'all'; // client-side state filter over the live rows
 
   const page = document.createElement('section');
@@ -198,10 +199,25 @@ export function render(mount) {
           ? data
           : (data && Array.isArray(data.subscriptions) ? data.subscriptions : []);
         lastRows = rows;
+        lastGoodAt = new Date();
         paintList();
       } catch (_) {
         if (!alive) return;
-        if (lastRows && lastRows.length) return; // keep last-good list on failed refresh
+        if (lastRows && lastRows.length) {
+          // keep the last-good list, but NEVER silently (DESIGN / T49 law): repaint
+          // the good rows and append a stale note quoting when they landed + Retry.
+          paintList();
+          const stale = document.createElement('div');
+          stale.className = 'cad-stateblock cad-stateblock--err';
+          stale.style.marginTop = 'var(--gap)';
+          stale.textContent = `Couldn’t refresh — showing subscriptions as of ${istTime(lastGoodAt)}. `;
+          const r = document.createElement('button');
+          r.type = 'button'; r.className = 'cad-linkbtn'; r.textContent = 'Retry';
+          r.addEventListener('click', load);
+          stale.appendChild(r);
+          listSlot.appendChild(stale);
+          return;
+        }
         showState(stateBlock('Couldn’t load subscriptions.', true, true));
       }
     }
