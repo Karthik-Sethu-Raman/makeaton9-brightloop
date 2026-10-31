@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Reset your password — Cadence</title>
+  <title>Password reset — Cadence</title>
   <link rel="stylesheet" href="/frontend/styles/tokens.css">
   <link rel="stylesheet" href="/frontend/styles/layout.css">
 </head>
@@ -19,6 +19,8 @@
        API CONTRACT for T08 (Karthik) — mirrors validators.js messages:
          POST /api/auth/forgot  {email}                     (client validates email first)
            -> 200 {"ok": true,  "reset_url": "/reset.html?token=<token>"}
+                (server ALSO logs reset_url to stdout — the task line's "response/log"
+                 second demo channel)
            -> 404 {"detail": "No account uses that email."}
          POST /api/auth/reset   {token, password}           (client validates policy first)
            -> 200 {"ok": true}
@@ -36,7 +38,7 @@
     </div>
 
     <section class="cad-card cad-auth-card">
-      <h1 class="cad-auth-h1" id="heading">Reset your password</h1>
+      <h1 class="cad-auth-h1" id="heading">Password reset</h1>
       <p class="cad-auth-lede" id="lede">Enter your account email and we will generate a reset link.</p>
 
       <form id="forgot-form" class="cad-auth-form" novalidate>
@@ -60,31 +62,42 @@
     </section>
   </main>
 
+  <script>
+    // Pre-paint mode toggle (synchronous, non-module): the ?token= visitor must never
+    // see the email form flash while the module script loads over the network.
+    if (new URLSearchParams(location.search).get('token')) {
+      document.getElementById('forgot-form').hidden = true;
+      document.getElementById('reset-form').hidden = false;
+      document.getElementById('heading').textContent = 'New password';
+      document.getElementById('lede').textContent = 'Set a new password for your account. It must follow the password policy.';
+    }
+  </script>
+
   <script type="module">
     import { attachBlurError, validateForm, MSG } from '/frontend/validation/validators.js';
 
     const token = new URLSearchParams(location.search).get('token');
-    const heading = document.getElementById('heading');
-    const lede = document.getElementById('lede');
     const forgotForm = document.getElementById('forgot-form');
     const resetForm = document.getElementById('reset-form');
     const result = document.getElementById('result');
 
-    // DESIGN states: keep the frame, one sentence, no banners — this renders
-    // error ("Couldn't reach…" + Retry) and success blocks inside the card.
-    function renderState(kind, text, extraHtml) {
+    // DESIGN states: keep the frame, one sentence, no banners. Errors render inside
+    // the card; Retry (page reload) ONLY for transient/network failures — a server
+    // detail (bad email, weak password, expired token) is corrected in-place, and
+    // reloading would discard what the user typed.
+    function renderState(kind, text, extraEl) {
       result.innerHTML = '';
-      if (!text && !extraHtml) return;
+      if (!text && !extraEl) return;
       const block = document.createElement('div');
       block.className = kind === 'error' ? 'cad-auth-result--err' : 'cad-auth-result--ok';
       block.textContent = text || '';
-      if (extraHtml) {
-        const extra = document.createElement('div');
-        extra.className = 'cad-auth-linkline';
-        extra.innerHTML = extraHtml; // built below from constants only — never user input
-        block.appendChild(extra);
+      if (extraEl) {
+        const line = document.createElement('div');
+        line.className = 'cad-auth-linkline';
+        line.appendChild(extraEl);
+        block.appendChild(line);
       }
-      if (kind === 'error') {
+      if (kind === 'retry') {
         const retry = document.createElement('button');
         retry.type = 'button';
         retry.className = 'cad-linkbtn';
@@ -95,9 +108,11 @@
       result.appendChild(block);
     }
 
+    const GENERIC = 'Couldn’t reach the server. ';
+
     function busy(form, on) {
       const btn = form.querySelector('button[type="submit"]');
-      btn.disabled = on; // disabled stays legible; the sentence below says why
+      btn.disabled = on; // disabled stays legible; the label says what's happening
       btn.textContent = on ? 'Working…' : btn.dataset.label;
     }
 
@@ -106,21 +121,17 @@
       btn.dataset.label = btn.textContent;
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        if (!validateForm(form.fields)) return;
+        if (!validateForm(form.fields).ok) return; // gate on the ok flag — object is always truthy
         busy(form, true);
-        renderState(null); // clear previous result
+        renderState(null);
         try { await submitFn(new FormData(form)); }
-        catch { renderState('error', 'Couldn’t reach the server. '); }
+        catch { renderState('retry', GENERIC); } // network failure — the only true Retry case
         finally { busy(form, false); }
       });
     }
 
     if (token) {
-      // --- mode 2: choose a new password ---
-      heading.textContent = 'Choose a new password';
-      lede.textContent = 'Set a new password for your account. It must follow the password policy.';
-      forgotForm.hidden = true;
-      resetForm.hidden = false;
+      // --- mode 2: choose a new password (pre-paint script already swapped forms) ---
       resetForm.fields = [{ input: resetForm.password, rule: 'password' }];
       attachBlurError(resetForm.password, 'password');
       wire(resetForm, async (data) => {
@@ -130,13 +141,15 @@
           body: JSON.stringify({ token, password: String(data.get('password') ?? '') }),
         });
         const body = await response.json().catch(() => ({}));
-        if (response.ok) {
+        if (response.ok && body.ok) {
           resetForm.hidden = true;
           renderState('ok', 'Password updated. You can sign in with the new password now.');
         } else if (response.status === 400) {
-          renderState('error', body.detail || MSG.password + ' ');
+          renderState('error', (body.detail || MSG.password));      // policy, mirrored
+        } else if (response.status === 404) {
+          renderState('error', (body.detail || 'That reset link has expired. Request a new one.'));
         } else {
-          renderState('error', (body.detail || 'That reset link has expired. Request a new one.') + ' ');
+          renderState('retry', GENERIC);                            // 5xx / malformed — retryable
         }
       });
     } else {
@@ -150,12 +163,20 @@
           body: JSON.stringify({ email: String(data.get('email') ?? '').trim() }),
         });
         const body = await response.json().catch(() => ({}));
-        if (response.ok && body.reset_url) {
+        const url = String(body.reset_url || '');
+        if (response.ok && url.startsWith('/reset.html?token=')) {
+          // link built with DOM APIs + contract-shape check: response data is never
+          // parsed as HTML, and only this exact same-origin shape becomes clickable
           forgotForm.hidden = true;
-          renderState('ok', 'Reset link generated (email isn’t wired in the demo):',
-            `<a class="cad-auth-link" href="${body.reset_url}">Open reset link</a>`);
+          const link = document.createElement('a');
+          link.className = 'cad-auth-link';
+          link.textContent = 'Open reset link';
+          link.href = url;
+          renderState('ok', 'Reset link generated (email isn’t wired in the demo):', link);
+        } else if (response.status === 404) {
+          renderState('error', (body.detail || 'No account uses that email.'));
         } else {
-          renderState('error', (body.detail || 'No account uses that email.') + ' ');
+          renderState('retry', GENERIC);                            // 5xx / malformed — retryable
         }
       });
     }

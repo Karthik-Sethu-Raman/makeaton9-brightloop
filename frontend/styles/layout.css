@@ -144,8 +144,10 @@ body {
 }
 
 /* ---------- auth/reset standalone page (T33) — no sidebar: zero nav destinations,
-   so per DESIGN's shell rule it's a centred single card; 380px fits 390px phones
-   (390 - 2×16 page padding = 358 content) ---------- */
+   so per DESIGN's shell rule it's a centred single card. 390px phone arithmetic:
+   390 − 2×24 (--pad) = 342 content; card is width:100% max-width:380 so it shrinks
+   to 342 with no horizontal scroll (phone media query below drops padding to
+   --gap 16px and raises the button to the 44px touch target). ---------- */
 
 .cad-auth {
   min-height: 100vh;
@@ -266,4 +268,8 @@ body {
     margin-top: 0;
     overflow-x: auto; /* nav scrolls, the page never does */
   }
+
+  /* phone margins 16-20px (DESIGN) and 44px touch targets on the auth page */
+  .cad-auth { padding: var(--gap); }
+  .cad-auth-form .cad-btn-primary { height: 44px; }
 }
