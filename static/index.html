@@ -26,6 +26,14 @@
       </div>
       <div class="cad-scope">Internal workspace</div>
 
+      <!-- T37 phone fold: DESIGN sanctions "48px top bar w/ menu sheet" for a
+           7-destination nav (bottom nav is capped at 5). The checkbox drives
+           the sheet from pure CSS (#cad-navtoggle:checked ~ .cad-nav in
+           layout.css); the label is the Menu hit area, shown only <=720px.
+           Input sits BEFORE the nav so the sibling selector can reach it. -->
+      <input type="checkbox" id="cad-navtoggle" class="cad-navtoggle" aria-label="Open navigation menu">
+      <label for="cad-navtoggle" class="cad-menubtn">Menu</label>
+
       <!-- T06 (Saurabh): hash router fills this nav and applies .is-active. -->
       <nav class="cad-nav" id="nav" aria-label="Primary"></nav>
     </aside>
@@ -39,6 +47,15 @@
     </main>
 
   </div>
+
+  <!-- T37: close the phone menu sheet the moment a nav tap navigates (pure-CSS
+       toggle otherwise stays open after same-page taps). -->
+  <script>
+    window.addEventListener('hashchange', function () {
+      var t = document.getElementById('cad-navtoggle');
+      if (t) t.checked = false;
+    });
+  </script>
 
   <!-- Boot the SPA: router fills #nav and mounts page modules into #view.
        Module script = deferred, runs after the DOM above exists. -->

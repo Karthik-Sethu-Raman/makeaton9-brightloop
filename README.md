@@ -41,9 +41,7 @@ Installs deps if missing, then runs `python -m pytest -q`.
 | staff | staff@brightloop.test | Staff@12345 |
 | customer | shop@aralamstores.test | Shop@12345 |
 
-Sign in through the app (sidebar → Sign in) or via `POST /api/auth/login`. Password
-reset (`/reset.html`) generates a link that is printed to the **server console** — the
-demo's log channel (no external mail).
+(Auth endpoints land with T08; the accounts are in the seed data already.)
 
 ## Architecture (one breath)
 

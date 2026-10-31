@@ -3,7 +3,8 @@
    Grid sums (DESIGN: one 16px gutter, arithmetic must close):
    - page:   224px sidebar + 1fr main            = 100vw, gutter = border between
    - cards:  repeat(auto-fit, minmax(220px,1fr)) + 16px (--gap) between items
-   - phone:  1 column; sidebar folds to a 48px top bar, no horizontal scroll */
+   - phone:  1 column; 48px top bar + menu sheet (DESIGN fold for 7 destinations),
+             no horizontal scroll ever */
 
 * { box-sizing: border-box; }
 
@@ -83,6 +84,15 @@ body {
 .cad-navitem[aria-current="page"] {
   background: var(--active);
   color: var(--text);
+}
+
+/* ---------- phone menu toggle (T37) ----------
+   #cad-navtoggle is a visually-hidden-but-focusable checkbox (phone block
+   restyles it); the .cad-menubtn LABEL is its hit area. On desktop both are
+   display:none — the nav is a plain sidebar column, nothing to toggle. */
+.cad-navtoggle,
+.cad-menubtn {
+  display: none;
 }
 
 /* ---------- cards: shared bottom edges, one 16px gutter ---------- */
@@ -345,33 +355,94 @@ body {
   color: var(--faint);
 }
 
-/* ---------- phone fold (basic 390px guarantee; T37 does the full pass) ---------- */
+/* ---------- phone fold (T37: DESIGN "48px top bar w/ menu sheet") ----------
+   7 sidebar destinations > 5, so bottom nav is out and the sheet is the one
+   sanctioned fold. Pure CSS: #cad-navtoggle is a checkbox in index.html; when
+   checked, its later sibling .cad-nav drops open under the 48px bar. The bar
+   arithmetic: menubtn height 48 + padding 0 = exactly 48px. Nav item targets
+   are min-height 44px (DESIGN touch law). */
 
 @media (max-width: 720px) {
+  /* DESIGN: the page NEVER scrolls horizontally on a phone. Belt-and-braces
+     guard around any future content that forgets min-width:0. */
+  body { overflow-x: hidden; }
+
   .cad-shell { grid-template-columns: 1fr; }
 
   .cad-sidebar {
     display: flex;
+    flex-wrap: wrap; /* nav sheet wraps to its own full-width row */
     align-items: center;
-    gap: var(--gap);
+    gap: 0 var(--gap);
     min-height: 48px; /* DESIGN: 48px top bar */
-    padding: 8px var(--gap);
+    padding: 0 var(--gap);
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
 
   .cad-scope { display: none; }
 
-  .cad-nav {
-    flex-direction: row;
-    margin-top: 0;
-    overflow-x: auto; /* nav scrolls, the page never does */
+  /* toggle: focusable at 1px so keyboard users can open the sheet with Space */
+  .cad-navtoggle {
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
   }
 
-  /* phone margins 16-20px (DESIGN) and 44px touch targets on auth screens: inputs
-     AND buttons, not just the submit. .cad-login-form is login.js's class (T46,
-     Saurabh) — styled from here so the main input flow hits the target size without
-     waiting for that file's next touch; flagged in the T44 DONE note. */
+  .cad-menubtn {
+    display: flex;
+    align-items: center;
+    height: 48px; /* fills the bar exactly (48 >= 44 touch law) */
+    margin-left: auto;
+    padding: 0 14px;
+    font-size: var(--fs-body);
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .cad-navtoggle:focus-visible + .cad-menubtn {
+    outline: 2px solid var(--muted);
+    outline-offset: -2px;
+  }
+
+  /* the sheet: closed by default, opens when the toggle is checked. In-flow
+     (pushes content, no overlay/backdrop to manage); a surface panel hung
+     under the transparent bar. */
+  .cad-nav {
+    display: none;
+    flex-direction: column;
+    flex-basis: 100%; /* full-width second row of the wrapped bar */
+    gap: 2px;
+    margin-top: 0;
+    padding: 8px var(--gap) 14px;
+    background: var(--surface);
+    border-top: 1px solid var(--rule);
+  }
+
+  #cad-navtoggle:checked ~ .cad-nav { display: flex; }
+
+  .cad-navitem {
+    display: flex;
+    align-items: center;
+    min-height: 44px; /* DESIGN phone: touch targets >= 44px */
+    padding: 0 12px;
+  }
+
+  /* DESIGN phone margins 16-20px: pages inject .cad-page with var(--pad) (24px)
+     AFTER this stylesheet loads, so the override wins on specificity (.cad-main
+     .cad-page = 0-2-0 > .cad-page 0-1-0), never source order. --gap = 16px. */
+  .cad-main .cad-page,
+  .cad-main .cad-boot { padding: var(--gap); }
+
+  /* 44px touch targets on auth screens: inputs AND buttons, not just the
+     submit. .cad-login-form is login.js's class (T46, Saurabh) — styled from
+     here so the main input flow hits the target size without waiting for that
+     file's next touch; flagged in the T44 DONE note. */
   .auth-shell,
   .cad-auth { padding: var(--gap); }
 
