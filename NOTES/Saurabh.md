@@ -128,3 +128,20 @@ Key choices I must be able to explain:
   * Four states all ship (loading skeleton reusing the real table layout, empty sentence,
     error + Retry keeping last-good list, data); responsive via the shared table's 640px
     two-line fold; cleanup() sets alive=false so a late POST/GET can't paint after nav.
+
+## 11:15 — T00 dry-run micro-task
+- Built: `frontend/components/dryrun.js` → one pure util `clamp(n, lo, hi)` (keeps a
+  number inside [lo,hi]; any non-number / NaN / Infinity returns `lo`). Plus
+  `dryrun.selftest.mjs` (8 cases, runs under plain `node`) and `tests/test_dryrun_saurabh.py`.
+- Why it exists: this was the scheduled 11:15 pipeline rehearsal — the point was to run
+  the FULL worker cycle once on something tiny: claim the task on the board + push, write
+  code, commit incrementally, green TEST_CMD, then close board/PROGRESS/NOTES. Not a demo
+  feature — `dryrun.js` is clearly marked as dry-run only.
+- Test design I reused (from Avanthik's T07): pytest can't run JS directly, so the wrapper
+  has TWO tests — (1) a source-present grep that passes even with no node installed, and
+  (2) a subprocess that runs the node selftest and `pytest.skip`s LOUDLY (never fails) when
+  node isn't on PATH. So CI stays green on any machine.
+- Must be able to explain: `clamp` guards non-finite input with
+  `typeof n !== 'number' || !Number.isFinite(n)` → returns `lo` (NaN/Infinity/strings all
+  collapse to the floor), so it never leaks a bad value into a chart scale or width later.
+  Result: node selftest 8/8, full TEST_CMD 29/29.

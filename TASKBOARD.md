@@ -53,7 +53,8 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 
 - [ ] **T00** (P0, owner: each member, ~5m) dry-run micro-task per member: add one tiny
   utility function + its test in YOUR module. Used ONLY by the 11:15 dry-runs.
-  [Saurabh: CLAIMED @11:15]
+  [Saurabh: DONE @11:15 — frontend/components/dryrun.js clamp() + dryrun.selftest.mjs +
+  tests/test_dryrun_saurabh.py; node selftest 8/8, TEST_CMD 29/29]
 - [x] **T-V1** (P1, owner: Manu, ~15m) DONE @10:07 by Manu — **`scripts/make-demo-video.mjs`** video
   recorder (spec: VIDEO-SCRIPT.md): 7 captioned scenes (captions injected INTO the page,
   styled only with DESIGN tokens), explicit waits on data counters (no sleeps on live data),
@@ -292,6 +293,7 @@ Reporting
 `10:52 Manu claimed T03`
 `11:05 Avanthik claimed T07 (resume own PARTIAL — verify wiring landed, close out)`
 `11:12 Manu resumed T03 (own CLAIMED task — killed 10:56 cycle landed code but never closed the board)`
+`11:15 Saurabh claimed T00 (per-member dry-run share)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
