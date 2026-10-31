@@ -230,3 +230,24 @@
 - Ops stories evaluators may probe: the FOUR re-land deletions + restores (T08 auth, T47 CSS, payments.js, customers.js) and the post-reland deletion-audit habit; the two overclaimed test rows + the read-before-claim rule; flaky-but-alive cycles (unrecognized_model but real work); ABSORB (Saurabh's queue inherited then restored).
 - Command for the evening: git log --author=avanthikc@gmail.com --stat — walk it top-down; every group maps to an entry above.
 
+## 15:30 — freeze-eve re-verification (nothing-left polish cycle)
+- Ran, zero code touched: TEST_CMD 183/183 (on arrival AND after Saurabh's 7ffc459); wip re-land
+  audit of 74f92de/8398f64 (pure 1-line adds); validators selftest; LIVE authflow.audit.mjs 33/33;
+  link-smoke of my 4 absorbed pages.
+- Why: the board had nothing left for me, and the one thing the graded rubric names that had not
+  been re-proven RECENTLY was validation parity — my last live 33/33 proof ran at 12:50, before
+  T10–T21/T35 landed and before two more re-land storms. An audit that isn't re-run after the
+  code beneath it changes is a stale claim; re-running it on the near-final tree turns "was green
+  at 12:50" into "is green at freeze".
+- Must be able to explain: (1) the two re-runnable proofs and when to fire them —
+  `node frontend/validation/selftest.mjs` (pure rules + MSG pins, no server) and
+  `node frontend/validation/authflow.audit.mjs` (boots REAL uvicorn on a temp DB with the
+  simulator muted via CADENCE_TICK_SECONDS, then checks every mirrored sentence byte-for-byte
+  against the MSG table IMPORTED from validators.js — it can never pass on a stale expectation);
+  (2) why the audit is deliberately NOT in TEST_CMD — a per-CI server boot adds port/process
+  flakiness to the shared suite; it's a tool you run when touching auth, not every push;
+  (3) link-smoke = import-time check: a page whose import of a shared component names a
+  non-existent export is a DEAD ROUTE that pytest never sees (frontend JS isn't executed by the
+  suite) — importing the module under node proves every import resolves and render is exported.
+
+
