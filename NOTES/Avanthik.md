@@ -250,4 +250,28 @@
   non-existent export is a DEAD ROUTE that pytest never sees (frontend JS isn't executed by the
   suite) — importing the module under node proves every import resolves and render is exported.
 
+## 15:49 — T28 ₹0-payment parity gate (freeze-eve hardening)
+- Built: 3 lines in frontend/pages/payments.js amountRule (+ contract comment line) — after the
+  shared paymentAmount rule returns ok, parseFloat(value) === 0 fails with 'Enter an amount
+  above ₹0.', the exact payments.py MSG_AMOUNT_POSITIVE string.
+- Why: T27 landed at 15:32 and nobody had verified my page (built against a DOCUMENTED contract)
+  against the real API. Static audit: everything matched (list shape, POST keys, method enum,
+  404/409 sentences, paisa ceiling) — except one gap: the shared amount rule is shape-only (>= 0)
+  and the ceiling comparison passes 0, so a ₹0 payment cleared the CLIENT gate (no blur error,
+  validateForm ok) and only the server's 400 said no. That is client-valid → server-rejected
+  with a sentence that existed nowhere client-side — the same class as the minQuantity break
+  T36-pass-2 caught (graded parity requirement).
+- Why NOT in validators.js: rules.amount is shared (discounts min-purchase uses it, where 0 is
+  legal) and its MSG table is pinned byte-for-byte by tests/test_validators_contract.py — adding
+  a key means touching Karthik's py mirror + pins, cross-module churn at 15:47. The >0 law is
+  PAYMENTS-only (schema CHECK amount > 0), so the guard lives in the payments page wrapper,
+  exactly where the per-invoice ceiling already lives.
+- Must be able to explain: (1) the check ORDER mirrors the server's _validate_amount — shape
+  first (empty → 'Enter an amount.'), then the ₹0 guard, then the ceiling — so the user always
+  sees the same sentence in the same situation on both sides; (2) the 9-case proof: '0', '0.00',
+  '00' → POSITIVE; '8.10' against ₹8.10 outstanding → ok (paisa-exact compare); '12' → amtMax;
+  '-3' → amtBad; ₹0 is rejected even with NO bound (server's ₹0 check is also bound-independent);
+  (3) why the fix is in the page, not the shared rule (above) — the one-sentence-per-rule table
+  stays one-law-per-constraint.
+
 
