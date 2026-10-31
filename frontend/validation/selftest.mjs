@@ -3,7 +3,7 @@
 // backend/api/validators.py (T08) must mirror. Run: node frontend/validation/selftest.mjs
 // (pytest picks it up via tests/test_validators_contract.py). Silent success = exit 0;
 // every failed check prints and the process exits 1.
-import { validate, rules, MSG, required, paymentAmount } from './validators.js';
+import { validate, rules, MSG, required, paymentAmount, validateForm, setError, clearErrorFor } from './validators.js';
 
 let failed = 0;
 function check(name, cond) {
@@ -129,5 +129,78 @@ check('required whitespace message', validate(nameRequired, '   ').message === '
 check('required without label throws', throws(() => required('')));
 check('required with non-string label throws', throws(() => required(42)));
 
+// --- form-level DOM behavior (T53) ---------------------------------------------------
+// validateForm/setError/clearErrorFor are executed against a minimal DOM shim so
+// the graded must-haves — focus jumps to the FIRST error, inline message under the
+// field, aria wiring, clear-on-fix — are pinned in CI without a browser install.
+// The shim reflects `.id =` into the registry like a real element (setError uses
+// the property form); full live-API coverage lives in authflow.audit.mjs.
+{
+  const byId = new Map();
+  const focusLog = [];
+  const makeEl = () => {
+    const el = {
+      attrs: {}, children: [], _text: '',
+      set id(v) { el.attrs.id = String(v); byId.set(String(v), el); },
+      get id() { return el.attrs.id || ''; },
+      set className(v) { el.attrs.class = String(v); },
+      get className() { return el.attrs.class || ''; },
+      set textContent(v) { el._text = String(v); },
+      get textContent() { return el._text; },
+      setAttribute(k, v) { el.attrs[k] = String(v); },
+      getAttribute(k) { return k in el.attrs ? el.attrs[k] : null; },
+      removeAttribute(k) { delete el.attrs[k]; },
+      appendChild(c) { el.children.push(c); return c; },
+      insertAdjacentElement(_pos, el2) { el.children.push(el2); el._inline = el2; return el2; },
+      remove() { if (el.attrs.id) byId.delete(el.attrs.id); el._removed = true; },
+      focus() { focusLog.push(el.attrs.id || el.name || '?'); },
+    };
+    return el;
+  };
+  const input = (id, value) => {
+    const el = makeEl();
+    el.attrs.id = id; byId.set(id, el);
+    el.name = id; el.value = value ?? '';
+    return el;
+  };
+  globalThis.document = { createElement: makeEl, getElementById: (id) => byId.get(id) || null };
+  try {
+    // login form field order (login.js): [email, password] — both empty
+    const emailI = input('login-email', ''), passI = input('login-password', '');
+    const v = validateForm([{ input: emailI, rule: 'email' }, { input: passI, rule: 'password' }]);
+    check('form: rejects empty login', v.ok === false && v.first === emailI);
+    check('form: focuses FIRST error field', focusLog.at(-1) === 'login-email');
+    check('form: inline message = MSG.emailEmpty', emailI._inline?.textContent === MSG.emailEmpty);
+    check('form: aria-invalid set', emailI.getAttribute('aria-invalid') === 'true');
+    const desc = (emailI.getAttribute('aria-describedby') || '').split(/\s+/);
+    check('form: aria-describedby points at the error node', desc.includes(emailI._inline.id));
+
+    // signup: email valid, password weak -> password is the first (and only) error
+    const sEmail = input('s-email', 'demo@cadence.in'), sPass = input('s-password', 'weak');
+    const s = validateForm([{ input: sEmail, rule: 'email' }, { input: sPass, rule: 'password' }]);
+    check('form: first error skips VALID fields', s.first === sPass && focusLog.at(-1) === 's-password');
+    check('form: valid field carries no error node', sEmail._inline === undefined);
+    check('form: weak-password message = MSG.password', sPass._inline?.textContent === MSG.password);
+
+    // clear-on-fix: revalidate after correcting -> node removed, aria state restored
+    sPass.value = 'Abcdefg!9';
+    const s2 = validateForm([{ input: sEmail, rule: 'email' }, { input: sPass, rule: 'password' }]);
+    check('form: ok after fix', s2.ok === true);
+    check('form: error node removed on fix', sPass._inline?._removed === true);
+    check('form: aria-invalid cleared on fix', sPass.getAttribute('aria-invalid') === null);
+
+    // setError APPENDS to an existing aria-describedby (a field hint survives)
+    const hinted = input('hinted', '');
+    hinted.setAttribute('aria-describedby', 'hint-id');
+    setError(hinted, 'x');
+    check('setError keeps existing describedby', (hinted.getAttribute('aria-describedby') || '').startsWith('hint-id '));
+    clearErrorFor(hinted);
+    check('clearErrorFor restores original describedby', hinted.getAttribute('aria-describedby') === 'hint-id');
+    check('clearErrorFor is a no-op on clean fields', (() => { clearErrorFor(input('clean', '')); return true; })());
+  } finally {
+    delete globalThis.document; // later sections / hosts must not see the shim
+  }
+}
+
 if (failed) { console.error(`${failed} check(s) failed`); process.exit(1); }
-console.log(`validators selftest: all checks passed (${Object.keys(rules).length} rules + required()/paymentAmount() factories, MSG table pinned)`);
+console.log(`validators selftest: all checks passed (${Object.keys(rules).length} rules + required()/paymentAmount() factories + form-level DOM checks, MSG table pinned)`);
