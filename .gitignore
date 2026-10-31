@@ -10,3 +10,6 @@ coverage/
 *.log
 *.db
 *.sqlite
+*.webm
+makeaton9-video/
+.venv/
