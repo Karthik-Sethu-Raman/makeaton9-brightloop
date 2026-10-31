@@ -295,9 +295,26 @@ Subscriptions
   frontend/styles/layout.css verbatim from 77b6a34 — eaten by my b1a7822 stale-tree re-land
   (68b026a); T21/T49 claim markers below + Saurabh's 13:35 PROGRESS row restored too.
 Invoicing
-- [ ] **T20** (P2, owner: Manu, ~15m) CLAIMED @14:33 by Manu — Billing run: generate due invoices from active
-  subscriptions â€” idempotent (never twice, never skipped), taxes auto from tax_rules;
+- [x] **T20** (P2, owner: Manu, ~15m) DONE @15:14 by Manu — Billing run: generate due invoices from active
+  subscriptions — idempotent (never twice, never skipped), taxes auto from tax_rules;
   `tests/test_billing_run.py`.
+  DONE detail: `backend/models/billing.py` = the one billing-run law. NEVER TWICE — three
+  stacked guards: next_billing_date advances one full calendar period (plans.add_period,
+  T13) in the SAME commit as the invoice; schema UNIQUE(subscription_id, issue_date)
+  makes a double-bill physically impossible; a concurrent IntegrityError (livefeed bills
+  too) is RECOGNISED as already-billed and absorbed, never crashed. NEVER SKIPPED — the
+  date advances FROM THE DUE DATE, not today, so a sub left unbilled for periods is
+  caught up one back-dated invoice per period oldest-first (cap 24/run, `remaining_due`
+  in the report); shell subs with no lines unblock the queue without invoicing; non-
+  active subs raise loudly (caller bug, never silent skip). TAXES AUTO — every line's
+  rate via taxrules.percent_for (T19 law; stored line rate = fallback only), rounded per
+  line, INV numbering moved here (MAX suffix + 1) with the simulator's copy now a thin
+  alias; the tick calls bill_subscription(limit=1) so live feed + batch run share ONE
+  law. 8 tests (double-bill absorbed, catch-up, limit-then-followup, tax source,
+  guards). Code landed by killed 14:33/14:56 cycles; RED cleared by integrator 6c2c63e
+  (seed draft INV-0004 off SUB-0002's billing day + tests carry created_at so the
+  pinned IntegrityError is the double-bill guard); this cycle verified TEST_CMD
+  183/183 (179+4 → all green, count UP) and closed it.
 - [x] **T21** (P2, owner: Karthik, ~10m) DONE @14:25 by Karthik (integrator cycle — code landed
   as a72a90e by the killed 13:38 cycle; this cycle verified TEST_CMD 170/170 incl. its 9 tests
   + router wired in main.py, and closed it) — Invoice API: list/detail, confirm/cancel/send/
