@@ -75,3 +75,15 @@
   the contract + same-origin; (3) why Retry reloads ONLY on network failure — a reload would discard what the
   user typed on a correctable error like a weak password; (4) the synchronous pre-paint script that flips forms
   for ?token= visitors so they never see the email form flash while the module loads.
+
+## 10:51 — T44 shared auth styling (closed out for the 10:40 cycle)
+- Built: .auth-shell/.auth-card/.auth-h1/.auth-lede/.auth-form/.btn-primary canonical classes in layout.css
+  (cad-auth* kept as aliases), reset.html refactored onto them, styles README docs. Code was written by the
+  10:40 SCHEDULED cycle (it died at max-turns before bookkeeping); I audited + closed it.
+- Why this way: login (T46) and reset (T33) are the same screen archetype — one card, centred, no sidebar —
+  so one set of classes keeps them pixel-identical and gives every future form (discounts, plans) the same
+  base. Aliases stay so nothing breaks mid-flight; new code must use the canonical names.
+- Must be able to explain: (1) what I audited before putting DONE on the cycle's work — the .ok validation
+  gate, the DOM-built contract-shape-checked reset link, retry-only-on-transient, pre-paint toggle, no hex
+  outside tokens.css; (2) why aliases instead of a rename — 4 agents push to main continuously; a hard rename
+  would break any in-flight page importing the old class names mid-window.

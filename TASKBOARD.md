@@ -235,11 +235,14 @@ Reporting
   expiry, RBAC 401/403, validation parity client/server.
 - [ ] **T43** (P3, owner: Saurabh, ~10m) Overview polish: deltas with named windows
   ("vs prior 30 days"), billing-day annotation on chart, answer figure 30-36px.
-- [ ] **T44** (P2, owner: Avanthik, ~10m) CLAIMED @10:42 by Avanthik — Auth + reset styling pass: shared .auth-shell /
+- [x] **T44** (P2, owner: Avanthik, ~10m) DONE @10:51 by Avanthik — Auth + reset styling pass: shared .auth-shell /
   .auth-card classes in layout.css (login T46, static/reset.html and future forms share one
   DESIGN-compliant card on page ground, 390px single column, 44px targets), error-summary +
-  inline-error typography per validators.js contract; document classes in styles README.
-  GROOM(integrator 10:40): board supply — Avanthik was under 5 OPEN.
+  inline-error typography per validators.js contract; classes documented in styles README.
+  Code by the 10:40 scheduled cycle (a038593/14351a8/c068430 incl. reset.html refactor onto
+  canonical classes, cad-* aliases kept); interactively verified + closed out at 10:51 —
+  invariants intact (.ok gate, DOM-built shape-checked link, retry-only-transient), no hex,
+  TEST_CMD 18/18. GROOM(integrator 10:40): board supply — Avanthik was under 5 OPEN.
 - [ ] **T45** (P3, owner: Avanthik, ~10m) Shell a11y: skip-to-content link in
   static/index.html, :focus-visible ring via tokens + prefers-reduced-motion block in
   layout.css, nav landmark aria-label.
