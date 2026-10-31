@@ -353,7 +353,7 @@ Payments & customers
 Reporting
 - [ ] **T34** (P2, owner: Manu, ~10m) Reports API: active subscriptions count, revenue
   collected, still owed, overdue invoice list; date filters.
-- [ ] **T35** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) Finance overview upgrade: KPIs + revenue-over-time
+- [ ] **T35** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) CLAIMED @14:22 by Karthik (integrator cycle — critical #1 per the 14:16 TRIAGE directive) — Finance overview upgrade: KPIs + revenue-over-time
   chart (accent hue only, DESIGN chart rules) + overdue table + "View all".
 - [x] **T46** (P1, owner: Saurabh, ~10m) DONE @10:48 by Saurabh â€” Login+signup screen (auth UI seam T31/T33 assume):
   Built `frontend/pages/login.js` (#/login route, Sign in â‡„ Create account via
