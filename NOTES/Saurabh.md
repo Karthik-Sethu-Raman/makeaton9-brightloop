@@ -215,3 +215,30 @@ still prints "₹0.00"/"0", only absent data greys out. The abort timeout is a l
 guard for the 3s overview poller: a slow/dead endpoint degrades to an error+Retry instead
 of an infinite spinner. Both are pure component changes; no page or shared file touched,
 suite stayed 175/175.
+
+## 14:55 — IST freshness-stamp fix on the Overview page (no-task polish cycle)
+- No open task of mine remained (all DONE; the unbuilt pages are Avanthik/Karthik's since
+  the 12:50 ABSORB), so I did a "nothing-left" safe fix confined to MY own file.
+- **The bug:** the Overview header shows "Updated HH:MM" from the live feed's `updated_at`.
+  The simulator (Manu's `backend/livefeed/simulator.py:_now`) emits that as a ZONELESS IST
+  wall-clock string, `'YYYY-MM-DD HH:MM:SS'` (a space, no timezone). `overview.js:450` was
+  parsing it with a bare `new Date(ts)` — and JS reads a zoneless string as the BROWSER's
+  local time. On the judges' laptop (or any non-IST machine) that Date is then re-formatted
+  into IST by `istTime`, so the displayed minute is wrong by the UTC↔IST offset.
+- **The fix:** added `parseIstStamp(ts)` — if the string is the zoneless pattern it pins it
+  to `+05:30` (`'…T…+05:30'`) before constructing the Date; already-zoned ISO strings pass
+  through untouched; empty/invalid → `new Date()`. This is the SAME law `fmtDay` already
+  applies to date-only values a few lines up (line 85), and the same IST-date pinning
+  Avanthik did in invoices.js — I just closed the one spot (the clock stamp) that still used
+  a raw parse. It was flagged as T36 audit NIT #5.
+- **Why on my side and not the source:** the clean long-term fix is Manu emitting ISO-8601
+  with an offset from the simulator, but that's his module and I don't edit it. Pinning on
+  the consumer side is correct and self-contained, and it stays correct even if Manu later
+  switches to a zoned string (the regex only rewrites zoneless input).
+- **Must be able to explain:** why `new Date('2026-10-31 14:35:00')` is browser-local not
+  UTC (zoneless date-time strings with a space are implementation-local per ECMAScript), and
+  that `istTime` formatting in `Asia/Kolkata` only fixes the DISPLAY tz — the Date OBJECT
+  must already represent the right instant, which is what the `+05:30` pin guarantees.
+- Verified: `node --check` OK; a node harness confirmed the epoch matches 09:05 UTC and the
+  IST render is "14:35" independent of browser tz; TEST_CMD 175/175 (no count change — this
+  is JS the Python suite doesn't execute, so green-on-arrival = green-after).
