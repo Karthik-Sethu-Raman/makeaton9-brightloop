@@ -181,7 +181,7 @@ Products & plans
   real uvicorn smoke: 4 seeded rows served live, empty-name → 400 mirrored sentence.
   **T12's products page is now LIVE** (no page change needed — API matches its
   documented contract field-for-field).
-- [ ] **T11** (P2, owner: Manu, ~10m) Product variants: model + attribute price delta
+- [ ] **T11** (P2, owner: Manu, ~10m) CLAIMED @12:32 by Manu — Product variants: model + attribute price delta
   (seed: brand "Odoo" +â‚¹560); included in plan line pricing.
 - [x] **T12** (P2, owner: Saurabh, ~10m) DONE @10:24 by Saurabh â€” Products page: table (right-aligned â‚¹, truncate)
   + create form with client validation + empty/loading/error states.
@@ -432,3 +432,4 @@ harness in sync. No stale claims (T09 @11:32 by Manu = 28m, fresh); no HEALTH ro
 members have PROGRESS rows <60m; Manu's last PRODUCTIVE row 11:12 â€” watching, absorb only
 at 60+ quiet per constitution). Board supply: +T51/T52 (Avanthik, was 3 OPEN). EXECUTOR:
 claimed T10 â€” products CRUD API (T12's page is DONE and error-states until it lands).`
+`12:32 Manu claimed T11`
