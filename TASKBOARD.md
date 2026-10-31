@@ -114,7 +114,7 @@ Products & plans
   price, notes; server validation (price ≥ 0, name required).
 - [ ] **T11** (P2, owner: Manu, ~10m) Product variants: model + attribute price delta
   (seed: brand "Odoo" +₹560); included in plan line pricing.
-- [ ] **T12** (P2, owner: Saurabh, ~10m) Products page: table (right-aligned ₹, truncate)
+- [ ] **T12** (P2, owner: Saurabh, ~10m) CLAIMED @10:17 by Saurabh — Products page: table (right-aligned ₹, truncate)
   + create form with client validation + empty/loading/error states.
 - [ ] **T13** (P2, owner: Manu, ~10m) Plans model: billing frequency daily/weekly/monthly/
   yearly, min quantity, available from/to, close policy (auto-close on end / early close /
@@ -197,3 +197,5 @@ Reporting
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
+
+`10:17 Saurabh claimed T12`
