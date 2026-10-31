@@ -142,8 +142,18 @@ Products & plans
   pause / renew) per plan.
 - [ ] **T14** (P2, owner: Karthik, ~10m) Plans CRUD API + validation (from ≤ to, price ≥ 0,
   frequency enum); tests.
-- [ ] **T15** (P2, owner: Saurabh, ~10m) Plans page: list + create form incl. close-policy
+- [x] **T15** (P2, owner: Saurabh, ~10m) DONE @11:08 by Saurabh — Plans page: list + create form incl. close-policy
   control and frequency; states.
+  Built `frontend/pages/plans.js`: shared table (name/billing/price ₹ right/min qty/
+  availability window/at-term-end) reading GET /api/plans (DB-dynamic, Karthik T14),
+  POST to create. Create form: name (required), billing frequency + close-policy selects
+  (schema enums), price (price rule), min qty (quantity rule — server enforces ≥1),
+  available from/to (date, dateOrder end≥start). All four states; blur + submit-gate +
+  focus-first-error via validators.js. Plans is an AUX route (#/plans) under the one
+  "Products & plans" section — NO 8th sidebar row; router.js ACTIVE_FOR keeps the
+  Products pill lit; cross-linked both ways in the page headers. Renders live once T14
+  (/api/plans) lands, error+Retry until then (products/overview precedent). node --check
+  OK; served 200, /api/plans 404 (pre-T14) verified; TEST_CMD 24/24.
 Subscriptions
 - [ ] **T16** (P2, owner: Manu, ~10m) Subscription model: SUB-0001 numbering sequence,
   states Draft→Quotation→Confirmed→Active→Closed, lines (product, qty, unit price, tax,

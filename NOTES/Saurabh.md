@@ -100,3 +100,31 @@
     automatically, no edit needed.
   * `cleanup()` sets `alive=false` so a slow login response resolving after the user
     navigates away can't redirect or paint a dead screen.
+
+## T15 — Plans page (frontend/pages/plans.js)  [11:08]
+What I built: the Plans screen under the "Products & plans" section. A table lists plans
+from the live DB (GET /api/plans, Karthik's T14) — columns: Name, Billing (daily/weekly/
+monthly/yearly), Price (₹ right-aligned tabular), Min qty, Available (from → to window),
+At term end (close policy). A "New plan" form creates one via POST /api/plans.
+
+Key choices I must be able to explain:
+  * Dynamic data (graded): the table reads the DB endpoint, never static JSON. Until T14
+    lands it shows the error state + Retry — same contract-first pattern as my Products/
+    Overview pages; it "lights up" automatically when the API arrives, no edit.
+  * Validation client AND server (graded): name required; price → validators.js `price`
+    rule; min qty → `quantity` rule (whole number; the SERVER enforces ≥1 per the schema
+    CHECK, documented in the in-file contract); availability dates → `dateOrder` (end ≥
+    start, error on the end field). Blur-time inline errors, submit re-validates all and
+    focuses the FIRST failing field. Same validators.js module Avanthik owns, so the
+    Python mirror shares the exact messages.
+  * close_policy + billing_frequency are <select>s whose option values ARE the schema
+    enums (renew/auto_close/early_close/pause and daily/weekly/monthly/yearly) — no free
+    text, so the server never has to reject a typo.
+  * Navigation: Plans is NOT a new sidebar row. DESIGN calls the section "Products & plans"
+    (one destination). I made #/plans an AUX route in router.js (like login/portal) and
+    added ACTIVE_FOR = {plans:'products'} so the sidebar's Products pill stays grey-lit
+    while on Plans. The two pages cross-link in their headers (Products ⇄ Plans). This
+    keeps the sidebar at 7 clean destinations.
+  * Four states all ship (loading skeleton reusing the real table layout, empty sentence,
+    error + Retry keeping last-good list, data); responsive via the shared table's 640px
+    two-line fold; cleanup() sets alive=false so a late POST/GET can't paint after nav.
