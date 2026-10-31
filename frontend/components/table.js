@@ -54,10 +54,20 @@ function ensureStyle() {
   document.head.appendChild(s);
 }
 
+// T49: missing values render as a GREY dash (DESIGN States/Tables) — the shared
+// renderer wraps both null/undefined and the DASH glyph ('—' from fmt.js) in
+// span.cad-dash (layout.css), so every table inherits the law at once.
 function fillCell(td, col, row) {
   const out = col.render ? col.render(row) : row[col.key];
-  if (out instanceof Node) td.appendChild(out);
-  else td.textContent = out == null ? '' : String(out);
+  if (out instanceof Node) { td.appendChild(out); return; }
+  if (out == null || out === '—') {
+    const d = document.createElement('span');
+    d.className = 'cad-dash';
+    d.textContent = '—';
+    td.appendChild(d);
+    return;
+  }
+  td.textContent = String(out);
 }
 
 // Build the table element. `rows` may be []; caller shows its own empty block
