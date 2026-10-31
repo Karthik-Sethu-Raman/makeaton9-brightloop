@@ -197,3 +197,21 @@ Key choices I must be able to explain:
   of T49, which Avanthik had CLAIMED. Editing those same files in parallel is exactly how
   the re-land squashes ate work earlier today, so I stayed clear. Explain: good coordination
   hygiene beat grabbing extra credit.
+
+## 14:36 — closed the last two component-level audit findings (kpi.js + poll.js)
+With T49 finished and its claim released, the two findings it had explicitly left open
+for "T36 pass-3" were no longer owned by anyone and sit in MY module
+(`frontend/components/`), so I landed them this cycle:
+- **kpi.js grey-dash**: a KPI cell whose value is missing (`null`/`undefined` or the `—`
+  glyph from fmt.js) now renders inside `<span class="cad-dash">` — the same law table.js
+  already follows. Before, the em-dash printed in `--text` colour instead of the faint
+  grey DESIGN reserves for "missing".
+- **poll.js fetch timeout**: added an `AbortController` that aborts at
+  `max(intervalMs*2, 4000)`ms. Previously a hung first request left `inFlight=true`
+  forever, so the screen stayed stuck on "loading" and the Retry button (which calls
+  `refresh`=`tick`) silently no-op'd because tick early-returns while inFlight.
+**Q&A explain:** the grey-dash is a DESIGN "missing vs real-zero" distinction — a real 0
+still prints "₹0.00"/"0", only absent data greys out. The abort timeout is a liveness
+guard for the 3s overview poller: a slow/dead endpoint degrades to an error+Retry instead
+of an infinite spinner. Both are pure component changes; no page or shared file touched,
+suite stayed 175/175.
