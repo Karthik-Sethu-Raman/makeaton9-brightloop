@@ -295,7 +295,7 @@ Subscriptions
   frontend/styles/layout.css verbatim from 77b6a34 — eaten by my b1a7822 stale-tree re-land
   (68b026a); T21/T49 claim markers below + Saurabh's 13:35 PROGRESS row restored too.
 Invoicing
-- [ ] **T20** (P2, owner: Manu, ~15m) Billing run: generate due invoices from active
+- [ ] **T20** (P2, owner: Manu, ~15m) CLAIMED @14:33 by Manu — Billing run: generate due invoices from active
   subscriptions â€” idempotent (never twice, never skipped), taxes auto from tax_rules;
   `tests/test_billing_run.py`.
 - [x] **T21** (P2, owner: Karthik, ~10m) DONE @14:25 by Karthik (integrator cycle — code landed
@@ -541,6 +541,7 @@ Reporting
 `13:20 Avanthik claimed T24`
 `13:33 Manu claimed T16`
 `14:22 Karthik claimed T35 (integrator cycle — critical #1 per the 14:16 TRIAGE directive)`
+`14:33 Manu claimed T20`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
