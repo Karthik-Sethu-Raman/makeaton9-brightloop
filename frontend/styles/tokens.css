@@ -1,0 +1,20 @@
+/* tokens.css — DESIGN.md's :root block VERBATIM (design law, integrator-only).
+   Every other stylesheet references var(--...) — NO color literals anywhere else. */
+
+:root {
+  --ground:#f8fafc; --surface:#ffffff; --raised:#f7f8fa; --active:#e9edf1;
+  --border:#e4e7eb; --rule:#eef1f3; --control:#cdd5dc;
+  --text:#111827; --muted:#475569; --faint:#64748b;
+  --primary:#16191d;            /* near-black primary button, white label. ONE per screen. */
+  --accent:#b45309;             /* coin copper — data + at most one control per screen. */
+  --positive:#247b50; --pill-positive-bg:#dcfae5; --pill-positive-ink:#04250e;
+  --negative:#c4242a; --pill-negative-bg:#ffedea; --pill-negative-ink:#831c1e;
+  --pill-warning-bg:#fffbeb; --pill-warning-ink:#92400e;
+  --grid:#e5e5e5;
+  --radius-card:8px; --radius-control:6px; --radius-chip:4px;
+  --gap:16px; --card-pad:20px; --pad:24px;
+  --control-height:32px; --row-height:48px;
+  --font:"Fira Sans","Segoe UI",system-ui,-apple-system,sans-serif; /* grotesk, tabular figures via .num */
+  --fs-title:24px; --fs-section:16px; --fs-kpi:24px; --fs-body:14px; --fs-small:12px;
+}
+.num { font-variant-numeric: tabular-nums; }
