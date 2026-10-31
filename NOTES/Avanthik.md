@@ -203,3 +203,10 @@
 - Why shared-first: every 20-min cycle that builds a page re-commits the same three anti-patterns (false-empty, silent refresh, black dash) because each page hand-rolls its states. Fixing fillCell once retires the dash pattern for every table past and future; the loading-flag and lastGoodAt patterns are now the documented page recipe (T22-verify + discounts already follow).
 - Must be able to explain: why mergeFresh DELETES keys (Object.assign keeps stale older values for keys the fresh response omits — a cancelled invoice kept showing its pre-cancel outstanding); the +05:30 date pinning (date-only strings parse as browser-local, one day off east of IST); and the two re-land eats + byte-exact restores (stale-tree re-lands remain the day's systemic hazard).
 
+
+## 14:43 — T28 payments page
+- Built: frontend/pages/payments.js — record form + list, all T49 laws baked in from the start; T27 API contract documented in-file.
+- Why the two blockers matter for Q&A: (1) importing a name a module doesn't export is a LINK-TIME error in ES modules — the route died silently into the router's 'being built' placeholder while pytest stayed green; the defense is a node import smoke (import('./payments.js') links OK), now part of my close-out habit. (2) paymentAmount(outstanding) captures its bound AT BUILD TIME — passing a getter function meant String(fn)→NaN→no bound→shape-only; the per-invoice ceiling needs a wrapper RULE that re-runs the factory with the live picker value on every validation. My code comment claimed the wrong behavior — the verify pass caught the comment lying.
+- Also: third stale-tree re-land deletion today (Manu's d5a0840 ate the file an hour after T08's); restored from my commit + fixed forward.
+- Must be able to explain: the link-smoke defense; the wrapper-rule pattern for context-dependent validation; the IST date default (en-CA locale trick) vs toISOString's UTC day.
+

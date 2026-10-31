@@ -341,7 +341,7 @@ Payments & customers
   API → Manu"; the directive numbered it T25, but payments is T27's scope (ruling row in
   PROGRESS); T28's page depends on it], ~10m) Payments API: record (method, amount, date, note)
   against invoice; outstanding balance + overdue flag computed.
-- [ ] **T28** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) CLAIMED @14:32 by Avanthik — Payments page: record form (client+server
+- [x] **T28** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @14:43 by Avanthik — Payments page: record form (client+server
   validation) + paid/outstanding/overdue views.
 - [ ] **T29** (P2, owner: Manu, ~10m) Customers model+API: list/detail with their
   subscriptions and invoices.
