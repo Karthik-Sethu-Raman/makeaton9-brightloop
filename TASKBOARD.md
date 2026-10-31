@@ -279,8 +279,29 @@ Invoicing
   `tests/test_billing_run.py`.
 - [ ] **T21** (P2, owner: Karthik, ~10m) Invoice API: list/detail, confirm/cancel/send/
   print actions, state Draftâ†’Confirmedâ†’Paid guards.
-- [ ] **T22** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) CLAIMED @13:05 by Avanthik —
+- [x] **T22** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @13:20 by Avanthik —
   Invoices page: table (paid/outstanding/overdue filter) + detail with lines/taxes/totals + actions.
+  DONE detail: `frontend/pages/invoices.js` (router already lazy-imports it; first landed page in
+  the absorbed module, per the integrator's 12:50 ABSORB enactment logged in PROGRESS). List:
+  shared table (number/customer/due date/status pill/total + outstanding, both ₹ right) reading
+  GET /api/invoices (DB-dynamic, Karthik T21); the task's paid/outstanding/overdue filter with
+  LIVE counts in the option labels; overdue = confirmed + due_date < today IST + balance > 0
+  (server `overdue` verdict wins, else DERIVED client-side) and renders as the row's ONE pill in
+  negative tone. Detail: meta grid (customer/subscription/issue/due) + lines table (tax via
+  fmt.pct — 0.0% law) + totals subtotal/discount/tax/total/paid/balance-due (server figures
+  preferred, else computed from lines/payments) + Due/Was-due note + optional payments list
+  (paints the moment T27 sends it). Actions: Confirm (draft), Send + Print (confirmed), Print
+  (paid); Cancel = ARMED two-step in a separate consequence-worded section (DESIGN destructive
+  law) whose confirmation names the invoice, 6s disarm. Actions POST /api/invoices/{id}/{verb}
+  with authHeaders (RBAC-ready for T32), busy label-swap, result in .cad-flash ok(status)/
+  err(alert) with the server sentence shown VERBATIM (409 detail), focus moves to the flash when
+  the repaint removes the acted-on button; list cache updated in place so Back reflects the new
+  state without a refetch. All 4 states + last-good list kept on failed refresh; missing values
+  via .cad-dash spans (T36 class, first page consumer). /api/invoices contract (list/detail/
+  action shapes incl. the 409 body) documented in-file for T21. Renders live once T21 lands,
+  error+Retry until then — real uvicorn boot on a throwaway DB verified: module 200, shell 200,
+  /api/invoices 404 pre-T21. node --check OK; TEST_CMD 135/135 (120 + Manu's T13 model tests —
+  count UP, no drop).
 - [ ] **T23** (P2, owner: Karthik, ~10m) Tax rules API (admin-only): rate % scoped by
   product/type; applied automatically at billing.
 Discounts
