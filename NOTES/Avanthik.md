@@ -210,3 +210,9 @@
 - Also: third stale-tree re-land deletion today (Manu's d5a0840 ate the file an hour after T08's); restored from my commit + fixed forward.
 - Must be able to explain: the link-smoke defense; the wrapper-rule pattern for context-dependent validation; the IST date default (en-CA locale trick) vs toISOString's UTC day.
 
+
+## 15:01 — T30 customers page (my last page build)
+- Built: frontend/pages/customers.js — list-only internal view, name-sorted client-side, T29 contract documented (bare array OR {customers:[...]}, counts integer, outstanding rupees-or-null-for-dash).
+- Why list-only before the freeze: T29's detail shape isn't pinned; a half-guessed drill-down near 15:45 risks more than it earns. The graded surface (consistent list, four states, validation-free read-only) lands clean.
+- Must be able to explain: the row-sanitize fix (a null element in the response array would throw inside the sort; inside the catch path that throw escapes as an unhandled rejection and strands the skeleton — filter at assignment); and the four re-land deletions today (T08 auth, my T47 CSS, payments.js, customers.js — all restored from commits; the defense is post-push existence checks on files you just landed).
+
