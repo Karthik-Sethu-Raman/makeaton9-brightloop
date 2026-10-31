@@ -1,0 +1,138 @@
+/* layout.css — the app shell (owner: Avanthik, T05).
+   Builds on tokens.css ONLY — var(--...) everywhere, no color literals.
+   Grid sums (DESIGN: one 16px gutter, arithmetic must close):
+   - page:   224px sidebar + 1fr main            = 100vw, gutter = border between
+   - cards:  repeat(auto-fit, minmax(220px,1fr)) + 16px (--gap) between items
+   - phone:  1 column; sidebar folds to a 48px top bar, no horizontal scroll */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--ground);
+}
+
+/* ---------- shell: 224px sidebar + main ---------- */
+
+.cad-shell {
+  display: grid;
+  grid-template-columns: 224px 1fr; /* 224 + 1fr = viewport; DESIGN 224–240 */
+  min-height: 100vh;
+}
+
+.cad-sidebar {
+  padding: var(--pad) var(--gap);
+  border-right: 1px solid var(--border); /* sidebar sits on page ground, never dark */
+}
+
+.cad-main {
+  min-width: 0; /* let children shrink inside the 1fr track instead of blowing out */
+}
+
+/* ---------- brand block: 20px mark + wordmark + scope ---------- */
+
+.cad-mark-ring { stroke: var(--accent); fill: none; stroke-width: 2; }
+.cad-mark-dot  { fill: var(--accent); }
+
+.cad-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cad-wordmark {
+  font-size: var(--fs-section);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.cad-scope {
+  margin-top: 4px;
+  padding-left: 28px; /* 20px mark + 8px gap — aligns with the wordmark */
+  font-size: var(--fs-small);
+  color: var(--faint);
+}
+
+/* ---------- nav (items injected by T06 router) ----------
+   Active item = neutral grey pill, radius 8 (DESIGN). NEVER a colored pill
+   or a left accent bar. Pill color is the --active token, not a literal. */
+
+.cad-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: var(--gap);
+}
+
+.cad-navitem {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: var(--fs-body);
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.cad-navitem:hover { background: var(--raised); color: var(--text); }
+
+.cad-navitem.is-active,
+.cad-navitem[aria-current="page"] {
+  background: var(--active);
+  color: var(--text);
+}
+
+/* ---------- cards: shared bottom edges, one 16px gutter ---------- */
+
+.cad-cardrow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--gap); /* 16px */
+  align-items: stretch; /* cards in a row share a bottom edge */
+}
+
+.cad-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
+}
+
+/* ---------- misc ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--muted);
+  outline-offset: 2px;
+}
+
+.cad-boot {
+  padding: var(--pad);
+  color: var(--faint);
+}
+
+/* ---------- phone fold (basic 390px guarantee; T37 does the full pass) ---------- */
+
+@media (max-width: 720px) {
+  .cad-shell { grid-template-columns: 1fr; }
+
+  .cad-sidebar {
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+    min-height: 48px; /* DESIGN: 48px top bar */
+    padding: 8px var(--gap);
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cad-scope { display: none; }
+
+  .cad-nav {
+    flex-direction: row;
+    margin-top: 0;
+    overflow-x: auto; /* nav scrolls, the page never does */
+  }
+}
