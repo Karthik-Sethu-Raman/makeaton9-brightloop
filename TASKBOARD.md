@@ -131,9 +131,18 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   T08 lands). TEST_CMD 27/27.
   password policy (>8 chars, upper, lower, special), price/qty ≥ 0, date order; blur-time
   inline errors under fields; wired into the signup form.
-- [ ] **T08** (P1, owner: Karthik, ~15m) CLAIMED @11:20 by Karthik (integrator cycle) — Auth API: POST /api/auth/signup (unique email +
+- [x] **T08** (P1, owner: Karthik, ~15m) DONE @11:35 by Karthik (integrator cycle) — Auth API: POST /api/auth/signup (unique email +
   full password policy SERVER-side, same messages as client), /login, /me with role;
   `tests/test_auth.py` incl. one invalid-password and one duplicate-email case.
+  DONE detail: `backend/api/validators.py` = validators.js mirror (ALL rules, MSG verbatim,
+  [0-9] not \d, code-point length, leading zeros OK) + `backend/api/auth.py`: signup 400 mirrored
+  MSG / 409 duplicate, login 401 one message (no user enumeration, dummy-hash on miss), /me via
+  x-auth-token, forgot → reset_url ALSO printed to server log (demo's 2nd channel), single-use
+  30-min reset tokens (weak try does NOT burn the token). main.py includes router BEFORE the "/"
+  mount (route order). tests/test_auth.py: 19 tests incl. mirror Unicode/code-point traps.
+  TEST_CMD 48/48. T46 login.js + T33 reset.html are now live against real endpoints.
+  [restored 11:32 by Avanthik — this DONE block was lost when the 11:25 worker re-land
+  squashed TASKBOARD; verbatim from 49eece8]
 - [ ] **T09** (P1, owner: Manu, ~10m) Dress-rehearse make-demo-video.mjs against the live
   app (scenes 1-7), fix waits/pacing; log rehearsal result in PROGRESS.
 
@@ -281,6 +290,23 @@ Reporting
   static/index.html, :focus-visible ring via tokens + prefers-reduced-motion block in
   layout.css, nav landmark aria-label.
   GROOM(integrator 10:40): board supply — Avanthik was under 5 OPEN.
+- [ ] **T47** (P2, owner: Avanthik, ~10m) Shared inline-feedback classes (.cad-flash ok/err +
+  form submit-busy state) in layout.css + styles README — the convention pages still lack for
+  POST success feedback ("Saved", "Invoice confirmed") next to forms; Saurabh's pages consume.
+  GROOM(integrator 11:35): board supply — Avanthik was at 3 OPEN.
+- [ ] **T48** (P3, owner: Avanthik, ~10m) Shell head polish in static/index.html + reset.html:
+  favicon from the existing SVG mark (any literal color must carry a comment naming the token
+  it mirrors — hex otherwise lives only in tokens.css) + meta description.
+- [ ] **T49** (P2, owner: Saurabh, ~10m) Page-side fixes from T36's audit (6 findings listed on
+  the T36 note): .cad-dash for DASH/null in table.js fillCell + kpi.js value, lastGoodAt
+  sentence + Retry on failed refresh, poll.js fetch timeout via AbortController (~2× interval).
+  GROOM(integrator 11:35): makes the audit actionable as its own claimable unit.
+- [ ] **T50** (P3, owner: Avanthik, ~10m) validators.js + backend/api/validators.py: shared
+  'required' text rule (e.g. 'Enter a product name.' — pick the message, pin BOTH sides +
+  selftest.mjs) so required-ness stops being hand-rolled per page (products.js checkName today;
+  discounts/customers forms coming). Coordinate w/ T10's server messages.
+  [T47-T50 restored 11:32 by Avanthik — lost in the 11:25 worker re-land squash; verbatim
+  from 49eece8]
 
 ## Claim log (append only)
 <!-- e.g. `12:35 Manu claimed T03` -->
@@ -306,3 +332,5 @@ Board supply: +T44/T45 (Avanthik, was 4 OPEN), +T46 (Saurabh — auth UI gap: lo
 screen had no owner but T31/T33 + graded validation must-have assume it), GROOM note on T03
 (simulator seam = backend/livefeed/simulator.py start()/stop(), auto-wired by T01 lifespan).
 No code fixes needed — main was green on arrival. Next: claiming T01 (Karthik executor).``11:20 Karthik claimed T08 (integrator cycle — executor for Karthik-owned tasks)`
+
+`11:20-11:35 [integrator] cycle: pulled (T00/T36/T37); TEST_CMD 27/27 GREEN on arrival, 48/48 after T08. Fixed ci.cmd (own file): unique pytest --basetemp per run — Avanthik's 11:15 note (session-finish WinError 5 on %TEMP% pytest symlink = false RED). git branch -r: only origin/main. No stale claims; all members active <60m (no HEALTH rows). Board supply: +T47/T48/T50 (Avanthik, was 3 OPEN), +T49 (Saurabh — T36 audit findings as claimable unit). README auth section un-staled (T08 landed; reset link lands in server log). EXECUTOR: T08 DONE — auth API + validators.js mirror + 19 tests, see T08 note. [restored 11:32 by Avanthik — lost in the 11:25 worker re-land squash]`
