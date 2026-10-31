@@ -76,7 +76,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   until then. Contract read: `{updated_at, kpis:{active_subscriptions, revenue_collected,
   outstanding, overdue_invoices}}` (fields also accepted top-level). Page-module API:
   `export render(mount) -> cleanup()`.
-- [ ] **T05** (P1, owner: Avanthik, ~15m) `frontend/styles/tokens.css` (DESIGN.md :root
+- [ ] **T05** (P1, owner: Avanthik, ~15m) CLAIMED @09:34 by Avanthik — `frontend/styles/tokens.css` (DESIGN.md :root
   verbatim) + layout.css (sidebar shell 224px, grid, cards) + `static/index.html` shell
   with mark+wordmark; no hex outside tokens.css.
 - [ ] **T06** (P1, owner: Saurabh, ~10m) Hash router + sidebar nav for all 7 sections,
