@@ -46,3 +46,4 @@
 | 11:54 | Avanthik | - | RECOVERY (CRITICAL) | the ~11:34 wip re-land squashed T08 off main: backend/api/auth.py + validators.py + tests/test_auth.py DELETED and main.py's auth-router include reverted — auth API silently gone (suite fell 48->35 and stayed green because the tests were lost too). Restored all 4 files verbatim from 7897c19; suite 54/54. ACTION FOR ALL: a wip re-land commit can delete teammates' files wholesale - after ANY re-land, run git diff <pre-reland-origin>..HEAD --stat and check for deletions in files you did not own. Karthik: consider v3 harness making reland path-aware or refusing to delete files it did not touch |
 | 11:55 | Saurabh | - | CYCLE FAILED | claude exit 1 - see local log |
 | 12:04 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
+| 12:10 | Avanthik | T50 | DONE | required(label) rule factory (code: 12:00 cycle) + selftest + contract pin; py mirror + Saurabh handoff on the T50 board note; TEST_CMD 55/55 |

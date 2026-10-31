@@ -143,3 +143,9 @@
 - Why: a favicon can't load tokens.css, so it is the ONE sanctioned hex location outside it — the file carries a comment naming the token each literal mirrors (--accent), per the task line. Meta description is DESIGN's tagline verbatim (index) so search/preview text matches the product story.
 - Must be able to explain: why the favicon's hex is legal (isolated asset, cannot consume CSS vars, documented mirror) while the same hex in layout.css would fail the guard test (T47 lesson).
 
+
+## 12:10 — T50 shared required() rule
+- Built (cycle wrote, I closed): required(label) returns a BUILT RULE; validate() runs rule functions as-is; message template 'Enter <label>.' pinned in the contract test.
+- Why a factory instead of a parameterized rule: the dispatcher keeps its (ruleName, value) shape — built rules compose like any other, and the label carries its article at the call site where the copywriter (page owner) controls the sentence.
+- Must be able to explain: how the factory dodges extending validate()'s signature; why the template is pinned in a pytest test (message drift between js/py fails CI before demo); and the products.js migration being one line.
+

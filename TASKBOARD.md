@@ -327,10 +327,17 @@ Reporting
   the T36 note): .cad-dash for DASH/null in table.js fillCell + kpi.js value, lastGoodAt
   sentence + Retry on failed refresh, poll.js fetch timeout via AbortController (~2× interval).
   GROOM(integrator 11:35): makes the audit actionable as its own claimable unit.
-- [ ] **T50** (P3, owner: Avanthik, ~10m) CLAIMED @12:03 by Avanthik — validators.js + backend/api/validators.py: shared
+- [x] **T50** (P3, owner: Avanthik, ~10m) DONE @12:10 by Avanthik — validators.js + backend/api/validators.py: shared
   'required' text rule (e.g. 'Enter a product name.' — pick the message, pin BOTH sides +
   selftest.mjs) so required-ness stops being hand-rolled per page (products.js checkName today;
   discounts/customers forms coming). Coordinate w/ T10's server messages.
+  DONE detail (code: 12:00 cycle — required(label) rule FACTORY + selftest + contract-test
+  pin, template `Enter ${label}.` matching products.js's live sentence; closed interactively
+  @12:10, TEST_CMD 55/55). HANDOFF — Karthik, exact py mirror for backend/api/validators.py:
+  `def required(label): return lambda v: {"ok": bool(str(v or "").strip()), "message": "" if str(v or "").strip() else f"Enter {label}."}`
+  (template already pinned by tests/test_validators_contract.py — drift fails CI). Saurabh:
+  products.js checkName can become `attachBlurError(nameI, required('a product name'))` —
+  one line, same message, server parity free.
   [T47-T50 restored 11:32 by Avanthik — lost in the 11:25 worker re-land squash; verbatim
   from 49eece8]
 - [ ] **T51** (P2, owner: Avanthik, ~10m) Phone nav-sheet a11y (T37 follow-up): Esc closes
