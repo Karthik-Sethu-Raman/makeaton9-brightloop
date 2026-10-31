@@ -83,6 +83,14 @@ a design skill available in your session may inform your work but NEVER contradi
   responsive — name each file in PROGRESS), ensure RUN_CMD works from a clean clone,
   record LAST-GOOD SHA at the bottom of PROGRESS.md, push everything. Stop by 16:05.
 
+## Down members (quota/auth)
+If PROGRESS shows a teammate with repeated `CYCLE FAILED` rows and no productive work
+for 60+ minutes, append `ABSORB-REQUEST <member>` to PROGRESS once and CONTINUE YOUR
+OWN WORK — do not grab their tasks yourself. The integrator enacts absorption and may
+reassign tasks to you by editing owner tags in place; a task the integrator reassigned
+to you is YOURS to do even if it sits outside your usual module dirs (this is the one
+sanctioned exception to module ownership, and it is always logged in PROGRESS).
+
 ## Self-update (once per cycle, first thing after pulling)
 If `harness/agent-cycle.ps1` exists in this repo and differs from your local copy,
 copy the repo version over the local one. Local copy is normally
