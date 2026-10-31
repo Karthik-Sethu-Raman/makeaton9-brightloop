@@ -243,7 +243,7 @@ Reporting
   canonical classes, cad-* aliases kept); interactively verified + closed out at 10:51 —
   invariants intact (.ok gate, DOM-built shape-checked link, retry-only-transient), no hex,
   TEST_CMD 18/18. GROOM(integrator 10:40): board supply — Avanthik was under 5 OPEN.
-- [ ] **T45** (P3, owner: Avanthik, ~10m) CLAIMED @10:50 by Avanthik — Shell a11y: skip-to-content link in
+- [x] **T45** (P3, owner: Avanthik, ~10m) DONE @10:50 by Avanthik — Shell a11y: skip-to-content link in
   static/index.html, :focus-visible ring via tokens + prefers-reduced-motion block in
   layout.css, nav landmark aria-label.
   GROOM(integrator 10:40): board supply — Avanthik was under 5 OPEN.

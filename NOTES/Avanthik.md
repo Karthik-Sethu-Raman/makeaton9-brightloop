@@ -87,3 +87,9 @@
   gate, the DOM-built contract-shape-checked reset link, retry-only-on-transient, pre-paint toggle, no hex
   outside tokens.css; (2) why aliases instead of a rename — 4 agents push to main continuously; a hard rename
   would break any in-flight page importing the old class names mid-window.
+
+## 10:50 — T45 shell a11y
+- Built: skip-to-content link (static/index.html) + reduced-motion media guard (layout.css).
+- Why this way: the link is the FIRST focusable element so Tab before anything else offers the skip; it lives off-screen (left:-9999px) and only enters view on :focus, so mouse users never see it. The reduced-motion block is a guard for future component CSS — nothing animates yet.
+- Must be able to explain: why :focus (not :focus-visible) on the skip link — it must appear for ANY focus, including Click-me-TAB flows; and why the global motion kill uses !important (component animations must lose to the OS preference, always).
+

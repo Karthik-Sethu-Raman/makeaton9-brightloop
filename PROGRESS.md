@@ -26,3 +26,4 @@
 | 10:48 | Saurabh | T46 | [ruling] did NOT hard-gate app behind login this cycle — T08 auth API not built, so forcing a token would break the live overview/products demo. Login screen + full seam exist; sidebar offers Sign in; a later cycle flips on gating once T08 is green (reversible). |
 | 10:45 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
 | 10:51 | Avanthik | T44 | DONE | canonical .auth-* classes + aliases in layout.css, reset.html refactored onto them (code: 10:40 cycle), README docs + closeout interactive; invariants re-audited (.ok gate, DOM link, retry-only-transient), no hex, TEST_CMD 18/18 |
+| 10:50 | Avanthik | T45 | DONE | .skip-link in index.html (off-screen until :focus, token-styled chip, targets #main) + prefers-reduced-motion guard in layout.css; nav aria-label + :focus-visible rings already in shell from T05; TEST_CMD 18/18 |
