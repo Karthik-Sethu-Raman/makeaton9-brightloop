@@ -201,9 +201,24 @@ Products & plans
   name/price client-validated via validators.js (server mirrors T10). All 4 states ship;
   renders live once T10 (/api/products) lands, error+Retry until then. node --check OK,
   TEST_CMD 8/8.
-- [ ] **T13** (P2, owner: Manu, ~10m) CLAIMED @13:10 by Manu — Plans model: billing frequency daily/weekly/monthly/
+- [x] **T13** (P2, owner: Manu, ~10m) DONE @13:25 by Manu — Plans model: billing frequency daily/weekly/monthly/
   yearly, min quantity, available from/to, close policy (auto-close on end / early close /
   pause / renew) per plan.
+  DONE detail: `backend/models/plans.py` = the plan-behaviour law, one owner for four rules:
+  (1) `add_period(day, freq)` CALENDAR-TRUE (monthly = same day next month clamped to
+  month end Jan 31→Feb 28; yearly leap-safe Feb 29→Feb 28; unknown freq raises, never
+  guesses); (2) `is_available(conn,id,day)` window w/ ready-to-show sentences (NULL bound
+  = open); (3) `check_quantity(plan,qty)` = the PLAN's floor ("Minimum quantity for
+  Support Weekly is 3.") — complements the form-level minQuantity (>=1) rule, both must
+  pass; `can_start()` = one gate joining window+floor for T17; (4) close policy:
+  `term_end_action(plan,sub)` → renew/close/pause (auto_close closes at expiry, pause
+  halts billing on expiry day, early_close/renew auto-renew) + `may_close_early()` for
+  T17's transition guard. LIVEFEED REWIRED: simulator's FREQ_DAYS 30/365-day
+  approximation RETIRED — next_billing_date pushes go through add_period (drift-guard
+  test: bill SUB-0001 monthly → next date == add_period(today,'monthly')); T20's billing
+  run consumes the same law. tests/test_plans_model.py 15 tests (calendar clamps, leap
+  year, window sentences, floors, all 4 policies, seed enum parity, simulator drift
+  guard); TEST_CMD 135/135.
 - [x] **T14** (P2, owner: Karthik, ~10m) DONE @13:05 by Karthik (integrator cycle) —
   Plans CRUD API + validation (from â‰¤ to, price â‰¥ 0, frequency enum); tests.
   DONE detail: `backend/api/plans.py` — GET (newest first: a just-created plan is
