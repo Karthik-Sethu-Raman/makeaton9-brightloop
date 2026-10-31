@@ -12,3 +12,7 @@ validators.js byte-for-byte, and match these conventions exactly —
 - password length counts CODE POINTS (JS uses `[...v].length` to match Python's `len()`);
 - whole-number rules ACCEPT leading zeros ('03' = 3); thresholds are value-based;
 - a rule always returns the same message for the same input. Change one side, change both.
+
+`selftest.mjs` executes the pure rules (incl. every mirror trap) under plain node —
+`node frontend/validation/selftest.mjs` — and `tests/test_validators_contract.py` runs it
+inside TEST_CMD while pinning the MSG strings verbatim, so message drift fails CI first.
