@@ -39,9 +39,13 @@ const CONFIG = {
   sceneHoldMs: 6_000,      // default caption hold (spec: scenes hold 4-8s)
   liveChangesNeeded: 2,    // scene 2: KPI strip must visibly change this many times
   liveTimeoutMs: 40_000,
-  // Routes are best guesses until T06's router lands; clicking #nav is preferred.
+  navTimeoutMs: 4_000,     // per-scene explicit waits
+  // T09 rehearsal findings (11:32): the hero/validation form is the T46 auth screen
+  // at #/login?mode=signup. #/portal and #/signup were pre-T46 guesses that now
+  // resolve to placeholder screens with no form.
+  signupRoute: '#/login?mode=signup',
+  // Scene 6 prefers real #nav clicks (T06 landed); hash fallback kept for safety.
   navRoutes: ['#/overview', '#/subscriptions', '#/invoices'],
-  heroRoutes: ['#/portal', '#/signup', '#/customers'],
   demoEmail: () => `demo.reel.${Date.now()}@brightloop.test`,
   demoPassword: 'Reel!Pass2026', // >8 chars, upper, lower, special — passes policy
 };
@@ -161,19 +165,32 @@ async function waitForLiveChanges(page) {
   }
 }
 
-// Find a form to demo validation on: prefer the portal signup form
-// (email + password = the graded policy), else fall back to any form.
-async function findHeroForm(page) {
-  for (const route of CONFIG.heroRoutes) {
-    await page.goto(`${CONFIG.baseUrl}/${route}`, { waitUntil: 'domcontentloaded' }).catch(() => {});
-    const signup = page.locator('form:has(input[type="email"])').first();
-    if ((await signup.count()) && (await signup.locator('input[type="password"]').count())) {
-      return { form: signup, kind: 'signup' };
-    }
+// Open the auth screen's signup form (T46: #/login?mode=signup — email + password
+// + confirm). T09 rule: each scene OWNS its navigation and shows its caption AFTER
+// navigating — page.goto full-loads destroy an injected caption div, so a caption
+// shown before the goto would never reach the footage.
+async function gotoSignupForm(page) {
+  await page.goto(`${CONFIG.baseUrl}/${CONFIG.signupRoute}`, { waitUntil: 'domcontentloaded' });
+  const form = page.locator('form:has(input[type="email"])').first();
+  try {
+    await form.waitFor({ state: 'visible', timeout: CONFIG.navTimeoutMs });
+  } catch {
+    return null; // auth screen absent → caller skips its scene (best-effort rule)
   }
-  const any = page.locator('form:has(input)').first();
-  if (await any.count()) return { form: any, kind: 'generic' };
-  return null;
+  return form;
+}
+
+// Fill EVERY password field on the form (signup has password + confirm — T46).
+// Filling only the first would (a) trip Playwright strict mode on .fill() and
+// (b) leave confirm mismatched so the submit gate rejects the hero flow.
+async function fillAllPasswords(form, value) {
+  const pw = form.locator('input[type="password"]');
+  const n = await pw.count();
+  for (let i = 0; i < n; i++) await pw.nth(i).fill(value);
+}
+
+async function hideCaption(page) {
+  await page.evaluate(() => document.getElementById('cad-video-caption')?.remove());
 }
 
 const SCENES = [
@@ -183,8 +200,9 @@ const SCENES = [
       'Cadence — built for the Subscription Management System problem. ' +
       'Plans, subscriptions and recurring billing in one place, replacing spreadsheets ' +
       'and hand-typed invoices.',
-    run: async (page) => {
+    async run(page) {
       await gotoApp(page);
+      await showCaption(page, this.caption);
       await sleep(CONFIG.sceneHoldMs);
     },
   },
@@ -193,8 +211,9 @@ const SCENES = [
     caption:
       'Live data — a simulator thread lands payments in the database every few seconds; ' +
       'this Overview polls /api/live/summary every 3s. Not static JSON.',
-    run: async (page) => {
+    async run(page) {
       await gotoApp(page, '#/overview');
+      await showCaption(page, this.caption);
       const changed = await waitForLiveChanges(page);
       if (!changed) warn('scene 2: KPI values did not visibly change in time (feed slow or overview absent)');
       await sleep(4_000); // let the changed numbers sit on camera
@@ -202,25 +221,36 @@ const SCENES = [
   },
   {
     id: 3,
-    caption: 'Hero flow — create an account: unique email, password policy enforced as you type.',
-    run: async (page) => {
-      const found = await findHeroForm(page);
-      if (!found) return warn('scene 3 skipped: no form found (portal task pending)');
-      const { form } = found;
-      await form.locator('input[type="email"]').fill(CONFIG.demoEmail());
-      await form.locator('input[type="password"]').fill(CONFIG.demoPassword());
-      await sleep(1_000); // form readable on camera before submit
+    caption: 'Hero flow — create an account: unique email, strong password, then straight into the app.',
+    async run(page) {
+      const form = await gotoSignupForm(page);
+      if (!form) return warn('scene 3 skipped: signup form not found (auth screen pending)');
+      await showCaption(page, this.caption);
+      await form.locator('input[type="email"]').first().fill(CONFIG.demoEmail());
+      await fillAllPasswords(form, CONFIG.demoPassword);
+      await sleep(1_000); // filled form readable on camera before submit
       await form.locator('button[type="submit"], button:not([type])').first().click().catch(() => {});
-      await sleep(2_500); // result / navigation lands on camera
+      // Explicit wait for the post-signup redirect (login.js sets the hash by role) —
+      // never a fixed sleep on a network action.
+      await page
+        .waitForFunction(() => !location.hash.startsWith('#/login'), null, { timeout: CONFIG.navTimeoutMs })
+        .catch(() => warn('scene 3: no post-signup redirect observed (login.js contract changed?)'));
+      // Customer accounts land on #/portal (T31 pending → placeholder). Show the
+      // signed-in shell instead: the sidebar now carries the new account's email.
+      await page.evaluate(() => { location.hash = '#/overview'; });
+      await sleep(3_000);
     },
   },
   {
     id: 4,
     caption: 'Input validation — client AND server.',
-    run: async (page) => {
-      const found = await findHeroForm(page);
-      if (!found) return warn('scene 4 skipped: no form found (portal task pending)');
-      const { form } = found;
+    async run(page) {
+      // Scene 3 left us signed in, and the router bounces authed users off
+      // #/login → clear the session so the form is actually reachable.
+      await page.evaluate(() => localStorage.clear());
+      const form = await gotoSignupForm(page);
+      if (!form) return warn('scene 4 skipped: signup form not found (auth screen pending)');
+      await showCaption(page, this.caption);
       const email = form.locator('input[type="email"]').first();
       const pass = form.locator('input[type="password"]').first();
       await email.fill('not-an-email');
@@ -240,7 +270,8 @@ const SCENES = [
   {
     id: 5,
     caption: 'Responsive — same app, phone width.',
-    run: async (page) => {
+    async run(page) {
+      await showCaption(page, this.caption);
       await page.setViewportSize(CONFIG.phone);
       await sleep(1_000); // let the layout reflow
       await sleep(CONFIG.sceneHoldMs);
@@ -250,8 +281,9 @@ const SCENES = [
   {
     id: 6,
     caption: 'Clean navigation.',
-    run: async (page) => {
-      // Prefer real menu clicks when T06's nav exists; else hash-navigate.
+    async run(page) {
+      await showCaption(page, this.caption);
+      // Prefer real menu clicks (T06 #nav); else hash-navigate.
       const links = page.locator('#nav a');
       const n = Math.min(await links.count(), 3);
       if (n >= 2) {
@@ -271,7 +303,10 @@ const SCENES = [
   {
     id: 7,
     caption: '', // end card is its own overlay (below), not the caption bar
-    run: async (page) => {
+    async run(page) {
+      // The scene-6 caption bar sits at a HIGHER z-index than the end card —
+      // remove it or "Clean navigation." burns on top of the finale.
+      await hideCaption(page);
       await page.evaluate(() => {
         const card = document.createElement('div');
         card.id = 'cad-endcard';

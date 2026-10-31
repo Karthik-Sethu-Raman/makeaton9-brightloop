@@ -343,20 +343,6 @@ body {
    passing the >=4.5 text law. Pages wrap the DASH glyph: <span class="cad-dash">—</span> */
 .cad-dash { color: var(--faint); }
 
-/* ---------- inline form feedback (T47) ----------
-   POST success/failure feedback NEXT TO forms ("Saved", "Invoice confirmed").
-   Page pattern: <div class="cad-flash cad-flash--ok" role="status">Saved</div>
-   (use --err with role="alert"). Convention: swap the submit label + disabled
-   during flight (see .cad-btn-primary:disabled above and busy() in reset.html),
-   then flash the result line — never a full-screen banner (DESIGN States). */
-.cad-flash {
-  margin-top: var(--gap);
-  font-size: var(--fs-body);
-}
-
-.cad-flash--ok { color: var(--positive); }   /* on surface ≈ 5.3:1 ✓ */
-.cad-flash--err { color: var(--negative); }
-
 /* ---------- misc ---------- */
 
 :focus-visible {

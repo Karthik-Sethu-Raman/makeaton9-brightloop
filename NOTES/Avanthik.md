@@ -118,15 +118,3 @@
 - Why this way: the audit fan-out (5 parallel readers) found the grey-dash law was UNIMPLEMENTABLE from shared CSS — no class existed. Adding it in layout.css means Saurabh's fix is one wrapper span, and every future screen gets states classes for free.
 - Must be able to explain: (1) the negative-margin hit-area trick — padding grows the touch target to 44px, margins pull the layout back so nothing moves; (2) why Retry now calls form.requestSubmit() — a reload discards typed input, re-submit keeps it and re-runs the validation gate; (3) --faint chosen for the dash: 4.76:1 on surface, above the 4.5:1 text law.
 
-
-## 11:33 — T37 responsive 390px pass (+ board recovery)
-- Built (cycle wrote, I verified/closed): index.html nav checkbox + Menu label + hashchange auto-close; layout.css phone sheet rules. Also: RECOVERED the board after the 11:25 re-land squash ate the integrator's T08 DONE block, T47-T50 tasks and log line (verbatim restore from 49eece8).
-- Why the sheet, not bottom nav: DESIGN caps bottom nav at 5 destinations; the app has 7 — so the sanctioned alternative (48px top bar + menu sheet) is the one legal fold. Pure CSS via #cad-navtoggle:checked ~ .cad-nav keeps it working even if JS dies; the tiny hashchange script only CLOSES the sheet after navigation.
-- Must be able to explain: (1) the sibling-selector trick — the checkbox must sit BEFORE the nav in the DOM so :checked ~ reaches it; (2) why the checkbox stays focusable (screen-reader/keyboard users Tab to it, :focus-visible + .cad-menubtn shows the ring); (3) the re-land squash: how a push-rejection recovery (reset --soft + add -A + commit) can silently drop the OTHER side's both-sides-appended board lines, and why you re-diff shared files against origin after any wip re-land.
-
-
-## 11:35 — T47 inline-feedback classes
-- Built: .cad-flash/--ok/--err in layout.css + consumption convention in styles README.
-- Why: every list-page form (products create, discounts, plans) needs the same 'Saved'/'failed' line; one class keeps the whole app's POST feedback identical and token-pure (--positive ≈5.3:1, --negative, no new hex). role=status (ok) vs role=alert (err) so screen readers announce errors assertively but successes politely.
-- Must be able to explain: why the a11y roles differ between ok and err variants; and that the busy() pattern (label swap + disabled with legible opacity) comes from reset.html and is the documented convention.
-

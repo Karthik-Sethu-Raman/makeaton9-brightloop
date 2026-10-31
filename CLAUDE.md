@@ -51,11 +51,7 @@ a design skill available in your session may inform your work but NEVER contradi
 6. Update: TASKBOARD.md (status DONE/PARTIAL/BLOCKED), PROGRESS.md (one row),
    NOTES/<your member>.md (plain-English note: what you built, where, key design
    choice, what your human must be able to EXPLAIN in the judged Q&A round).
-7. `git push`. If rejected: `git pull --rebase --autostash` once. If the script
-   re-lands your work (a `wip re-land` commit), you MUST then re-verify the shared
-   files against origin (`git diff HEAD origin/main -- TASKBOARD.md PROGRESS.md NOTES`)
-   and restore any lines from either side that the squash dropped - re-lands preserve
-   your tree, which can silently eat others' appended rows and task lines. Conflicts that are
+7. `git push`. If rejected: `git pull --rebase --autostash` once. Conflicts that are
    BOTH-SIDES-APPENDED lines in TASKBOARD.md / PROGRESS.md / NOTES are yours to
    resolve — keep BOTH sides and complete the push; they are routine coordination
    noise, never a reason to abort. Aborting is only for conflicts inside code
@@ -84,5 +80,4 @@ a design skill available in your session may inform your work but NEVER contradi
 Match the existing codebase's conventions. Understand every line you commit — your
 human will be personally quizzed on it. When you finish, your final output is data
 for the log files, not a message to a human.
-
 
