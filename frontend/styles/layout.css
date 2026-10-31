@@ -281,6 +281,39 @@ body {
   text-decoration: underline;
 }
 
+/* ---------- a11y (T45) ---------- */
+
+/* Skip-to-content: invisible until focused, then a high-contrast chip top-left.
+   Tokens only; it never participates in layout. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10;
+  padding: 8px 12px;
+  font-size: var(--fs-small);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: var(--gap);
+  top: var(--gap);
+}
+
+/* Honour the OS motion setting: kill animations/transitions/smooth scroll for
+   users who ask for reduced motion (guard for future component CSS). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ---------- misc ---------- */
 
 :focus-visible {
