@@ -228,7 +228,10 @@ export function render(mount) {
       clearErrorFor(nameI); return true;
     }
     const priceGuard = attachBlurError(priceI, 'price');
-    const minQtyGuard = attachBlurError(minQtyI, 'quantity');
+    // minQuantity (not quantity): the schema CHECKs min_quantity >= 1, so a client-
+    // valid 0 used to get server-rejected with a DIVERGENT sentence (T36 pass-2
+    // finding; rewired by integrator T14 — one line, same sentence both sides now).
+    const minQtyGuard = attachBlurError(minQtyI, 'minQuantity');
     // dateOrder error belongs on the END field; its start value comes from fromI.
     const dateGuard = attachBlurError(toI, 'dateOrder', () => fromI.value);
     nameI.addEventListener('blur', checkName);
