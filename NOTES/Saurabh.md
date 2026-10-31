@@ -242,3 +242,24 @@ suite stayed 175/175.
 - Verified: `node --check` OK; a node harness confirmed the epoch matches 09:05 UTC and the
   IST render is "14:35" independent of browser tz; TEST_CMD 175/175 (no count change — this
   is JS the Python suite doesn't execute, so green-on-arrival = green-after).
+
+## 15:15 — Never-silent failed-refresh across my three list pages (T12/T15/T18 polish)
+- **What I built:** products.js, plans.js, subscriptions.js all had the same bug — on a
+  FAILED list refresh that still had last-good rows, they did `if (lastRows && lastRows.length) return;`
+  i.e. kept the stale table on screen with ZERO signal that the refresh failed. DESIGN's
+  "never silent" law (which Avanthik encoded as the T49 pattern on the absorbed pages —
+  invoices/discounts/payments/customers) says keep the old data BUT tell the user.
+- **The fix (identical shape in all three):** added `lastGoodAt` (set to `new Date()` every
+  successful load); in the catch's keep-last-good branch I now repaint the good rows and
+  append a `cad-stateblock cad-stateblock--err` note reading
+  `Couldn’t refresh — showing <products|plans|subscriptions> as of <istTime(lastGoodAt)>.`
+  with a wired **Retry** button (calls `load` again). Imported `istTime` from fmt.js in each.
+- **Key design choice:** reused the EXACT wording + classes + Retry mechanics Avanthik's
+  pages already use, so the whole app now speaks one language on a failed refresh — no new
+  CSS, no new tokens, just the shared `.cad-stateblock--err` / `.cad-linkbtn`. The table is
+  re-rendered from `lastRows` first so the stale note always sits BELOW live data.
+- **Must be able to explain:** the difference between the first-load error state (no data →
+  full error block + Retry) and a failed REFRESH (data exists → keep it, append a stale note);
+  why silently keeping stale data is a UX/grading risk (user trusts a number that's actually
+  frozen). These are frontend-only (`frontend/pages/`), my module; pytest doesn't execute JS
+  so TEST_CMD stays 183/183. Verified each with `node --check`.
