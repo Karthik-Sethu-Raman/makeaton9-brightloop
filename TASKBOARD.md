@@ -326,7 +326,7 @@ Reporting
   the T36 note): .cad-dash for DASH/null in table.js fillCell + kpi.js value, lastGoodAt
   sentence + Retry on failed refresh, poll.js fetch timeout via AbortController (~2× interval).
   GROOM(integrator 11:35): makes the audit actionable as its own claimable unit.
-- [ ] **T50** (P3, owner: Avanthik, ~10m) validators.js + backend/api/validators.py: shared
+- [ ] **T50** (P3, owner: Avanthik, ~10m) CLAIMED @12:03 by Avanthik — validators.js + backend/api/validators.py: shared
   'required' text rule (e.g. 'Enter a product name.' — pick the message, pin BOTH sides +
   selftest.mjs) so required-ness stops being hand-rolled per page (products.js checkName today;
   discounts/customers forms coming). Coordinate w/ T10's server messages.
@@ -346,6 +346,7 @@ Reporting
 `11:12 Manu resumed T03 (own CLAIMED task — killed 10:56 cycle landed code but never closed the board)`
 `11:15 Saurabh claimed T00 (per-member dry-run share)`
 `11:20 Avanthik claimed T37`
+`12:03 Avanthik claimed T50`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
