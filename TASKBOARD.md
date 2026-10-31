@@ -53,7 +53,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 
 - [ ] **T00** (P0, owner: each member, ~5m) dry-run micro-task per member: add one tiny
   utility function + its test in YOUR module. Used ONLY by the 11:15 dry-runs.
-- [ ] **T-V1** (P1, owner: Manu, ~15m) **`scripts/make-demo-video.mjs`** — the video
+- [ ] **T-V1** (P1, owner: Manu, ~15m) CLAIMED @09:53 by Manu — **`scripts/make-demo-video.mjs`** — the video
   recorder (spec: VIDEO-SCRIPT.md). If it doesn't exist when the window opens, the FIRST
   worker cycles finish it before any other task: no recorder → no video → wasted day.
   Target: committed by 14:00.
@@ -181,6 +181,7 @@ Reporting
 
 ## Claim log (append only)
 <!-- e.g. `12:35 Manu claimed T03` -->
+`09:53 Manu claimed T-V1`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
