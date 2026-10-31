@@ -42,3 +42,20 @@
   aria-invalid + aria-describedby APPENDED (never clobbering a field hint) and restored on clear;
   (4) dateOrder takes [from, to] strictly and throws on a bare value so a forgotten pair can
   never silently validate as ok.
+
+## 10:26 — T06 boot seam (SPA switch-on)
+- Built: one line in static/index.html — `<script type="module" src="/frontend/pages/router.js">`
+  before </body> (plus a 2-line comment).
+- Why this way: Saurabh's router (T06) was complete but nothing loaded it — the shell rendered a
+  dead, empty sidebar. `type="module"` scripts are deferred by spec, so the script runs AFTER the
+  #nav/#view elements above it exist; no defer/DOMContentLoaded wiring needed in the shell. The
+  path is absolute `/frontend/...` because the FastAPI plan (architecture note 1) mounts the
+  frontend/ dir at /frontend on the same origin — no CORS, no build step.
+- Must be able to explain: (1) how it was verified WITHOUT a backend (T01 hasn't landed):
+  served the repo root with `python -m http.server` to mirror the planned mounts, then fetched
+  every URL the boot requests — 11/11 returned 200 (2 stylesheets, router.js, overview.js +
+  products.js, the fmt/kpi/poll/table components, validators.js), and both page modules export
+  the `render(mount)` the router calls; (2) why missing routes (invoices etc.) DON'T break boot —
+  router.js lazy-imports per route and catches the failure into a DESIGN empty-state; (3) until
+  T01+T03 land, Overview correctly shows its ERROR state (fetch /api/live/summary 404s) — that is
+  the designed degraded behaviour, not a bug.

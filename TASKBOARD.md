@@ -91,9 +91,9 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   `render(mount)->cleanup()` into #view, runs prev cleanup() on swap (stops overview poller),
   default `#/overview`, `aria-current`+`.is-active` grey pill. Unbuilt screens (products/
   invoices/payments/discounts/customers/subscriptions) show DESIGN empty-state placeholder;
-  they light up automatically as those page modules land. ⚠️ BOOT SEAM (Avanthik, static/):
-  index.html needs `<script type="module" src="/frontend/pages/router.js"></script>` before
-  </body> — nothing loads the SPA until that one line is added (contract at top of router.js).
+  they light up automatically as those page modules land. ✅ BOOT SEAM closed @10:26 by
+  Avanthik: index.html loads router.js before </body>; boot import graph (11 URLs — styles,
+  router, overview/products pages, components, validators) verified 200 over HTTP.
 - [ ] **T07** (P1, owner: Avanthik, ~15m) PARTIAL @09:52 by Avanthik — validators.js + form CSS complete and
   adversarially verified (all rules: email, password >8/upper/lower/special, price/qty ≥0, dateOrder, usageLimit;
   blur inline errors, form-level render+focus-first-error; TEST_CMD 4/4). REMAINING: (a) wire into the signup form
