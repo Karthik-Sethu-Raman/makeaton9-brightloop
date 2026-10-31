@@ -7,4 +7,10 @@ passwords directly.
 from .db import connect, db_path, ensure_db
 from .seed import seed_if_empty
 
-__all__ = ["connect", "db_path", "ensure_db", "seed_if_empty"]
+# T19: template repo + copy action, and the shared auto-tax law (the
+# simulator's billing helper delegates to it). Imported by name, never *.
+from . import taxrules, templates
+
+__all__ = [
+    "connect", "db_path", "ensure_db", "seed_if_empty", "taxrules", "templates",
+]

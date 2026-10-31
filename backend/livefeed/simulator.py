@@ -25,6 +25,7 @@ from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from ..models import connect
+from ..models import taxrules
 from ..models.plans import add_period
 
 IST = ZoneInfo("Asia/Kolkata")
@@ -114,14 +115,10 @@ def advance_one_subscription(conn: sqlite3.Connection) -> dict | None:
 
 
 def tax_percent_for(conn: sqlite3.Connection, product_id: int, fallback: float) -> float:
-    """Rate from tax_rules for the product's type; type-specific beats catch-all."""
-    row = conn.execute(
-        "SELECT tr.rate_percent FROM tax_rules tr, products p WHERE p.id=?"
-        " AND (tr.product_type IS NULL OR tr.product_type = p.type)"
-        " ORDER BY (tr.product_type IS NOT NULL) DESC, tr.id LIMIT 1",
-        (product_id,),
-    ).fetchone()
-    return float(row["rate_percent"]) if row else float(fallback)
+    """Rate from tax_rules for the product's type — now owned by
+    models.taxrules.percent_for (T19 moved the law next to the other model
+    laws so the copy action and billing share it); kept as a thin alias."""
+    return taxrules.percent_for(conn, product_id, fallback)
 
 
 def bill_due_subscription(conn: sqlite3.Connection) -> dict | None:
