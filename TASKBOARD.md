@@ -82,7 +82,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   cards, 390px fold to 48px top bar; var(--...) only, zero color literals) + `static/index.html`
   shell with SVG copper-ring mark + Cadence wordmark + scope, empty #nav slot for T06 router,
   #view mount. Grid sums commented per DESIGN. TEST_CMD green (4 passed).
-- [ ] **T06** (P1, owner: Saurabh, ~10m) Hash router + sidebar nav for all 7 sections,
+- [ ] **T06** (P1, owner: Saurabh, ~10m) CLAIMED @09:57 by Saurabh — Hash router + sidebar nav for all 7 sections,
   active item = grey pill per DESIGN; works from Overview in one click.
 - [ ] **T07** (P1, owner: Avanthik, ~15m) PARTIAL @09:52 by Avanthik — validators.js + form CSS complete and
   adversarially verified (all rules: email, password >8/upper/lower/special, price/qty ≥0, dateOrder, usageLimit;
