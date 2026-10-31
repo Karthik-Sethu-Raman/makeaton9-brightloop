@@ -271,13 +271,31 @@ Subscriptions
   optional `onRowClick` (keyboard+hover, backward-compat â€” products/plans unaffected). Renders
   live once T17 lands, error+Retry until then (served 200, /api/subscriptions 404 pre-T17
   verified). node --check OK; TEST_CMD 35/35.
-- [ ] **T19** (P2, owner: Manu, ~10m) CLAIMED @13:53 by Manu — Quotation templates: template with plan/product
+- [x] **T19** (P2, owner: Manu, ~10m) DONE @14:10 by Manu — Quotation templates: template with plan/product
   lines valid N days; "new subscription from template" copy action.
+  DONE detail: `backend/models/templates.py` — create/detail/list with friendly ValueError sentences
+  (blank name, missing/unknown plan, non-whole or <1 validity, empty lines; line specs validated
+  through variants.price_line BEFORE any write — no half-inserted template). Lines stored BARE
+  (product, variant, qty); priced_lines() prices at CURRENT sales_price + variant delta (T11 law)
+  + tax auto from taxrules.percent_for — the ONE pricing path shared by detail/totals/copy, so a
+  template's displayed figures and the subscription it produces can never disagree. valid_until =
+  created_at + valid_days; new_subscription(template, customer) refuses an expired template
+  ("Large Retailer Bundle expired on <date>; create a new template.") and otherwise delegates to
+  subscriptions.create(state='quotation') — SUB numbering + state machine stay T16-owned; returns
+  sub + totals + from_template for the flash. Tax law MOVED from simulator.py to
+  `backend/models/taxrules.py` (percent_for: type-specific beats catch-all, lowest id wins, else
+  caller fallback); simulator keeps a delegating alias. tests/test_templates.py 9 tests (seeded
+  pricing w/ auto tax, detail/list shape, copy→quotation, twice=new numbers, expiry refusal,
+  unknown-id guards, create sentences, roundtrip, taxrules law + simulator alias). TEST_CMD
+  170/170 (135→170, count UP). Code landed by the killed 13:53 cycle (3ef163b); this cycle
+  verified + closed. ALSO this cycle: restored Avanthik's T41 print-CSS block in
+  frontend/styles/layout.css verbatim from 77b6a34 — eaten by my b1a7822 stale-tree re-land
+  (68b026a); T21/T49 claim markers below + Saurabh's 13:35 PROGRESS row restored too.
 Invoicing
 - [ ] **T20** (P2, owner: Manu, ~15m) Billing run: generate due invoices from active
   subscriptions â€” idempotent (never twice, never skipped), taxes auto from tax_rules;
   `tests/test_billing_run.py`.
-- [ ] **T21** (P2, owner: Karthik, ~10m) Invoice API: list/detail, confirm/cancel/send/
+- [ ] **T21** (P2, owner: Karthik, ~10m) CLAIMED @13:38 by Karthik (integrator cycle) — Invoice API: list/detail, confirm/cancel/send/
   print actions, state Draftâ†’Confirmedâ†’Paid guards.
 - [x] **T22** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @13:20 by Avanthik —
   Invoices page: table (paid/outstanding/overdue filter) + detail with lines/taxes/totals + actions.
@@ -426,7 +444,7 @@ Reporting
 - [x] **T48** (P3, owner: Avanthik, ~10m) DONE @11:50 by Avanthik â€” Shell head polish in static/index.html + reset.html:
   favicon from the existing SVG mark (any literal color must carry a comment naming the token
   it mirrors â€” hex otherwise lives only in tokens.css) + meta description.
-- [ ] **T49** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Page-side fixes from T36's audit (6 findings listed on
+- [ ] **T49** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) CLAIMED @13:35 by Avanthik (scope now: T36 audit + T22-verify findings — shared-layer first) — Page-side fixes from T36's audit (6 findings listed on
   the T36 note): .cad-dash for DASH/null in table.js fillCell + kpi.js value, lastGoodAt
   sentence + Retry on failed refresh, poll.js fetch timeout via AbortController (~2Ã— interval).
   GROOM(integrator 11:35): makes the audit actionable as its own claimable unit.
@@ -521,3 +539,4 @@ only. Board supply: Karthik 10 / Manu 8 / Avanthik 8 OPEN (>=5 each). README: st
 'auth endpoints land with T08' line fixed + What's-live section added. EXECUTOR: T14
 DONE — plans API; plans + products pages both live; NEXT highest-value Karthik task =
 T17 subscription API (T18's page has been waiting since 11:46).`
+`14:10 Manu closed T19 (own claim from 13:53; code verified 170/170, no new code needed) + restored T41 print CSS / T21+T49 claim markers / Saurabh 13:35 row eaten by b1a7822 re-land`
