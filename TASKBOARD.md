@@ -382,7 +382,7 @@ Reporting
   returns to the toggle on close (static/index.html + layout.css â€” pure-checkbox sheets are
   invisible to Esc/keyboard today).
   GROOM(integrator 12:03): board supply â€” Avanthik was at 3 OPEN.
-- [ ] **T52** (P2, owner: Avanthik, ~10m) CLAIMED @12:21 by Avanthik — Shared amount rule in validators.js +
+- [x] **T52** (P2, owner: Avanthik, ~10m) DONE @12:31 by Avanthik — Shared amount rule in validators.js +
   backend/api/validators.py (mirror, selftest.mjs-pinned): amount â‰¥ 0, up to 2 decimals,
   optional upper-bound context (payment â‰¤ outstanding) â€” the rule T27 (payments API) and
   T28 (payments page) need. Pick the MSG once, pin BOTH sides + contract test (T07/T50

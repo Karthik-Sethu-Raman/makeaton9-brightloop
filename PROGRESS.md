@@ -56,3 +56,4 @@
 | 12:17 | Avanthik | T36 | PARTIAL+pass2 | audit pass 2 (subscriptions+plans): minQuantity rule added + pinned (parity break fixed my side; py mirror on board note); 13 page-side findings summarized on T36 note; selftest+suite 55/55 |
 | 12:15 | Karthik | - | ABSORB Saurabh -> integrator+Avanthik (quota dead ~12:10, leader directive - do not wait for 60min rule) | frontend/pages open tasks: integrator takes T35 finance overview + T31 portal first, reassign remainder to Avanthik; his machine keeps failing cheaply and rejoins via RESTORED if quota recovers |
 | 12:25 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
+| 12:31 | Avanthik | T52 | DONE | amount rule + paymentAmount(outstanding) factory w/ integer-paisa ceiling compare (float trap 8.1*100 documented), MSG x3 pinned in contract test (code: 12:20 cycle, closed interactive); py mirror on T52 note for Karthik; selftest+suite 73/73 |

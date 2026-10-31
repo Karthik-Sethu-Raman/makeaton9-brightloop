@@ -155,3 +155,9 @@
 - Why: the audit's best catch — plans.js validated min-quantity with the >=0 rule while the DB schema CHECKs >=1. The client said yes, the server said no, with a DIFFERENT sentence — exactly what the graded client/server parity requirement forbids. New rule: empty fails 'Enter a minimum quantity.' (NOT NULL column), 0/2.5/-1 fail 'Minimum quantity must be a whole number of 1 or more.', leading zeros ok.
 - Must be able to explain: why quantity (>=0) and minQuantity (>=1) are separate rules instead of one parameterized rule — each rule is one fixed message pair, and the mirror contract pins message-per-rule; and how the audit found it (page's own header comment cited the schema CHECK).
 
+
+## 12:31 — T52 amount rule + payment ceiling
+- Built (cycle wrote, I closed): rules.amount (>=0, <=2dp) + paymentAmount(outstanding) factory; ceiling compares in integer PAISA.
+- Why paisa: 8.1 * 100 = 810.000...01 in binary float — a raw 'payment <= outstanding' would randomly reject exact payments. Multiplying by 100 and rounding to integers makes the compare exact; the trap is commented at the compare site.
+- Must be able to explain: the float trap with the 8.1 example; why the ceiling is a FACTORY (each invoice has its own outstanding — the bound is per-call context, not a global rule); MSG amtMax fires only when shape is already valid so the user sees one error at a time.
+
