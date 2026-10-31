@@ -30,3 +30,21 @@
   1:1 by ONE server module so both sides always agree.
 - **Key design choice:** vertical slice first (T01-T04: boot, DB, livefeed, one page)
   before any feature meat — an app that boots and shows live data beats ten half-features.
+
+## 10:48 — T01 vertical slice (integrator cycle)
+- **Built:** `backend/api/main.py` (create_app + module-level `app`, GET /api/health,
+  mounts, lifespan) and `tests/test_health.py` (6 tests).
+- **Why this way:** the SPA (T05/T06) and every page were DONE-but-waiting on a server;
+  this one file closes the boot seam for the whole team — Saurabh's pages, Avanthik's
+  reset.html and Manu's T03 livefeed all light up the moment their module lands, no
+  rewiring needed (find_spec guards detect them at boot).
+- **Must be able to explain:**
+  - Mount ORDER: `/frontend` is mounted before `/` because Starlette matches routes in
+    registration order and the `/` mount would otherwise swallow everything.
+  - Why find_spec instead of try/ImportError for the T03 seam: a *broken* simulator must
+    crash loudly, only an *absent* one may be skipped.
+  - Why no CORSMiddleware: SPA is same-origin (served by the same FastAPI app), so
+    cross-origin headers are unnecessary — smaller attack surface, one less thing to demo.
+  - Lifespan (not import time) does ensure_db + seed_if_empty: importing the module (e.g.
+    pytest collecting another test) must never touch the DB; only a running app does.
+  - Tests point CADENCE_DB at a tmp dir so they never write the real data/cadence.db.

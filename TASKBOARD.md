@@ -62,9 +62,16 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   Full app rehearsal = T09 once T01/T03 land.
 
 ### P1 — walking skeleton + graded must-haves
-- [ ] **T01** (P1, owner: Karthik, ~15m) CLAIMED @10:42 by Karthik — Vertical slice: `backend/api/main.py` app factory,
-  `GET /api/health`, static/ + frontend/ mounted, index.html served, CORS off (same-origin);
-  `tests/test_health.py` green; RUN_CMD boots end-to-end.
+- [x] **T01** (P1, owner: Karthik, ~15m) DONE @10:48 by Karthik (integrator cycle) — Vertical slice:
+  `backend/api/main.py` create_app() + `backend.api.main:app`; GET /api/health (DB ping);
+  frontend/ mounted at /frontend BEFORE static/ at / (html=True → index.html at /,
+  reset.html at /reset.html); CORS off (no middleware, asserted in test). Lifespan:
+  ensure_db + seed_if_empty (Manu's T02 exports) + guarded T03 seam — imports
+  start()/stop() from backend/livefeed/simulator.py and includes backend/livefeed/router.py
+  when they exist (find_spec-guarded so "not landed" ≠ "broken"). tests/test_health.py
+  (6 tests: health, shell@/, reset.html, 6 frontend module URLs, CORS-off, seed-on-boot
+  via tmp CADENCE_DB). TEST_CMD 18/18; real uvicorn boot verified (health 200, all SPA
+  assets 200, /api/live/summary 404 until T03 — expected).
 - [x] **T02** (P1, owner: Manu, ~15m) DONE @10:37 by Manu — `backend/models`: db.py (sqlite3 conn, WAL, dict rows),
   schema.py — customers, users, products, product_variants, plans, subscriptions,
   subscription_lines, invoices, invoice_lines, payments, discounts, tax_rules,
