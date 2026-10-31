@@ -69,7 +69,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 - [ ] **T03** (P1, owner: Manu, ~15m) `backend/livefeed`: simulator thread (started in app
   lifespan) mutating DB every ~3s (payment lands, sub state advances) +
   `backend/livefeed/router.py` → `GET /api/live/summary` reading DB (never static JSON).
-- [ ] **T04** (P1, owner: Saurabh, ~10m) Overview page: KPI strip (one container, 1px rules)
+- [ ] **T04** (P1, owner: Saurabh, ~10m) CLAIMED @09:23 by Saurabh — Overview page: KPI strip (one container, 1px rules)
   + live numbers from `/api/live/summary`, poll 3s, freshness stamp, `.num` tabular.
 - [ ] **T05** (P1, owner: Avanthik, ~15m) `frontend/styles/tokens.css` (DESIGN.md :root
   verbatim) + layout.css (sidebar shell 224px, grid, cards) + `static/index.html` shell
