@@ -235,7 +235,7 @@ Reporting
   expiry, RBAC 401/403, validation parity client/server.
 - [ ] **T43** (P3, owner: Saurabh, ~10m) Overview polish: deltas with named windows
   ("vs prior 30 days"), billing-day annotation on chart, answer figure 30-36px.
-- [ ] **T44** (P2, owner: Avanthik, ~10m) Auth + reset styling pass: shared .auth-shell /
+- [ ] **T44** (P2, owner: Avanthik, ~10m) CLAIMED @10:42 by Avanthik — Auth + reset styling pass: shared .auth-shell /
   .auth-card classes in layout.css (login T46, static/reset.html and future forms share one
   DESIGN-compliant card on page ground, 390px single column, 44px targets), error-summary +
   inline-error typography per validators.js contract; document classes in styles README.
@@ -252,6 +252,7 @@ Reporting
 `10:13 Manu claimed T02`
 `10:24 Avanthik claimed T06-boot-seam (index.html router script line — flagged Avanthik/static in T06 DONE note)`
 `10:42 Karthik claimed T01`
+`10:42 Avanthik claimed T44`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
