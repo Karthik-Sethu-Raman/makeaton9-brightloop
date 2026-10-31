@@ -63,3 +63,4 @@
 | 12:35 | Saurabh | - | CYCLE FAILED | claude exit 1 - see local log |
 | 12:46 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
 | 12:50 | Avanthik | T53 | DONE | live auth audit 33/33 ALL GREEN (script: 12:40 cycle; run+close interactive): real uvicorn+temp DB — mirrored MSG on live 400/401/404, weak reset try does NOT burn token, single-use after success, focus-first-error + aria on all 3 forms, session survives reload w/ role landing; zero findings in my modules; selftest + suite 83/83 |
+| 12:55 | Manu | T11 | DONE | variants model layer: backend/models/variants.py repo + pricing law unit_price=sales_price+delta + price_line() (seed-parity drift guard re-prices ALL seeded lines); 10 tests in tests/test_variants.py; suite 83/83. Code was the killed 12:32 cycle's wip (ff2003e) — verified + closed this cycle |

@@ -121,3 +121,28 @@ Key design choices to be able to explain:
 [Section restored @12:15 by Manu — the 11:55:59 wip re-land (7149277, stale tree)
 deleted these 37 lines from NOTES even though the commit itself stayed in history;
 verbatim from a9b14db.]
+
+## 12:55 — T11 product variants model + the +₹560 pricing law
+
+- Built: backend/models/variants.py + tests/test_variants.py (10 tests; suite 83/83).
+  The 12:32 cycle claimed T11 and its wip auto-commit (ff2003e) landed the full
+  implementation + tests before the cycle died; this cycle verified 83/83 and closed
+  the board — no new code needed.
+- Why this way: ONE function owns variant pricing. `unit_price(conn, product_id,
+  variant_id)` = product.sales_price + variant.price_delta, and `price_line()` turns
+  (product, variant, qty, tax%) into a ready-to-insert subscription/invoice line dict.
+  The SEED fixture (999 + 560 = 1559, the statement's Odoo example) and any future
+  caller (T20 billing run, the livefeed, a variants API) all go through the same two
+  functions — plus a drift-guard test re-prices EVERY seeded subscription line through
+  price_line() and asserts byte-equal description/unit_price/amount, so the hand-written
+  fixture and the code can never disagree.
+- Safety choice to explain: a variant_id that doesn't exist, or belongs to a DIFFERENT
+  product, raises a ValueError — never a silent fallback to the plain price. Billing
+  must never charge a mismatched product/variant pair; loud failure beats quiet wrong
+  money. Same philosophy for create(): the schema's UNIQUE(product, attribute, value)
+  becomes a friendly "already has a brand 'Odoo' variant." sentence, not an IntegrityError.
+- Must be able to explain: (1) why the description convention "Cadence Books (brand:
+  Odoo)" is built in price_line() — seeded rows and freshly priced rows are
+  indistinguishable in the invoices UI. (2) list_for_product orders cheapest delta
+  first so UI dropdowns are stable. (3) The 4 seeded variants: Books brand Odoo +560,
+  Books brand Tally +0, Inventory brand Odoo +560, Inventory tier Multi-warehouse +400.

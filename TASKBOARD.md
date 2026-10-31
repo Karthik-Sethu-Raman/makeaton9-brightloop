@@ -181,8 +181,19 @@ Products & plans
   real uvicorn smoke: 4 seeded rows served live, empty-name → 400 mirrored sentence.
   **T12's products page is now LIVE** (no page change needed — API matches its
   documented contract field-for-field).
-- [ ] **T11** (P2, owner: Manu, ~10m) CLAIMED @12:32 by Manu — Product variants: model + attribute price delta
-  (seed: brand "Odoo" +â‚¹560); included in plan line pricing.
+- [x] **T11** (P2, owner: Manu, ~10m) DONE @12:55 by Manu — Product variants: model + attribute price delta
+  (seed: brand "Odoo" +₹560); included in plan line pricing.
+  DONE detail: `backend/models/variants.py` — repo (list_for_product cheapest-delta
+  first; create w/ friendly ValueErrors: blank attr/value, unknown product, non-numeric
+  delta, duplicate pair via UNIQUE -> "already has a brand 'Odoo' variant.") + THE
+  pricing law: `unit_price(p,v) = sales_price + price_delta` (mismatched/unknown pair
+  raises, never silent fallback) and `price_line()` -> ready-to-insert sub/invoice line
+  dict (description convention "Cadence Books (brand: Odoo)" identical to SEED). Drift
+  guard: test_price_line_matches_every_seeded_subscription_line re-prices ALL seeded
+  lines through the code — fixture and function are one law (999+560=1559 pinned).
+  Seed variants were already in (T02); code+tests landed via the killed 12:32 cycle's
+  wip (ff2003e), verified 83/83 this cycle and closed. T20 billing + any variant
+  API/page consume price_line() so the +₹560 can never drift between screens.
 - [x] **T12** (P2, owner: Saurabh, ~10m) DONE @10:24 by Saurabh â€” Products page: table (right-aligned â‚¹, truncate)
   + create form with client validation + empty/loading/error states.
   Built frontend/pages/products.js + shared frontend/components/table.js (DESIGN table
