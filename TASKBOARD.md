@@ -142,7 +142,7 @@ Products & plans
   pause / renew) per plan.
 - [ ] **T14** (P2, owner: Karthik, ~10m) Plans CRUD API + validation (from ≤ to, price ≥ 0,
   frequency enum); tests.
-- [ ] **T15** (P2, owner: Saurabh, ~10m) Plans page: list + create form incl. close-policy
+- [ ] **T15** (P2, owner: Saurabh, ~10m) CLAIMED @10:56 by Saurabh — Plans page: list + create form incl. close-policy
   control and frequency; states.
 Subscriptions
 - [ ] **T16** (P2, owner: Manu, ~10m) Subscription model: SUB-0001 numbering sequence,
