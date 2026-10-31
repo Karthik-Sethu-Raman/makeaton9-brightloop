@@ -58,3 +58,45 @@
     navigates away can't paint into a dead screen (router calls cleanup on nav).
   * Why a shared table component: 5 of my list screens need the identical table; one source
     = consistent UI (graded) and no divergence when I build T18/T22/T28/T30.
+
+## 10:48 — T46 Login/signup screen + the auth seam
+- Built three things: `frontend/pages/login.js` (the `#/login` screen),
+  `frontend/components/auth.js` (the browser's session store), and edits to my own
+  `router.js` (T06) to make login/portal routable and to put a user line in the sidebar.
+- The screen: ONE auth card, two modes in one form. Default is **Sign in** (email +
+  password); the "Create an account" link switches to **Create account** via
+  `#/login?mode=signup`, which adds a **Confirm password** field. On sign-in there's a
+  "Forgot password?" link to `/reset.html` (Avanthik's standalone reset page, T33).
+- Validation (graded: client AND server): email + password run through Avanthik's
+  `validators.js` on blur and again on submit (`validateForm` renders inline errors and
+  focuses the first bad field). The password policy ("more than 8 chars, upper, lower,
+  special") is the SAME rule+message the server mirrors (T08). Confirm-password match is a
+  client-only UX check (not a server rule) so its message lives in my file, not the MSG table.
+- What happens on submit: POST to `/api/auth/login` or `/api/auth/signup`. On success I
+  read `{token, user:{email, role}}`, store it in localStorage via auth.js, and redirect by
+  ROLE — admin/staff land on `#/overview`, a customer on `#/portal` (T31). On failure the
+  server's sentence shows INSIDE the card (401 wrong creds / 409 duplicate email / 400
+  policy) — never a full-screen banner; "Retry" appears ONLY for a network/5xx failure
+  (a bad password is fixed in place, not by reloading).
+- `components/auth.js` is the single source for session state: `getToken/getUser/
+  setSession/clearSession/isAuthed`, `authHeaders()` (adds the `x-auth-token` header the
+  architecture note mandates), `landingHashFor(role)`, and `readAuthBody()` which
+  normalises the server response so it doesn't matter whether the token is `token` or
+  `access_token` or the role sits top-level vs under `user`. T31 (portal) will reuse it.
+- Router changes (my module): login + portal are an `AUX` map, deliberately NOT in the
+  7-item sidebar `ROUTES` (they aren't internal destinations). On the login route the
+  router adds `body.cad-authmode` which hides the sidebar so the card sits alone (DESIGN:
+  "no sidebar if ≤5 destinations", same treatment as reset.html). The sidebar gains a
+  **user line**: when signed in it shows the email + a **Log out** button (clears session →
+  `#/login`); when signed out it shows a **Sign in** link. It refreshes on every navigation
+  because the auth state flips the instant login.js redirects.
+- Must be able to explain:
+  * The RULING (also in PROGRESS): I did NOT force every page behind login this cycle.
+    T08 (the auth API) isn't built, so requiring a real token would have broken the live
+    Overview/Products demo. The screen and the whole seam exist and work; a later cycle
+    flips on hard gating once T08 is green. Reversible > broken.
+  * Contract-first, like my other pages: login.js submits against the documented T08
+    contract and shows its error/Retry state until the API lands — it "lights up"
+    automatically, no edit needed.
+  * `cleanup()` sets `alive=false` so a slow login response resolving after the user
+    navigates away can't redirect or paint a dead screen.

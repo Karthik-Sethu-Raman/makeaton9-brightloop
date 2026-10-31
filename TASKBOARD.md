@@ -197,7 +197,20 @@ Reporting
   collected, still owed, overdue invoice list; date filters.
 - [ ] **T35** (P2, owner: Saurabh, ~10m) Finance overview upgrade: KPIs + revenue-over-time
   chart (accent hue only, DESIGN chart rules) + overdue table + "View all".
-- [ ] **T46** (P1, owner: Saurabh, ~10m) CLAIMED @10:36 by Saurabh — Login+signup screen (auth UI seam T31/T33 assume):
+- [x] **T46** (P1, owner: Saurabh, ~10m) DONE @10:48 by Saurabh — Login+signup screen (auth UI seam T31/T33 assume):
+  Built `frontend/pages/login.js` (#/login route, Sign in ⇄ Create account via
+  ?mode=signup; email+password+confirm, validators.js blur+submit gate, focus-first-error,
+  401/409/400 in-card error + Retry only on network/5xx) + `frontend/components/auth.js`
+  (localStorage session: getToken/setSession/clearSession/authHeaders x-auth-token/
+  landingHashFor/readAuthBody — tolerant of token|access_token & nested role/email).
+  Router (my T06): aux routes login+portal (not in sidebar), auth-mode hides sidebar for
+  the standalone card, sidebar user line = email + Log out (or Sign in when signed out),
+  role redirect admin/staff→#/overview customer→#/portal, "Forgot password?"→/reset.html.
+  AUTH CONTRACT for T08 documented in-file (components/auth.js). Renders live once T08
+  lands (overview/products/reset precedent). node --check OK, TEST_CMD 12/12.
+  RULING: did NOT hard-gate the app behind login this cycle (would break the live
+  overview/products demo since T08 isn't built) — sidebar shows Sign in; gating can flip
+  on once T08 is green. Logged in PROGRESS.
   #/login route + form (email, password, confirm on signup) wired to validators.js
   (attachBlurError/validateForm — T07 API), POST /api/auth/signup + /login (T08), token →
   localStorage, role redirect (admin/staff → #/overview, customer → #/portal), sidebar
