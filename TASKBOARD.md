@@ -65,7 +65,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 - [ ] **T01** (P1, owner: Karthik, ~15m) Vertical slice: `backend/api/main.py` app factory,
   `GET /api/health`, static/ + frontend/ mounted, index.html served, CORS off (same-origin);
   `tests/test_health.py` green; RUN_CMD boots end-to-end.
-- [ ] **T02** (P1, owner: Manu, ~15m) `backend/models`: db.py (sqlite3 conn, WAL, dict rows),
+- [ ] **T02** (P1, owner: Manu, ~15m) CLAIMED @10:13 by Manu — `backend/models`: db.py (sqlite3 conn, WAL, dict rows),
   schema.py — customers, users, products, product_variants, plans, subscriptions,
   subscription_lines, invoices, invoice_lines, payments, discounts, tax_rules,
   quotation_templates; SEED fixture (marked SEED, incl. brand variant +₹560 example).
@@ -193,6 +193,7 @@ Reporting
 <!-- e.g. `12:35 Manu claimed T03` -->
 `09:53 Manu claimed T-V1`
 `09:57 Saurabh claimed T06`
+`10:13 Manu claimed T02`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
