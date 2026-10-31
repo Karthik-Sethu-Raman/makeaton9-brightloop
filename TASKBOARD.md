@@ -256,7 +256,7 @@ Subscriptions
 - [x] **T16** (P2, owner: Manu, ~10m) DONE @13:47 by Manu — Subscription model: SUB-0001 numbering sequence,
   states Draftâ†’Quotationâ†’Confirmedâ†’Activeâ†’Closed, lines (product, qty, unit price, tax,
   amount) with totals compute.
-- [ ] **T17** (P2, owner: Karthik, ~15m) Subscription API: create, list w/ filters
+- [ ] **T17** (P2, owner: Karthik, ~15m) DROPPED @15:50 (integrator FINAL: feature freeze D7; never funded — accepted endgame trade, T18's page stays in its designed error+Retry state) — Subscription API: create, list w/ filters
   (state, customer, plan), state-transition endpoint guarding legal moves only.
   GROOM(integrator 14:25): per the 14:16 TRIAGE — take ONLY if a slot remains after the
   criticals (T35/T31, Manu's T20+T27); the subscriptions page (T18) stays error-state if
@@ -374,22 +374,26 @@ Discounts
   this module or any frontend/validation test. D4 fallback taken: frontend task independent
   of the break. Page renders live the moment T25 lands.
 - [ ] **T25** (P2, owner: Manu [reassigned from Karthik @14:25 — T24's live page needs this
-  API; queue after T20 + payments], ~15m) Discount rules API: fixed or percentage, minimum
+  API; queue after T20 + payments], ~15m) DROPPED @15:50 (integrator FINAL: feature freeze D7; T24's page stays in its designed error+Retry state) — Discount rules API: fixed or percentage, minimum
   purchase/quantity, start/end, usage limit, product or whole-subscription scope;
   admin-only guard + tests.
 - [ ] **T26** (P2, owner: Manu, ~10m) DROPPED @14:25 (14:16 TRIAGE) — Discount engine: auto-apply best eligible rule on
   next invoice, stop on expiry or exhaustion; tests.
 Payments & customers
-- [ ] **T27** (P2, owner: Manu [reassigned from Karthik @14:25] CLAIMED @15:32 by Manu [reassigned from Karthik @14:25 — the 14:16 TRIAGE "payments
+- [x] **T27** (P2, owner: Manu [reassigned from Karthik @14:25] CLAIMED @15:32 by Manu [reassigned from Karthik @14:25 — the 14:16 TRIAGE "payments
   API → Manu"; the directive numbered it T25, but payments is T27's scope (ruling row in
   PROGRESS); T28's page depends on it], ~10m) Payments API: record (method, amount, date, note)
   against invoice; outstanding balance + overdue flag computed.
+  DONE @15:52 closed by integrator (code landed 15:32 by Manu's cycle; his 15:35 cycle
+  died before paperwork) — backend/api/payments.py, router wired in main.py, +11 tests
+  in tests/test_payments.py inside the FINAL 194/194 (183→194, count UP); page parity
+  re-proven live by Avanthik @15:49 (282f6f3 ₹0-gate mirror) + Saurabh's 15:35 smoke.
 - [x] **T28** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @14:43 by Avanthik — Payments page: record form (client+server
   validation) + paid/outstanding/overdue views.
-- [ ] **T29** (P2, owner: Manu, ~10m) Customers model+API: list/detail with their
+- [ ] **T29** (P2, owner: Manu, ~10m) DROPPED @15:50 (integrator FINAL: feature freeze D7; T30's page stays in its designed error+Retry state) — Customers model+API: list/detail with their
   subscriptions and invoices.
 - [x] **T30** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @15:01 by Avanthik — Customers page (internal team view).
-- [ ] **T31** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) Customer portal page: after signup/login shows
+- [ ] **T31** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) DROPPED @15:50 (integrator FINAL: feature freeze D7; never funded — #/portal shows the DESIGN empty-state; demo the portal scene via the admin/staff views) — Customer portal page: after signup/login shows
   ONLY own subscriptions + invoices (statement's portal scene).
 - [ ] **T32** (P2, owner: Karthik, ~10m) DROPPED @14:25 (14:16 TRIAGE) — RBAC dependency: admin/staff/customer routes;
   only admin can create staff; 401/403 tests.
@@ -634,3 +638,14 @@ slot-remaining note. OPEN per member is now intentionally <5 — the endgame ord
 shrinks the board on purpose; no new tasks minted against "PARTIAL beats perfect".
 T21 verified + closed DONE (9 tests in the 170, router wired) — T22's invoices page
 is LIVE end-to-end. EXECUTOR: claimed T35 (TRIAGE critical #1, finance overview).`
+
+`15:50-16:00 [integrator] FINAL PASS: TEST_CMD 194/194 GREEN on arrival (count stable
+vs 15:49 — no tests lost); wip re-lands ce4d0f8/6933dd8 audited = pure 1-line
+PROGRESS adds; origin: main only; rehearsal video verified in git. GROOM @freeze
+(D7 — no features after 15:45, so no executor task this cycle): T27 closed DONE
+(payments API, verified in-suite + parity re-proven twice), T17/T25/T29/T31 DROPPED
+in place @15:50 (never funded / triaged; pages stay in designed error+Retry states;
+portal scene demos via admin/staff); no new tasks minted at freeze. README: Demo-in-
+60-seconds block + honest What's-live. Graded must-have audit (4/4, files named) +
+LAST-GOOD SHA recorded in PROGRESS. Per D7 this is the last code-touching cycle;
+workers after 16:10 log "window closed" and idle.`

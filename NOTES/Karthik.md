@@ -119,3 +119,26 @@
   and asserts today's point moves (the graded "dynamic data" must-have, proven,
   not claimed); the window test pins that a 7-day window sums exactly the seed
   payments inside it (₹10,000.00).
+
+## FINAL PASS (15:50 integrator cycle — what you must be able to explain)
+- **State at freeze:** 194/194 tests green on pushed main; app boots via
+  `scripts\run.cmd`; README carries the "Demo in 60 seconds" block — that block is
+  the team's fallback if anything breaks at 16:50. LAST-GOOD SHA is the
+  `MAIN GREEN @ <sha>` row at the bottom of PROGRESS.md.
+- **Your one-breath architecture answer:** FastAPI app factory
+  (`backend/api/main.py`) serves the SPA and seeds SQLite on first boot; a simulator
+  thread (`backend/livefeed/simulator.py`, started in the app lifespan) bills due
+  subscriptions and lands payments every ~3s, so every number on screen is real
+  changing DB state — that is the graded dynamic-data must-have, and
+  `tests/test_reports.py` proves it (insert a payment → today's chart point moves).
+- **Validation parity (likely Q question):** rules live in ONE client module
+  (`frontend/validation/validators.js`) mirrored 1:1 by ONE server module
+  (`backend/api/validators.py`); every message string is pinned by
+  `tests/test_validators_contract.py`, so client/server drift FAILS CI — and it was
+  re-proven over real HTTP twice today (products 15:35, payments ₹0-gate 15:49).
+- **Honest gaps — say them before the judges find them:** the subscriptions /
+  discounts / customers LIST APIs and the customer portal page were cut by the 14:16
+  triage + 15:45 freeze (DECISIONS D7). Those pages ship UI-complete and show their
+  designed error+Retry state; the portal scene demos via admin/staff login instead.
+  Everything the video walks — overview → products/plans → invoices → payments →
+  finance — is live end-to-end.
