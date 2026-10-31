@@ -3,7 +3,7 @@
 // backend/api/validators.py (T08) must mirror. Run: node frontend/validation/selftest.mjs
 // (pytest picks it up via tests/test_validators_contract.py). Silent success = exit 0;
 // every failed check prints and the process exits 1.
-import { validate, rules, MSG, required } from './validators.js';
+import { validate, rules, MSG, required, paymentAmount } from './validators.js';
 
 let failed = 0;
 function check(name, cond) {
@@ -68,6 +68,42 @@ bad('minQuantity', '2.5', 'minQtyBad');
 good('minQuantity', '1');
 good('minQuantity', '03');                  // leading zeros accepted, = 3
 
+// amount (payments, T52) — same shape as price; empty is its own required-ness message
+bad('amount', '', 'amtEmpty');
+bad('amount', '-1', 'amtBad');
+bad('amount', '12.345', 'amtBad');
+bad('amount', '1,299', 'amtBad');
+bad('amount', '.5', 'amtBad'); // leading digit required, same as price
+good('amount', '0');
+good('amount', '12.5');
+good('amount', '1299.99');
+good('amount', '03.50'); // leading zeros accepted, mirror trap #3
+
+// paymentAmount(outstanding) — T52 factory: shape above + payment <= outstanding.
+// Ceiling is captured at BUILD time (build per render); shape errors always win
+// over the ceiling so a malformed value never reports amtMax.
+const pay500 = paymentAmount(500);
+check('pay accepts at ceiling', validate(pay500, '500').ok === true);
+check('pay accepts under ceiling', validate(pay500, '499.99').ok === true);
+check('pay rejects over ceiling', validate(pay500, '500.01').ok === false);
+check('pay ceiling message', validate(pay500, '501').message === MSG.amtMax);
+check('pay shape error beats ceiling', validate(pay500, '-3').message === MSG.amtBad);
+check('pay empty message', validate(pay500, '').message === MSG.amtEmpty);
+// float trap: 8.1 is not exact in binary — raw-float compare would reject ₹8.10
+// against ₹8.10 outstanding; the paisa (x100 integer) compare must accept it.
+const floatTrap = paymentAmount(8.1);
+check('pay paisa-compare exact at 8.10', validate(floatTrap, '8.10').ok === true);
+check('pay paisa-compare rejects 8.11', validate(floatTrap, '8.11').ok === false);
+// ceiling supplied as a string (input value convenience) behaves identically
+check('pay string ceiling works', validate(paymentAmount('500.00'), '500').ok === true);
+// missing / junk ceilings degrade to shape-only — never throw mid-form
+check('pay null bound degrades', validate(paymentAmount(null), '999999').ok === true);
+check('pay junk bound degrades', validate(paymentAmount('abc'), '999999').ok === true);
+// fully-paid invoice: outstanding 0 — only ₹0.00 clears the shape+ceiling rules
+const paidOff = paymentAmount(0);
+check('pay zero ceiling allows 0.00', validate(paidOff, '0.00').ok === true);
+check('pay zero ceiling rejects 0.01', validate(paidOff, '0.01').ok === false);
+
 // dateOrder — pair rule; either side empty = ok (requiredness is a different rule)
 good('dateOrder', ['2026-01-01', '2026-01-02']);
 good('dateOrder', ['', '2026-01-02']);
@@ -94,4 +130,4 @@ check('required without label throws', throws(() => required('')));
 check('required with non-string label throws', throws(() => required(42)));
 
 if (failed) { console.error(`${failed} check(s) failed`); process.exit(1); }
-console.log(`validators selftest: all checks passed (${Object.keys(rules).length} rules + required() factory, MSG table pinned)`);
+console.log(`validators selftest: all checks passed (${Object.keys(rules).length} rules + required()/paymentAmount() factories, MSG table pinned)`);

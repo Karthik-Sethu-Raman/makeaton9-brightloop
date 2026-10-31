@@ -31,6 +31,9 @@ const MSG = {
   qtyBad: 'Quantity must be a whole number of 0 or more.',
   minQtyEmpty: 'Enter a minimum quantity.',
   minQtyBad: 'Minimum quantity must be a whole number of 1 or more.',
+  amtEmpty: 'Enter an amount.',
+  amtBad: 'Amount must be ₹0 or more, with up to 2 decimals.',
+  amtMax: 'Amount must be no more than the outstanding balance.',
   dateOrder: 'The end date must be on or after the start date.',
   usageLimit: 'Usage limit must be a whole number of 1 or more.',
 };
@@ -81,6 +84,17 @@ const rules = {
     return { ok, message: ok ? '' : MSG.minQtyBad };
   },
 
+  // Payment amounts (T52): same shape as price (>= 0, up to 2 decimals) — the rule
+  // the payments record form (T28) and payments API (T27) share. The optional
+  // ceiling (payment <= outstanding) lives in paymentAmount() below; this base
+  // rule is shape only.
+  amount(value) {
+    const v = String(value ?? '').trim();
+    if (!v) return { ok: false, message: MSG.amtEmpty };
+    const ok = /^\d+(\.\d{1,2})?$/.test(v);
+    return { ok, message: ok ? '' : MSG.amtBad };
+  },
+
   // Discount usage limits: optional field, but if present, a whole number >= 1.
   // Leading zeros accepted ('03' = 3) — same convention as quantity.
   usageLimit(value) {
@@ -122,6 +136,29 @@ export function required(label) {
   return function requiredRule(value) {
     const ok = String(value ?? '').trim().length > 0;
     return { ok, message: ok ? '' : `Enter ${label}.` };
+  };
+}
+
+// --- payment amount with ceiling (T52) ----------------------------------------------
+// The payments flow's graded rule: amount >= 0, <= 2 decimals AND no more than the
+// invoice's outstanding balance. Shape errors report the amount messages; only a
+// shape-VALID value over the ceiling reports amtMax (one message per outcome).
+// `outstanding` is captured AT BUILD TIME — build the rule per form render so a
+// changed invoice can never leave a stale ceiling behind. A missing/blank/non-numeric
+// ceiling degrades to shape-only (never throws mid-form); the server still enforces
+// its own bound and that message surfaces in the form.
+export function paymentAmount(outstanding) {
+  const s = outstanding === null || outstanding === undefined ? '' : String(outstanding).trim();
+  const bound = Number(s);
+  const hasBound = s !== '' && Number.isFinite(bound);
+  // compare in integer paisa: 8.1 * 100 is 810.000...01 in binary float — raw
+  // floats would reject a payment of exactly ₹8.10 against ₹8.10 outstanding
+  const cents = (x) => Math.round(x * 100);
+  return function paymentAmountRule(value) {
+    const shape = rules.amount(value);
+    if (!shape.ok || !hasBound) return shape;
+    const ok = cents(parseFloat(String(value ?? '').trim())) <= cents(bound);
+    return { ok, message: ok ? '' : MSG.amtMax };
   };
 }
 
@@ -217,4 +254,4 @@ export function validateForm(fields) {
 };
 
 export { rules, MSG };
-export default { rules, MSG, required, validate, setError, clearErrorFor, attachBlurError, validateForm };
+export default { rules, MSG, required, paymentAmount, validate, setError, clearErrorFor, attachBlurError, validateForm };
