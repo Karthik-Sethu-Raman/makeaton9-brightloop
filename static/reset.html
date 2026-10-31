@@ -28,8 +28,8 @@
            -> 404 {"detail": "That reset link has expired. Request a new one."}
        Until T08 lands this page correctly shows its error state with Retry. -->
 
-  <main class="cad-auth">
-    <div class="cad-auth-brand">
+  <main class="auth-shell">
+    <div class="auth-brand">
       <svg class="cad-mark" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
         <circle class="cad-mark-ring" cx="10" cy="10" r="8"></circle>
         <circle class="cad-mark-dot" cx="16.9" cy="6" r="2.2"></circle>
@@ -37,11 +37,11 @@
       <span class="cad-wordmark">Cadence</span>
     </div>
 
-    <section class="cad-card cad-auth-card">
-      <h1 class="cad-auth-h1" id="heading">Password reset</h1>
-      <p class="cad-auth-lede" id="lede">Enter your account email and we will generate a reset link.</p>
+    <section class="auth-card">
+      <h1 class="auth-h1" id="heading">Password reset</h1>
+      <p class="auth-lede" id="lede">Enter your account email and we will generate a reset link.</p>
 
-      <form id="forgot-form" class="cad-auth-form" novalidate>
+      <form id="forgot-form" class="auth-form" novalidate>
         <div class="cad-field">
           <label class="cad-label" for="email">Email</label>
           <input class="cad-input" type="email" id="email" name="email" autocomplete="email">
@@ -49,7 +49,7 @@
         <button class="cad-btn-primary" type="submit" id="forgot-submit">Send reset link</button>
       </form>
 
-      <form id="reset-form" class="cad-auth-form" hidden novalidate>
+      <form id="reset-form" class="auth-form" hidden novalidate>
         <div class="cad-field">
           <label class="cad-label" for="password">New password</label>
           <input class="cad-input" type="password" id="password" name="password"
@@ -58,7 +58,7 @@
         <button class="cad-btn-primary" type="submit" id="reset-submit">Set new password</button>
       </form>
 
-      <div class="cad-auth-result" id="result" aria-live="polite"></div>
+      <div class="auth-result" id="result" aria-live="polite"></div>
     </section>
   </main>
 
@@ -89,11 +89,11 @@
       result.innerHTML = '';
       if (!text && !extraEl) return;
       const block = document.createElement('div');
-      block.className = kind === 'error' ? 'cad-auth-result--err' : 'cad-auth-result--ok';
+      block.className = kind === 'error' ? 'auth-result--err' : 'auth-result--ok';
       block.textContent = text || '';
       if (extraEl) {
         const line = document.createElement('div');
-        line.className = 'cad-auth-linkline';
+        line.className = 'auth-linkline';
         line.appendChild(extraEl);
         block.appendChild(line);
       }
@@ -169,7 +169,7 @@
           // parsed as HTML, and only this exact same-origin shape becomes clickable
           forgotForm.hidden = true;
           const link = document.createElement('a');
-          link.className = 'cad-auth-link';
+          link.className = 'auth-link';
           link.textContent = 'Open reset link';
           link.href = url;
           renderState('ok', 'Reset link generated (email isn’t wired in the demo):', link);
