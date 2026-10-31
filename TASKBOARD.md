@@ -69,8 +69,13 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 - [ ] **T03** (P1, owner: Manu, ~15m) `backend/livefeed`: simulator thread (started in app
   lifespan) mutating DB every ~3s (payment lands, sub state advances) +
   `backend/livefeed/router.py` → `GET /api/live/summary` reading DB (never static JSON).
-- [ ] **T04** (P1, owner: Saurabh, ~10m) CLAIMED @09:23 by Saurabh — Overview page: KPI strip (one container, 1px rules)
+- [x] **T04** (P1, owner: Saurabh, ~10m) DONE @09:28 by Saurabh — Overview page: KPI strip (one container, 1px rules)
   + live numbers from `/api/live/summary`, poll 3s, freshness stamp, `.num` tabular.
+  Code complete in frontend/pages/overview.js + components (fmt/kpi/poll). Renders live
+  once T03 (`/api/live/summary`) + T05 (index.html shell + tokens.css) land; error state
+  until then. Contract read: `{updated_at, kpis:{active_subscriptions, revenue_collected,
+  outstanding, overdue_invoices}}` (fields also accepted top-level). Page-module API:
+  `export render(mount) -> cleanup()`.
 - [ ] **T05** (P1, owner: Avanthik, ~15m) `frontend/styles/tokens.css` (DESIGN.md :root
   verbatim) + layout.css (sidebar shell 224px, grid, cards) + `static/index.html` shell
   with mark+wordmark; no hex outside tokens.css.
