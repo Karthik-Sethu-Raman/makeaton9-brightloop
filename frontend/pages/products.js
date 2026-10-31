@@ -100,11 +100,25 @@ export function render(mount) {
   const h1 = document.createElement('h1');
   h1.className = 'cad-h1';
   h1.textContent = 'Products & plans';
+  // Plans live under this same section (DESIGN: "Products & plans"); link across to
+  // the plans screen rather than earning a second sidebar row. Real hash href so
+  // middle/Ctrl-click still work.
+  const plansLink = document.createElement('a');
+  plansLink.className = 'cad-btn cad-btn--ghost';
+  plansLink.href = '#/plans';
+  plansLink.textContent = 'Plans';
+  plansLink.style.textDecoration = 'none';
+  plansLink.style.display = 'inline-flex';
+  plansLink.style.alignItems = 'center';
   const newBtn = document.createElement('button');
   newBtn.type = 'button';
   newBtn.className = 'cad-btn';
   newBtn.textContent = 'New product';
-  head.append(h1, newBtn);
+  const headActions = document.createElement('div');
+  headActions.style.display = 'flex';
+  headActions.style.gap = 'var(--gap)';
+  headActions.append(plansLink, newBtn);
+  head.append(h1, headActions);
 
   const formSlot = document.createElement('div');
   const listSlot = document.createElement('div');

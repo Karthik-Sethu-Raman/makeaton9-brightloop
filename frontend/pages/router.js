@@ -33,7 +33,13 @@ const ROUTES = [
 const AUX = {
   login:  { label: 'Sign in', load: () => import('./login.js') },
   portal: { label: 'Customer portal', load: () => import('./portal.js') },
+  // Plans (T15) lives UNDER the "Products & plans" section — one labelled destination,
+  // not an 8th sidebar row. Reached via the Products page link; the sidebar keeps the
+  // "products" item highlighted while here (see ACTIVE_FOR below).
+  plans:  { label: 'Plans', load: () => import('./plans.js') },
 };
+// Aux route -> the sidebar section whose grey pill stays active while it's open.
+const ACTIVE_FOR = { plans: 'products' };
 const DEFAULT_PATH = 'overview';
 const byPath = new Map(ROUTES.map((r) => [r.path, r]));
 // Resolve any known path (nav section OR aux) to its route record.
@@ -157,7 +163,7 @@ let navToken = 0; // guards against two async loads racing (fast nav clicks)
 
 async function navigate(navEl, viewEl) {
   const path = currentPath();
-  setActive(navEl, path);
+  setActive(navEl, ACTIVE_FOR[path] || path);
 
   // Auth mode (login screen): hide the sidebar so the card sits alone. Any other
   // route restores the shell. Keep the user line in step with the session.
