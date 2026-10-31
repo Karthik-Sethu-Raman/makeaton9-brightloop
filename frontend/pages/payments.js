@@ -15,7 +15,8 @@
 //   POST /api/payments  {invoice_id, method, amount, paid_on, note?}
 //     -> 201 {"ok": true, "payment": {...}, "outstanding": <number after>}
 //     -> 400 {"detail": <amount shape/ceiling MSG from validators.js — paymentAmount
-//                        sentences, paisa-exact ceiling>}   // client validates first
+//                        sentences, paisa-exact ceiling> | 'Enter an amount above ₹0.'
+//                        (schema CHECK amount > 0; client mirrors in amountRule)}  // client validates first
 //     -> 404 {"detail": "No invoice needs a payment with that id."}
 //     -> 409 {"detail": "That invoice is already fully paid."}
 // Until T27 lands this page shows its error state with Retry for the LIST, and a
@@ -149,7 +150,19 @@ export function render(mount) {
   // call with the live picker value. A wrapper function does exactly that (rule
   // functions run as-is through validate()); no bound (no/!confirmed invoice)
   // degrades to shape-only, as the factory intends.
-  const amountRule = (value) => paymentAmount(selectedOutstanding() ?? Infinity)(value);
+  // ₹0 guard: the shared amount rule is shape-only (>= 0) and the ceiling lets 0
+  // through, but the schema CHECKs amount > 0 — without this the client gate
+  // PASSED ₹0 and only the server's 400 said no (parity break, T36-pass-2 class).
+  // Sentence mirrors payments.py MSG_AMOUNT_POSITIVE byte-for-byte; fires only
+  // after shape is already valid, same order as the server's checks.
+  const POSITIVE_MSG = 'Enter an amount above ₹0.';
+  const amountRule = (value) => {
+    const r = paymentAmount(selectedOutstanding() ?? Infinity)(value);
+    if (r.ok && parseFloat(String(value ?? '').trim()) === 0) {
+      return { ok: false, message: POSITIVE_MSG };
+    }
+    return r;
+  };
   attachBlurError(invSel, required('an invoice'));
   attachBlurError(methodSel, required('a payment method'));
   attachBlurError(dateI, required('a payment date'));
