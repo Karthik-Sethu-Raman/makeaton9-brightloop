@@ -264,8 +264,8 @@ Invoicing
   `tests/test_billing_run.py`.
 - [ ] **T21** (P2, owner: Karthik, ~10m) Invoice API: list/detail, confirm/cancel/send/
   print actions, state Draftâ†’Confirmedâ†’Paid guards.
-- [ ] **T22** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Invoices page: table (paid/outstanding/overdue
-  filter) + detail with lines/taxes/totals + actions.
+- [ ] **T22** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) CLAIMED @13:05 by Avanthik —
+  Invoices page: table (paid/outstanding/overdue filter) + detail with lines/taxes/totals + actions.
 - [ ] **T23** (P2, owner: Karthik, ~10m) Tax rules API (admin-only): rate % scoped by
   product/type; applied automatically at billing.
 Discounts
@@ -444,7 +444,8 @@ Reporting
 `12:21 Avanthik claimed T52`
 
 `12:41 Avanthik claimed T53`
-`12:51 Karthik claimed T14 (integrator cycle â€” executor for Karthik-owned tasks)`
+
+`13:05 Avanthik claimed T22 (absorbed module per integrator 12:50 ABSORB enactment)``12:51 Karthik claimed T14 (integrator cycle â€” executor for Karthik-owned tasks)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
