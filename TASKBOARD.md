@@ -362,8 +362,20 @@ Reporting
 - [ ] **T34** (P2, owner: Manu, ~10m) DROPPED @14:25 (14:16 TRIAGE — T35 ships the one
   report the demo walks, /api/reports/finance, inside its own scope) — Reports API: active subscriptions count, revenue
   collected, still owed, overdue invoice list; date filters.
-- [ ] **T35** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) CLAIMED @14:22 by Karthik (integrator cycle — critical #1 per the 14:16 TRIAGE directive) — Finance overview upgrade: KPIs + revenue-over-time
+- [x] **T35** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) DONE @14:45 by Karthik (integrator cycle) — Finance overview upgrade: KPIs + revenue-over-time
   chart (accent hue only, DESIGN chart rules) + overdue table + "View all".
+  DONE detail: `backend/api/reports.py` GET /api/reports/finance — contiguous IST
+  day series zero-filled (a no-payment day prints 0, never a gap; honest zero
+  baseline), window clamped 7-120, top-5 overdue rows via T21's `_enrich` (ONE
+  overdue law across screens) + overdue_count for View all (N). overview.js
+  blocks 2+3: accent 2px line (no markers, no fill, straight segments), 3-5
+  gridlines + zero baseline, 4-7 round y ticks with top tick ABOVE max, 5
+  upright x labels, tabular tick figures, plain hover tooltips, muted View-all
+  link (Refresh stays the screen's one accent control); all 4 states per block,
+  keep-old-on-error w/ last-good time + Retry, 20s refresh + resize redraw.
+  tests/test_reports.py 5 tests (incl. DB-backed dynamic proof + seed-pinned
+  window filter 10000.00). TEST_CMD 175/175. Live smoke: series_total moved
+  17110.09→18822.96 while the simulator paid INV-0002 — the chart is live.
 - [x] **T46** (P1, owner: Saurabh, ~10m) DONE @10:48 by Saurabh â€” Login+signup screen (auth UI seam T31/T33 assume):
   Built `frontend/pages/login.js` (#/login route, Sign in â‡„ Create account via
   ?mode=signup; email+password+confirm, validators.js blur+submit gate, focus-first-error,

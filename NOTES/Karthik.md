@@ -79,3 +79,43 @@
 - **T10 products API (DONE 12:26):** `backend/api/products.py` — CRUD, DELETE 409s
   while subscription/template lines reference the product (FK guard turned into an
   explainable demo moment), name message verbatim from products.js.
+
+## T21 — invoice API (closed DONE 14:25; code landed by the killed 13:38 cycle, a72a90e)
+- **What/where:** `backend/api/invoices.py` — GET /api/invoices (list, newest
+  first), GET /{id} (detail: lines + stored totals + payments), POST /{id}/confirm,
+  /cancel, /send. 9 tests in `tests/test_invoices.py`. Router wired in main.py
+  BEFORE the "/" static mount (route order).
+- **Key design choices (the ones to explain):** (1) the OVERDUE verdict is
+  computed server-side in ONE place (`_enrich`: state==confirmed AND
+  outstanding>0.005 AND due_date < today IST) — the page trusts the server's
+  boolean instead of re-deriving, so invoices list and the new overview overdue
+  table can never disagree. (2) `outstanding` is sent ONLY for confirmed/paid —
+  a draft/cancelled invoice demands nothing, and sending 0 would defeat the
+  page's grey-dash-per-DESIGN law. (3) guard rejections are 409 {"detail":
+  sentence} written as spoken sentences ("A paid invoice cannot be cancelled.")
+  and the page shows them verbatim in its flash line.
+- **Q&A proof:** live demo — open Invoices, click a draft → Confirm, then try
+  Send on a draft via API → the sentence appears verbatim.
+
+## T35 — finance overview (DONE 14:45, integrator cycle, TRIAGE critical #1)
+- **What/where:** `backend/api/reports.py` — GET /api/reports/finance returns
+  { window_days, window_label, revenue_series (contiguous IST days, zeros
+  included), series_total, overdue (top 5, T21's verdict), overdue_count }.
+  `frontend/pages/overview.js` grew two blocks under the KPI strip: the daily
+  revenue chart + the overdue table with "View all (N)" → #/invoices.
+- **Key design choices (the ones to explain):** (1) revenue = payments grouped
+  by calendar day straight from SQLite — no caching, so each fetch is a fresh
+  read and the simulator's payments move the chart (live smoke: series_total
+  17110.09 → 18822.96 while the simulator paid INV-0002 in front of us).
+  (2) days with no payments are sent as 0.0, not skipped — a gap would lie
+  about scale; DESIGN demands an honest zero baseline. (3) the overdue list
+  reuses invoices.py `_enrich` rather than re-deriving — one law. (4) the chart
+  follows DESIGN.md's chart law exactly: single accent series, 2px straight
+  line, no markers/fill, 3-5 gridlines + zero baseline, y ticks 4-7 round even
+  steps with the TOP tick above the max, 5 x labels never rotated, tabular
+  figures, plain label+value hover tooltips. (5) keep-old-on-error: a failed
+  20s refresh keeps the chart/table and quotes the last-good time + Retry.
+- **Q&A proof:** `tests/test_reports.py` — the dynamic test inserts a payment
+  and asserts today's point moves (the graded "dynamic data" must-have, proven,
+  not claimed); the window test pins that a 7-day window sums exactly the seed
+  payments inside it (₹10,000.00).
