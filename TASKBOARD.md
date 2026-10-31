@@ -53,10 +53,13 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 
 - [ ] **T00** (P0, owner: each member, ~5m) dry-run micro-task per member: add one tiny
   utility function + its test in YOUR module. Used ONLY by the 11:15 dry-runs.
-- [ ] **T-V1** (P1, owner: Manu, ~15m) CLAIMED @09:53 by Manu — **`scripts/make-demo-video.mjs`** — the video
-  recorder (spec: VIDEO-SCRIPT.md). If it doesn't exist when the window opens, the FIRST
-  worker cycles finish it before any other task: no recorder → no video → wasted day.
-  Target: committed by 14:00.
+- [x] **T-V1** (P1, owner: Manu, ~15m) DONE @10:07 by Manu — **`scripts/make-demo-video.mjs`** video
+  recorder (spec: VIDEO-SCRIPT.md): 7 captioned scenes (captions injected INTO the page,
+  styled only with DESIGN tokens), explicit waits on data counters (no sleeps on live data),
+  auto-boots/kills uvicorn, best-effort scene skips + `--only` filter for rehearsal;
+  playwright+chromium installed in scripts/ (dev-only, node_modules ignored);
+  chromium launch + recordVideo→webm flush probed OK on Manu's laptop.
+  Full app rehearsal = T09 once T01/T03 land.
 
 ### P1 — walking skeleton + graded must-haves
 - [ ] **T01** (P1, owner: Karthik, ~15m) Vertical slice: `backend/api/main.py` app factory,
