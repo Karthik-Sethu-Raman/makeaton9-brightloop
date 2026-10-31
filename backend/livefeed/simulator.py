@@ -25,11 +25,11 @@ from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from ..models import connect
+from ..models.plans import add_period
 
 IST = ZoneInfo("Asia/Kolkata")
 logger = logging.getLogger("cadence.livefeed")
 
-FREQ_DAYS = {"daily": 1, "weekly": 7, "monthly": 30, "yearly": 365}
 PAY_METHODS = ("upi", "card", "bank_transfer", "cash", "cheque")
 NEXT_STATE = {"draft": "quotation", "quotation": "confirmed", "confirmed": "active"}
 DEFAULT_TICK_SECONDS = 3.0
@@ -143,7 +143,7 @@ def bill_due_subscription(conn: sqlite3.Connection) -> dict | None:
     if not lines:  # nothing to bill: just move the date so it never blocks the queue
         conn.execute(
             "UPDATE subscriptions SET next_billing_date=? WHERE id=?",
-            (_shift(_today(), FREQ_DAYS[sub["billing_frequency"]]), sub["id"]),
+            (add_period(_today(), sub["billing_frequency"]), sub["id"]),
         )
         conn.commit()
         return None
@@ -176,7 +176,7 @@ def bill_due_subscription(conn: sqlite3.Connection) -> dict | None:
     )
     conn.execute(
         "UPDATE subscriptions SET next_billing_date=? WHERE id=?",
-        (_shift(today, FREQ_DAYS[sub["billing_frequency"]]), sub["id"]),
+        (add_period(today, sub["billing_frequency"]), sub["id"]),
     )
     conn.commit()
     return {"kind": "invoice", "number": number, "subscription": sub["number"],
