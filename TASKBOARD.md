@@ -253,7 +253,7 @@ Products & plans
   (/api/plans) lands, error+Retry until then (products/overview precedent). node --check
   OK; served 200, /api/plans 404 (pre-T14) verified; TEST_CMD 24/24.
 Subscriptions
-- [ ] **T16** (P2, owner: Manu, ~10m) Subscription model: SUB-0001 numbering sequence,
+- [ ] **T16** (P2, owner: Manu, ~10m) CLAIMED @13:33 by Manu — Subscription model: SUB-0001 numbering sequence,
   states Draftâ†’Quotationâ†’Confirmedâ†’Activeâ†’Closed, lines (product, qty, unit price, tax,
   amount) with totals compute.
 - [ ] **T17** (P2, owner: Karthik, ~15m) Subscription API: create, list w/ filters
@@ -484,6 +484,7 @@ Reporting
 `13:05 Avanthik claimed T22 (absorbed module per integrator 12:50 ABSORB enactment)``12:51 Karthik claimed T14 (integrator cycle â€” executor for Karthik-owned tasks)`
 `13:10 Manu claimed T13`
 `13:20 Avanthik claimed T24`
+`13:33 Manu claimed T16`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
