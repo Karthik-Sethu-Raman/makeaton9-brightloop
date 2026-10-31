@@ -388,7 +388,7 @@ Reporting
   T28 (payments page) need. Pick the MSG once, pin BOTH sides + contract test (T07/T50
   pattern); coordinate w/ T50's required rule so the table stays one-message-per-rule.
   GROOM(integrator 12:03): board supply + unblocks payments validation parity.
-- [ ] **T53** (P2, owner: Avanthik, ~10m) CLAIMED @12:41 by Avanthik — End-to-end auth-flow audit against the LIVE T08
+- [x] **T53** (P2, owner: Avanthik, ~10m) DONE @12:50 by Avanthik — End-to-end auth-flow audit against the LIVE T08
   API (reset.html + login.js + validators): every mirrored message renders identically
   client/server on real 400/401/409s, weak reset try does NOT burn the token, focus-first-
   error works on all three forms, session survives reload. Fix findings in YOUR modules

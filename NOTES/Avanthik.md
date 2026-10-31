@@ -167,3 +167,9 @@
 - Why: a checkbox-driven CSS sheet is invisible to keyboards — no Esc, no focus semantics, tab runs away behind the overlay. The label carries role=button + aria-expanded (checkboxes can't express expanded to AT reliably); the script syncs state both ways.
 - Must be able to explain: why aria-expanded lives on the LABEL not the hidden checkbox; the Tab-trap set (menubtn + nav items + the focusable checkbox itself) and its wrap logic; why only Esc-close returns focus to the toggle (after a nav tap, focus belongs on the destination).
 
+
+## 12:50 — T53 live auth-flow audit
+- Built (cycle wrote the 33-check script, I ran+closed): frontend/validation/authflow.audit.mjs — boots real uvicorn on a temp DB, exercises signup/login/me/forgot/reset end-to-end incl. DOM-level checks (focus log, aria wiring, error-node lifecycle) in a real browser context.
+- Why a script instead of a one-off pass: the audit is RERUNNABLE — any future auth change re-proves the graded must-have in one command, and the 33 checks document exactly what 'client AND server validation, same messages' means operationally.
+- Must be able to explain: the J1/J2/L1 triple — weak password gets the exact mirrored sentence, the failed try does NOT burn the token (single-use only after SUCCESS), and a used token 404s with the expired sentence; and why DOM checks (focus log) belong in an audit, not just HTTP status asserts.
+
