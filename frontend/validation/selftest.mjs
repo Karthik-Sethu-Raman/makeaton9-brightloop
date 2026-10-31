@@ -3,7 +3,7 @@
 // backend/api/validators.py (T08) must mirror. Run: node frontend/validation/selftest.mjs
 // (pytest picks it up via tests/test_validators_contract.py). Silent success = exit 0;
 // every failed check prints and the process exits 1.
-import { validate, rules, MSG } from './validators.js';
+import { validate, rules, MSG, required } from './validators.js';
 
 let failed = 0;
 function check(name, cond) {
@@ -71,5 +71,19 @@ function throws(fn) { try { fn(); return false; } catch { return true; } }
 check('unknown rule throws', throws(() => validate('nope', 'x')));
 check('dateOrder without array throws', throws(() => validate('dateOrder', '2026-01-01')));
 
+// required(label) — shared required-ness rule (T50). Label carries its article;
+// 'a product name' -> 'Enter a product name.' (the copy products.js:181 already
+// ships, pinned verbatim so the factory swap changes nothing on screen).
+// Mirror trap: whitespace-only input is EMPTY — trim here, .strip() in Python.
+const nameRequired = required('a product name');
+check('required accepts text', validate(nameRequired, 'Odoo brand').ok === true);
+check('required accepts trimmed text', validate(nameRequired, ' Odoo ').ok === true);
+check('required rejects empty', validate(nameRequired, '').ok === false);
+check('required empty message', validate(nameRequired, '').message === 'Enter a product name.');
+check('required rejects whitespace-only', validate(nameRequired, '   ').ok === false);
+check('required whitespace message', validate(nameRequired, '   ').message === 'Enter a product name.');
+check('required without label throws', throws(() => required('')));
+check('required with non-string label throws', throws(() => required(42)));
+
 if (failed) { console.error(`${failed} check(s) failed`); process.exit(1); }
-console.log(`validators selftest: all checks passed (${Object.keys(rules).length} rules, MSG table pinned)`);
+console.log(`validators selftest: all checks passed (${Object.keys(rules).length} rules + required() factory, MSG table pinned)`);

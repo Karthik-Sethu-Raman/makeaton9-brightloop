@@ -15,9 +15,10 @@
 // Rules are pure functions: (value[, extra]) -> {ok, message}. A rule always returns
 // the same message for the same input, so parity is testable.
 // Pages wire up in three lines:
-//   import { attachBlurError } from '/frontend/validation/validators.js';
+//   import { attachBlurError, required } from '/frontend/validation/validators.js';
 //   attachBlurError(emailInput, 'email');
 //   attachBlurError(passwordInput, 'password');
+//   attachBlurError(nameInput, required('a product name')); // built rule (T50)
 
 // --- canonical messages (mirror these EXACTLY in backend/api/validators.py) -------
 const MSG = {
@@ -92,10 +93,31 @@ rules.dateOrder = function dateOrder(fromValue, toValue) {
 
 const PAIR_RULES = new Set(['dateOrder']);
 
+// --- required text (T50) -------------------------------------------------------------
+// The one rule every form hand-rolled with its own copy (products.js checkName today).
+// required(label) BUILDS a rule; the label carries its article ('a product name') so
+// the sentence reads 'Enter a product name.' — the copy products.js already ships.
+// Whitespace-only input counts as empty on both sides (trim before the length check).
+// The built rule is a plain unary rule: pass it anywhere a rule NAME goes
+// (validate, attachBlurError, validateForm fields).
+export function required(label) {
+  if (typeof label !== 'string' || !label.trim()) {
+    // a missing label is a programming error — it must never silently emit
+    // 'Enter .' to users (same philosophy as the pair-rule guard below)
+    throw new Error("validators: required(label) needs a label, e.g. 'a product name'");
+  }
+  return function requiredRule(value) {
+    const ok = String(value ?? '').trim().length > 0;
+    return { ok, message: ok ? '' : `Enter ${label}.` };
+  };
+}
+
 // --- dispatcher ---------------------------------------------------------------------
-// validate('price', '12.50')              -> {ok, message}
-// validate('dateOrder', [fromVal, toVal]) -> pair rules REQUIRE the array
+// validate('price', '12.50')                 -> {ok, message}
+// validate(required('a product name'), 'x')  -> rule FUNCTIONS run as-is (unary)
+// validate('dateOrder', [fromVal, toVal])    -> pair rules REQUIRE the array
 export function validate(ruleName, value) {
+  if (typeof ruleName === 'function') return ruleName(value);
   const rule = rules[ruleName];
   if (!rule) throw new Error(`validators: unknown rule "${ruleName}"`);
   if (PAIR_RULES.has(ruleName) && !Array.isArray(value)) {
@@ -182,4 +204,4 @@ export function validateForm(fields) {
 };
 
 export { rules, MSG };
-export default { rules, MSG, validate, setError, clearErrorFor, attachBlurError, validateForm };
+export default { rules, MSG, required, validate, setError, clearErrorFor, attachBlurError, validateForm };
