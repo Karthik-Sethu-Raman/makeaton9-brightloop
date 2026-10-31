@@ -29,3 +29,32 @@
 - SEAM I depend on: `static/index.html` (Avanthik's file) must load this with
   `<script type="module" src="/frontend/pages/router.js"></script>`. The router self-boots
   on DOMContentLoaded; until that line is added nothing drives the SPA. Flagged on the board.
+
+## 10:24 — T12 Products page + shared table component
+- Built: `frontend/pages/products.js` (the "Products & plans" screen) and a new reusable
+  `frontend/components/table.js` that every future list screen (Subscriptions/Invoices/
+  Payments/Customers) will reuse so they all look identical.
+- What it does: GET `/api/products` → a table (Name / Type / Sales price / Cost price /
+  Notes). A "New product" button in the title row opens an inline create form (Name, Type
+  select, Sales/Cost price, Notes) that POSTs to `/api/products`, then re-reads the list.
+- Dynamic data (graded must-have): the table is DB-backed through Karthik's T10 API — NOT
+  static JSON. Karthik's products CRUD isn't merged yet, so right now the page shows its
+  error state with a Retry button and "lights up" automatically the moment T10 lands
+  (same contract-first pattern as my Overview page). Contract: list is an array of
+  `{id,name,type,sales_price,cost_price,notes}` (also accepts `{products:[...]}`).
+- Validation (graded: client AND server): name required + price rule (₹0+, ≤2 decimals)
+  run on blur and on submit via Avanthik's `validators.js` (same `setError`/`validate` the
+  rest of the app uses). Server mirrors the SAME rules/messages in T10 — I surface the
+  server's `detail`/`message` sentence under the form if the POST is rejected.
+- table.js bakes DESIGN's table rules in ONE place: 12px grey sentence-case headers, no
+  zebra, 1px row rules, numbers right-aligned + `.num` tabular, identity (Name) column
+  ~40% width + single-line truncate, and below 640px each row folds to a two-line stack
+  (no horizontal scroll) — the graded 390px responsive rule.
+- Must be able to explain:
+  * All four states ship (DESIGN law): loading = flat grey skeleton bars at real row size
+    (no shimmer/shift), empty = framed sentence, error = sentence + Retry, zero = printed.
+    On a failed REFRESH I keep the last-good rows instead of flashing an error.
+  * `cleanup()` sets an `alive=false` flag so a slow fetch/POST resolving AFTER the user
+    navigates away can't paint into a dead screen (router calls cleanup on nav).
+  * Why a shared table component: 5 of my list screens need the identical table; one source
+    = consistent UI (graded) and no divergence when I build T18/T22/T28/T30.

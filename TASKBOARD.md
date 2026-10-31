@@ -114,8 +114,13 @@ Products & plans
   price, notes; server validation (price ≥ 0, name required).
 - [ ] **T11** (P2, owner: Manu, ~10m) Product variants: model + attribute price delta
   (seed: brand "Odoo" +₹560); included in plan line pricing.
-- [ ] **T12** (P2, owner: Saurabh, ~10m) CLAIMED @10:17 by Saurabh — Products page: table (right-aligned ₹, truncate)
+- [x] **T12** (P2, owner: Saurabh, ~10m) DONE @10:24 by Saurabh — Products page: table (right-aligned ₹, truncate)
   + create form with client validation + empty/loading/error states.
+  Built frontend/pages/products.js + shared frontend/components/table.js (DESIGN table
+  rules + 640px two-line fold). Reads GET /api/products (DB, dynamic), POST to create;
+  name/price client-validated via validators.js (server mirrors T10). All 4 states ship;
+  renders live once T10 (/api/products) lands, error+Retry until then. node --check OK,
+  TEST_CMD 8/8.
 - [ ] **T13** (P2, owner: Manu, ~10m) Plans model: billing frequency daily/weekly/monthly/
   yearly, min quantity, available from/to, close policy (auto-close on end / early close /
   pause / renew) per plan.
