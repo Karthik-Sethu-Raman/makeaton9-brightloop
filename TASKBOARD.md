@@ -182,8 +182,19 @@ Subscriptions
   amount) with totals compute.
 - [ ] **T17** (P2, owner: Karthik, ~15m) Subscription API: create, list w/ filters
   (state, customer, plan), state-transition endpoint guarding legal moves only.
-- [ ] **T18** (P2, owner: Saurabh, ~10m) CLAIMED @11:38 by Saurabh — Subscriptions page: table + status pills + detail
+- [x] **T18** (P2, owner: Saurabh, ~10m) DONE @11:46 by Saurabh — Subscriptions page: table + status pills + detail
   view (lines, taxes, totals); state badge visible per DESIGN.
+  Built `frontend/pages/subscriptions.js` (router already lazy-imports it): shared table
+  (number/customer/plan/status pill/next billing/total ₹ right) from GET /api/subscriptions
+  (DB-dynamic, Karthik T17), client-side state filter (all + 5 schema states), click/Enter a
+  row → detail view (meta grid + lines table [desc/qty/unit ₹/tax %/amount ₹] + subtotal/tax/
+  grand totals, server figures preferred else computed from lines). All 4 states; last-good
+  list kept on failed refresh; detail paints the list-stub instantly then enriches. NEW shared
+  `frontend/components/pill.js` statusPill(label,tone) — DESIGN pale-tint+dark-same-hue, 4 tones
+  (positive/warning/negative/neutral), one mark/row; invoices/payments reuse it. table.js got an
+  optional `onRowClick` (keyboard+hover, backward-compat — products/plans unaffected). Renders
+  live once T17 lands, error+Retry until then (served 200, /api/subscriptions 404 pre-T17
+  verified). node --check OK; TEST_CMD 35/35.
 - [ ] **T19** (P2, owner: Manu, ~10m) Quotation templates: template with plan/product
   lines valid N days; "new subscription from template" copy action.
 Invoicing

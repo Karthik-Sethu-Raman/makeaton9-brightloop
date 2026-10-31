@@ -145,3 +145,37 @@ Key choices I must be able to explain:
   `typeof n !== 'number' || !Number.isFinite(n)` → returns `lo` (NaN/Infinity/strings all
   collapse to the floor), so it never leaks a bad value into a chart scale or width later.
   Result: node selftest 8/8, full TEST_CMD 29/29.
+
+## T18 — Subscriptions page (11:46)
+- Built `frontend/pages/subscriptions.js`, the "Where does every subscription stand today?"
+  screen. The router (my T06) already lazy-imports `./subscriptions.js`, so dropping the
+  module in lit up the sidebar row automatically — no router edit needed.
+- WHAT IT DOES: live table reading GET /api/subscriptions (Karthik's T17, DB-backed — dynamic
+  data, never static JSON). Columns: number (identity), customer, plan, **status pill**, next
+  billing date, total (₹ right-aligned tabular). A state filter dropdown above the table filters
+  the ALREADY-FETCHED live rows client-side (instant, no extra round trip). Click or press
+  Enter on a row → **detail view**: a 2-col meta grid (customer/plan/start/next billing/expiry/
+  payment terms), a lines table (description/qty/unit price/tax %/amount), and a totals block
+  (Subtotal / Tax / Total).
+- NEW SHARED COMPONENT `frontend/components/pill.js` — `statusPill(label, tone)`. DESIGN rule:
+  status pills are pale tint + dark text of the SAME hue (never saturated fill + white), ONE
+  mark per row. Four tones map to the DESIGN token pairs: positive=green (active), warning=amber
+  (confirmed = pending activation), negative=red (unused here, for cancelled invoices), neutral=
+  grey chip (draft/quotation/closed = quiet). Invoices (T22) and Payments (T28) will reuse it.
+- table.js got an optional 3rd arg `{ onRowClick }` — makes rows keyboard-operable buttons
+  (Enter/Space, focus ring, hover). Backward-compatible: products/plans pass nothing and are
+  unaffected.
+- KEY DESIGN CHOICE to explain: the detail view paints the list-row stub INSTANTLY (we already
+  have number/customer/plan/state/total), THEN fetches GET /api/subscriptions/{id} to enrich
+  with lines + totals. So there's no blank-wait flash on drill-down, and if the detail fetch
+  fails we keep the stub visible with a quiet inline Retry rather than wiping the screen. Totals
+  prefer server-sent subtotal/tax_total/total but fall back to computing from the lines, so the
+  numbers are honest even before T17 sends aggregates.
+- Must be able to explain in Q&A: (1) dynamic data — table + detail both read live DB endpoints,
+  the filter operates on live rows; (2) status pill = meaning not decoration (hue encodes
+  lifecycle), DESIGN's pale-tint/one-per-row rule; (3) all 4 states ship (loading skeleton,
+  empty sentence, error+Retry with last-good kept, zero/dash handled); (4) responsive — table
+  folds to two-line rows <640px, meta grid + totals go single-column at 390px.
+- STATUS: renders live once T17 (/api/subscriptions) lands; error+Retry until then (same
+  products/overview/plans precedent). Verified: module served 200, /api/subscriptions 404
+  pre-T17, TEST_CMD 35/35.
