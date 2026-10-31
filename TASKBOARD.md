@@ -319,7 +319,7 @@ Reporting
   README hunks + this board's claim line); re-landed verbatim @11:44 (eec7771), token-guard
   2/2 green. Pattern: busy() label-swap during flight → .cad-flash--ok role=status /
   --err role=alert beside the form.
-- [ ] **T48** (P3, owner: Avanthik, ~10m) Shell head polish in static/index.html + reset.html:
+- [ ] **T48** (P3, owner: Avanthik, ~10m) CLAIMED @11:47 by Avanthik — Shell head polish in static/index.html + reset.html:
   favicon from the existing SVG mark (any literal color must carry a comment naming the token
   it mirrors — hex otherwise lives only in tokens.css) + meta description.
 - [ ] **T49** (P2, owner: Saurabh, ~10m) Page-side fixes from T36's audit (6 findings listed on
