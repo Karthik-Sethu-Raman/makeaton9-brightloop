@@ -345,7 +345,7 @@ Payments & customers
   validation) + paid/outstanding/overdue views.
 - [ ] **T29** (P2, owner: Manu, ~10m) Customers model+API: list/detail with their
   subscriptions and invoices.
-- [ ] **T30** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Customers page (internal team view).
+- [x] **T30** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @15:01 by Avanthik — Customers page (internal team view).
 - [ ] **T31** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) Customer portal page: after signup/login shows
   ONLY own subscriptions + invoices (statement's portal scene).
 - [ ] **T32** (P2, owner: Karthik, ~10m) DROPPED @14:25 (14:16 TRIAGE) — RBAC dependency: admin/staff/customer routes;
