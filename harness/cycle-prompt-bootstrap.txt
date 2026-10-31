@@ -9,11 +9,11 @@ prioritize strictly.
    do NOT guess a statement.
 2. Read DECISIONS.md (stack is already decided — D8), DESIGN.md (template with
    defaults), REPO-CLAUDE.md, TASKBOARD.md.
-3. VERIFY, best-effort only (never fix, never submit — humans own the portal and
-   GitHub settings): if the `gh` CLI exists AND is authenticated, check branch
-   protection on main and collaborators vivp-odoo + hackathon-odoo; append
-   `FLAG <what>` rows for anything missing. If gh is absent, skip silently and move
-   on — never block on verification.
+3. VERIFY (never fix, never submit — humans own the portal and GitHub settings):
+   with `gh` (authenticated on this machine) check branch protection on main
+   (force pushes blocked?) and that collaborators vivp-odoo + hackathon-odoo are
+   present. If either is missing, append `FLAG <what>` to PROGRESS.md (phone-visible;
+   the leader fixes it whenever they next look) and CONTINUE — never block on it.
 4. ARCHITECTURE (your call, commit to it): split the app into 4 modules with clean
    directory boundaries, one per member (ownership map goes in TASKBOARD header).
    Follow DECISIONS D8's stack. Write a 10-line architecture summary as a comment in

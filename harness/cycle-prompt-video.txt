@@ -4,11 +4,6 @@ file of the real working app. You do NOT create voiceover. You have ~30 minutes.
 
 1. `git pull --rebase --autostash`. Read TASKBOARD.md header (RUN_CMD), PROGRESS.md
    (find the last `MAIN GREEN @ <sha>` row), and VIDEO-SCRIPT.md (the scene list).
-1a. **ARCHIVE FIRST:** if `..\makeaton9-video\demo.webm` already exists (the 12:01
-   rehearsal take), copy it to `assets/demo-rehearsal.webm` in the repo and commit+push
-   immediately (it is ~1.7MB, under the 2MB ban; it is the emergency submission
-   artifact and must survive this machine dying). If assets/ is gitignored for media,
-   force-add just this one file with `git add -f`.
 2. Boot the app (RUN_CMD, background). If it fails to boot at HEAD: check out the
    MAIN GREEN SHA into a SIBLING folder (`git worktree add ..\makeaton9-green <sha>`),
    install deps + seed per README, run the app from there. Log which you used.
@@ -21,18 +16,6 @@ file of the real working app. You do NOT create voiceover. You have ~30 minutes.
    (create the folder; never commit video files to the repo).
 4. Verify the output: file exists, >500KB, duration roughly 60-180s. If it failed:
    debug once (port already in use? chromium installed? deps?) and retry once.
-4b. **Make it universally shareable:** if `ffmpeg -version` works, transcode to
-   `demo.mp4` (H.264, no audio track to encode): `ffmpeg -y -i ..\makeaton9-video\demo.webm
-   -c:v libx264 -preset veryfast -crf 23 -an ..\makeaton9-video\demo.mp4`. If ffmpeg is
-   missing, try `winget install -e --id Gyan.FFmpeg --accept-source-agreements
-   --accept-package-agreements` once (needs network; ~1 min) and retry the transcode.
-   If both fail, webm stands (YouTube accepts it natively - note "webm" in PROGRESS).
-   In all cases also keep the .webm; report BOTH paths in the VIDEO READY row.
-4c. **Caption verification (mandatory):** confirm via the DOM during recording — or
-   from a mid-scene screenshot after — that each scene's caption overlay element
-   existed with non-empty text (scene title present). Append `captions verified: Y/N
-   per scene` to the VIDEO READY row. If any scene's caption was empty, re-run that
-   scene with `--only <scene>` once.
 5. FALLBACK (recorder or app unusable after one retry): run the /brag skill with
    `--tone polished` in this repo (hyperframes is pre-warmed on this machine) and copy
    its rendered brag.mp4 to `..\makeaton9-video\demo.mp4`. A polished render of real
