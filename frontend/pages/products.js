@@ -11,7 +11,7 @@
 //
 // Page-module API (router contract): export render(mount) -> cleanup().
 
-import { inr } from '../components/fmt.js';
+import { inr, istTime } from '../components/fmt.js';
 import { renderTable, renderTableSkeleton } from '../components/table.js';
 import { validate, setError, clearErrorFor } from '../validation/validators.js';
 
@@ -272,6 +272,7 @@ export function render(mount) {
   }
 
   let lastRows = null;
+  let lastGoodAt = null;      // when lastRows landed — quoted if a refresh fails (T49 law)
   async function load() {
     // Loading: show skeleton only when we have nothing yet (no flash on refresh).
     if (!lastRows) showState('loading', renderTableSkeleton(COLUMNS, 4));
@@ -282,6 +283,7 @@ export function render(mount) {
       if (!alive) return;
       const rows = Array.isArray(data) ? data : (data && Array.isArray(data.products) ? data.products : []);
       lastRows = rows;
+      lastGoodAt = new Date();
       if (rows.length === 0) {
         showState('empty', stateBlock('No products yet — add your first with “New product”.', false, false));
       } else {
@@ -289,7 +291,21 @@ export function render(mount) {
       }
     } catch (_) {
       if (!alive) return;
-      if (lastRows && lastRows.length) return; // keep last-good list on a failed refresh
+      if (lastRows && lastRows.length) {
+        // keep the last-good list, but NEVER silently (DESIGN / T49 law): repaint
+        // the good rows and append a stale note quoting when they landed + Retry.
+        showState('data', renderTable(COLUMNS, lastRows));
+        const stale = document.createElement('div');
+        stale.className = 'cad-stateblock cad-stateblock--err';
+        stale.style.marginTop = 'var(--gap)';
+        stale.textContent = `Couldn’t refresh — showing products as of ${istTime(lastGoodAt)}. `;
+        const r = document.createElement('button');
+        r.type = 'button'; r.className = 'cad-linkbtn'; r.textContent = 'Retry';
+        r.addEventListener('click', load);
+        stale.appendChild(r);
+        listSlot.appendChild(stale);
+        return;
+      }
       showState('error', stateBlock('Couldn’t load products.', true, true));
     }
   }
