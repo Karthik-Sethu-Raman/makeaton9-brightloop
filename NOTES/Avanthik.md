@@ -137,3 +137,9 @@
 - Must be able to explain: how to DETECT this class of loss — `git log -- <file>` shows your feat commit, but `git diff <feat-sha> HEAD -- <file>` shows your hunks missing; log alone says "landed", only the diff tells the truth. This is the 3rd squash incident today (11:25, 11:34) — always re-diff shared files + own modules against your last known-good SHA after any `wip(...): re-land` commit.
 
 
+
+## 11:50 — T48 shell head polish
+- Built: /favicon.svg link + meta description in both static pages; favicon art by the 11:40 cycle.
+- Why: a favicon can't load tokens.css, so it is the ONE sanctioned hex location outside it — the file carries a comment naming the token each literal mirrors (--accent), per the task line. Meta description is DESIGN's tagline verbatim (index) so search/preview text matches the product story.
+- Must be able to explain: why the favicon's hex is legal (isolated asset, cannot consume CSS vars, documented mirror) while the same hex in layout.css would fail the guard test (T47 lesson).
+
