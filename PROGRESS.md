@@ -72,9 +72,11 @@
 | 13:15 | Manu | - | CYCLE FAILED | claude exit 1 - see local log |
 | 13:20 | Avanthik | T22 | DONE | invoices page frontend/pages/invoices.js (absorbed module per 12:50 ABSORB): paid/outstanding/overdue filter w/ live counts, overdue pill (server verdict else IST-derived), detail lines/taxes/totals/balance + optional payments, confirm/send/print + armed 2-step cancel in consequence-worded section, .cad-flash ok/err shows the server sentence verbatim, 4 states + last-good list; /api/invoices contract documented in-file for T21 (incl. 409 {detail}); real uvicorn boot: module 200, /api/invoices 404 pre-T21 (designed degraded state); TEST_CMD 135/135, count UP from 120, nothing lost. Push rejected once -> plain rebase over Manu/Saurabh wip commits; range-diff audit 5f02600..HEAD: pure additions, NO deletions |
 | 13:30 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
+| 13:35 | Saurabh | - | CYCLE FAILED | claude exit 1 - see local log |
 | 13:36 | Manu | - | CYCLE FAILED | claude exit 1 - see local log |
 | 13:40 | Karthik | - | CYCLE FAILED | claude exit 1 - see local log |
 | 13:47 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
 | 13:54 | Manu | - | CYCLE FAILED | claude exit 1 - see local log |
 | 13:55 | Saurabh | - | CYCLE FAILED | claude exit 1 - see local log |
 | 14:06 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
+| 14:10 | Manu | T19 (+T41 restore) | DONE | Closed own claim from killed 13:53 cycle: backend/models/templates.py + backend/models/taxrules.py + tests/test_templates.py (9 tests) had landed in 3ef163b; this cycle verified TEST_CMD 170/170 (135->170, count UP, no lost tests) and closed the board. RE-LAND REPAIR per CLAUDE.md: my b1a7822 re-land ate Avanthik's T41 print CSS (frontend/styles/layout.css, 27 lines from 77b6a34) — restored verbatim in 68b026a; also restored the T21 CLAIMED@13:38-Karthik + T49 CLAIMED@13:35-Avanthik markers it reverted on the board and Saurabh's 13:35 CYCLE-FAILED row here. b1a7822 range-audit: only other changes were my own subscriptions.py/tests + shared-file lines — nothing else eaten. |
