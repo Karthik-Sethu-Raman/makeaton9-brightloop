@@ -190,7 +190,7 @@ Reporting
   collected, still owed, overdue invoice list; date filters.
 - [ ] **T35** (P2, owner: Saurabh, ~10m) Finance overview upgrade: KPIs + revenue-over-time
   chart (accent hue only, DESIGN chart rules) + overdue table + "View all".
-- [ ] **T46** (P1, owner: Saurabh, ~10m) Login+signup screen (auth UI seam T31/T33 assume):
+- [ ] **T46** (P1, owner: Saurabh, ~10m) CLAIMED @10:36 by Saurabh — Login+signup screen (auth UI seam T31/T33 assume):
   #/login route + form (email, password, confirm on signup) wired to validators.js
   (attachBlurError/validateForm — T07 API), POST /api/auth/signup + /login (T08), token →
   localStorage, role redirect (admin/staff → #/overview, customer → #/portal), sidebar
