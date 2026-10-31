@@ -193,7 +193,8 @@ Products & plans
 - [ ] **T13** (P2, owner: Manu, ~10m) Plans model: billing frequency daily/weekly/monthly/
   yearly, min quantity, available from/to, close policy (auto-close on end / early close /
   pause / renew) per plan.
-- [ ] **T14** (P2, owner: Karthik, ~10m) Plans CRUD API + validation (from â‰¤ to, price â‰¥ 0,
+- [ ] **T14** (P2, owner: Karthik, ~10m) CLAIMED @12:51 by Karthik (integrator cycle) —
+  Plans CRUD API + validation (from â‰¤ to, price â‰¥ 0,
   frequency enum); tests.
 - [x] **T15** (P2, owner: Saurabh, ~10m) DONE @11:08 by Saurabh â€” Plans page: list + create form incl. close-policy
   control and frequency; states.
@@ -234,12 +235,12 @@ Invoicing
   `tests/test_billing_run.py`.
 - [ ] **T21** (P2, owner: Karthik, ~10m) Invoice API: list/detail, confirm/cancel/send/
   print actions, state Draftâ†’Confirmedâ†’Paid guards.
-- [ ] **T22** (P2, owner: Saurabh, ~10m) Invoices page: table (paid/outstanding/overdue
+- [ ] **T22** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Invoices page: table (paid/outstanding/overdue
   filter) + detail with lines/taxes/totals + actions.
 - [ ] **T23** (P2, owner: Karthik, ~10m) Tax rules API (admin-only): rate % scoped by
   product/type; applied automatically at billing.
 Discounts
-- [ ] **T24** (P2, owner: Saurabh, ~10m) Discounts page (admin-only): rules table + create
+- [ ] **T24** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Discounts page (admin-only): rules table + create
   form (fixed/%, min purchase/qty, dates, usage limit, scope).
 - [ ] **T25** (P2, owner: Karthik, ~15m) Discount rules API: fixed or percentage, minimum
   purchase/quantity, start/end, usage limit, product or whole-subscription scope;
@@ -249,12 +250,12 @@ Discounts
 Payments & customers
 - [ ] **T27** (P2, owner: Karthik, ~10m) Payments API: record (method, amount, date, note)
   against invoice; outstanding balance + overdue flag computed.
-- [ ] **T28** (P2, owner: Saurabh, ~10m) Payments page: record form (client+server
+- [ ] **T28** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Payments page: record form (client+server
   validation) + paid/outstanding/overdue views.
 - [ ] **T29** (P2, owner: Manu, ~10m) Customers model+API: list/detail with their
   subscriptions and invoices.
-- [ ] **T30** (P2, owner: Saurabh, ~10m) Customers page (internal team view).
-- [ ] **T31** (P2, owner: Saurabh, ~10m) Customer portal page: after signup/login shows
+- [ ] **T30** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Customers page (internal team view).
+- [ ] **T31** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) Customer portal page: after signup/login shows
   ONLY own subscriptions + invoices (statement's portal scene).
 - [ ] **T32** (P2, owner: Karthik, ~10m) RBAC dependency: admin/staff/customer routes;
   only admin can create staff; 401/403 tests.
@@ -269,7 +270,7 @@ Payments & customers
 Reporting
 - [ ] **T34** (P2, owner: Manu, ~10m) Reports API: active subscriptions count, revenue
   collected, still owed, overdue invoice list; date filters.
-- [ ] **T35** (P2, owner: Saurabh, ~10m) Finance overview upgrade: KPIs + revenue-over-time
+- [ ] **T35** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) Finance overview upgrade: KPIs + revenue-over-time
   chart (accent hue only, DESIGN chart rules) + overdue table + "View all".
 - [x] **T46** (P1, owner: Saurabh, ~10m) DONE @10:48 by Saurabh â€” Login+signup screen (auth UI seam T31/T33 assume):
   Built `frontend/pages/login.js` (#/login route, Sign in â‡„ Create account via
@@ -334,7 +335,7 @@ Reporting
   any invoice" action produces a clean page.
 - [ ] **T42** (P3, owner: Karthik, ~10m) API test hardening: billing idempotency, discount
   expiry, RBAC 401/403, validation parity client/server.
-- [ ] **T43** (P3, owner: Saurabh, ~10m) Overview polish: deltas with named windows
+- [ ] **T43** (P3, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Overview polish: deltas with named windows
   ("vs prior 30 days"), billing-day annotation on chart, answer figure 30-36px.
 - [x] **T44** (P2, owner: Avanthik, ~10m) DONE @10:51 by Avanthik â€” Auth + reset styling pass: shared .auth-shell /
   .auth-card classes in layout.css (login T46, static/reset.html and future forms share one
@@ -360,7 +361,7 @@ Reporting
 - [x] **T48** (P3, owner: Avanthik, ~10m) DONE @11:50 by Avanthik â€” Shell head polish in static/index.html + reset.html:
   favicon from the existing SVG mark (any literal color must carry a comment naming the token
   it mirrors â€” hex otherwise lives only in tokens.css) + meta description.
-- [ ] **T49** (P2, owner: Saurabh, ~10m) Page-side fixes from T36's audit (6 findings listed on
+- [ ] **T49** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Page-side fixes from T36's audit (6 findings listed on
   the T36 note): .cad-dash for DASH/null in table.js fillCell + kpi.js value, lastGoodAt
   sentence + Retry on failed refresh, poll.js fetch timeout via AbortController (~2Ã— interval).
   GROOM(integrator 11:35): makes the audit actionable as its own claimable unit.
@@ -414,6 +415,7 @@ Reporting
 `12:21 Avanthik claimed T52`
 
 `12:41 Avanthik claimed T53`
+`12:51 Karthik claimed T14 (integrator cycle â€” executor for Karthik-owned tasks)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
