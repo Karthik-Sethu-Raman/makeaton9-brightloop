@@ -1,0 +1,13 @@
+{
+  "name": "cadence-video-recorder",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dev tooling for scripts/make-demo-video.mjs (T-V1). NOT part of the app runtime; the app itself has no npm/build step.",
+  "scripts": {
+    "video": "node make-demo-video.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  }
+}
