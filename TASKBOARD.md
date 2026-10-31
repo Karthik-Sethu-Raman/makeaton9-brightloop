@@ -76,9 +76,12 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   until then. Contract read: `{updated_at, kpis:{active_subscriptions, revenue_collected,
   outstanding, overdue_invoices}}` (fields also accepted top-level). Page-module API:
   `export render(mount) -> cleanup()`.
-- [ ] **T05** (P1, owner: Avanthik, ~15m) CLAIMED @09:34 by Avanthik — `frontend/styles/tokens.css` (DESIGN.md :root
-  verbatim) + layout.css (sidebar shell 224px, grid, cards) + `static/index.html` shell
-  with mark+wordmark; no hex outside tokens.css.
+- [x] **T05** (P1, owner: Avanthik, ~15m) DONE @09:37 by Avanthik — `frontend/styles/tokens.css`
+  (DESIGN.md :root copied verbatim, byte-for-byte incl. comments) + layout.css (224px sidebar
+  shell on page ground, grey active pill via --active, .cad-cardrow/.cad-card shared-bottom-edge
+  cards, 390px fold to 48px top bar; var(--...) only, zero color literals) + `static/index.html`
+  shell with SVG copper-ring mark + Cadence wordmark + scope, empty #nav slot for T06 router,
+  #view mount. Grid sums commented per DESIGN. TEST_CMD green (4 passed).
 - [ ] **T06** (P1, owner: Saurabh, ~10m) Hash router + sidebar nav for all 7 sections,
   active item = grey pill per DESIGN; works from Overview in one click.
 - [ ] **T07** (P1, owner: Avanthik, ~15m) `frontend/validation/validators.js`: email format,
