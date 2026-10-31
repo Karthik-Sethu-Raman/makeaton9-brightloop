@@ -65,10 +65,16 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 - [ ] **T01** (P1, owner: Karthik, ~15m) Vertical slice: `backend/api/main.py` app factory,
   `GET /api/health`, static/ + frontend/ mounted, index.html served, CORS off (same-origin);
   `tests/test_health.py` green; RUN_CMD boots end-to-end.
-- [ ] **T02** (P1, owner: Manu, ~15m) CLAIMED @10:13 by Manu — `backend/models`: db.py (sqlite3 conn, WAL, dict rows),
+- [x] **T02** (P1, owner: Manu, ~15m) DONE @10:37 by Manu — `backend/models`: db.py (sqlite3 conn, WAL, dict rows),
   schema.py — customers, users, products, product_variants, plans, subscriptions,
   subscription_lines, invoices, invoice_lines, payments, discounts, tax_rules,
   quotation_templates; SEED fixture (marked SEED, incl. brand variant +₹560 example).
+  db.py (CADENCE_DB override) + schema.py (14 tables, CHECK enums, 8 indexes,
+  idempotent) + passwords.py (PBKDF2 stdlib) + seed.py (dated-rel-to-boot demo set:
+  paid/overdue/outstanding/draft invoices, all sub states, RBAC users, expired
+  discount) + __init__ exports ensure_db/seed_if_empty for T01/T03. Cycle-2 fix:
+  discounts INSERT had 11 placeholders for 12 cols (never ran), INV-0003 GST
+  corrected to 2525.58. tests/test_models.py + test_seed.py; TEST_CMD 12/12.
 - [ ] **T03** (P1, owner: Manu, ~15m) `backend/livefeed`: simulator thread (started in app
   lifespan) mutating DB every ~3s (payment lands, sub state advances) +
   `backend/livefeed/router.py` → `GET /api/live/summary` reading DB (never static JSON).
