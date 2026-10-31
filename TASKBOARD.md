@@ -231,7 +231,7 @@ Reporting
   (validation client AND server on the main input flow) needs this screen to exist.
 
 ### P3 — polish & hardening
-- [ ] **T36** (P3, owner: Avanthik, ~10m) States audit: empty/loading/error blocks on all
+- [ ] **T36** (P3, owner: Avanthik, ~10m) CLAIMED @11:08 by Avanthik (partial pass 1: pages existing at 11:08) — States audit: empty/loading/error blocks on all
   main pages per DESIGN (frame kept, one sentence, no shimmer).
 - [ ] **T37** (P3, owner: Avanthik, ~10m) Responsive 390px pass: sidebar folds to top bar
   + sheet or bottom nav, tables → two-line rows, no horizontal scroll.
