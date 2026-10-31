@@ -70,6 +70,11 @@
 
       toggle.addEventListener('change', function () { setExpanded(toggle.checked); });
 
+      // T37 auto-close, kept through the T51 rewrite: a nav tap navigates, the
+      // sheet must not stay open. (Focus is NOT stolen here — it belongs to the
+      // destination; only Esc-close returns focus to the toggle.)
+      window.addEventListener('hashchange', function () { setExpanded(false); });
+
       // label[tabindex] gets keyboard activation like a button
       label.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {

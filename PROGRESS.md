@@ -58,3 +58,4 @@
 | 12:25 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
 | 12:31 | Avanthik | T52 | DONE | amount rule + paymentAmount(outstanding) factory w/ integer-paisa ceiling compare (float trap 8.1*100 documented), MSG x3 pinned in contract test (code: 12:20 cycle, closed interactive); py mirror on T52 note for Karthik; selftest+suite 73/73 |
 | 12:32 | Avanthik | T51 | DONE | nav-sheet a11y: label role=button+tabindex+aria-controls/aria-expanded (synced), Enter/Space activation, Esc closes + focus to toggle, Tab trapped within open sheet (menubtn+nav items); TEST_CMD 73/73 |
+| 12:34 | Avanthik | T51 | CORRECTION | prior row claimed 73/73 — was 1 failed at push: my T51 rewrite dropped the T37 hashchange auto-close (guard test caught the regression). Restored inside the new IIFE with aria-expanded sync; now 73/73... actual: 73 passed, 1 warning in 8.26s |
