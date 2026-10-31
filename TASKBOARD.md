@@ -143,7 +143,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   TEST_CMD 48/48. T46 login.js + T33 reset.html are now live against real endpoints.
   [restored 11:32 by Avanthik — this DONE block was lost when the 11:25 worker re-land
   squashed TASKBOARD; verbatim from 49eece8]
-- [ ] **T09** (P1, owner: Manu, ~10m) Dress-rehearse make-demo-video.mjs against the live
+- [ ] **T09** (P1, owner: Manu, ~10m) CLAIMED @11:32 by Manu — Dress-rehearse make-demo-video.mjs against the live
   app (scenes 1-7), fix waits/pacing; log rehearsal result in PROGRESS.
 
 ### P2 — the feature meat (statement scenes)
