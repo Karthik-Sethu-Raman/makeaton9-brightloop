@@ -161,3 +161,9 @@
 - Why paisa: 8.1 * 100 = 810.000...01 in binary float — a raw 'payment <= outstanding' would randomly reject exact payments. Multiplying by 100 and rounding to integers makes the compare exact; the trap is commented at the compare site.
 - Must be able to explain: the float trap with the 8.1 example; why the ceiling is a FACTORY (each invoice has its own outstanding — the bound is per-call context, not a global rule); MSG amtMax fires only when shape is already valid so the user sees one error at a time.
 
+
+## 12:32 — T51 phone nav-sheet a11y
+- Built: aria wiring + keyboard handling in static/index.html inline script (no build step, vanilla JS).
+- Why: a checkbox-driven CSS sheet is invisible to keyboards — no Esc, no focus semantics, tab runs away behind the overlay. The label carries role=button + aria-expanded (checkboxes can't express expanded to AT reliably); the script syncs state both ways.
+- Must be able to explain: why aria-expanded lives on the LABEL not the hidden checkbox; the Tab-trap set (menubtn + nav items + the focusable checkbox itself) and its wrap logic; why only Esc-close returns focus to the toggle (after a nav tap, focus belongs on the destination).
+

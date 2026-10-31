@@ -34,7 +34,8 @@
            layout.css); the label is the Menu hit area, shown only <=720px.
            Input sits BEFORE the nav so the sibling selector can reach it. -->
       <input type="checkbox" id="cad-navtoggle" class="cad-navtoggle" aria-label="Open navigation menu">
-      <label for="cad-navtoggle" class="cad-menubtn">Menu</label>
+      <label for="cad-navtoggle" class="cad-menubtn" role="button" tabindex="0"
+             aria-controls="nav" aria-expanded="false">Menu</label>
 
       <!-- T06 (Saurabh): hash router fills this nav and applies .is-active. -->
       <nav class="cad-nav" id="nav" aria-label="Primary"></nav>
@@ -51,12 +52,52 @@
   </div>
 
   <!-- T37: close the phone menu sheet the moment a nav tap navigates (pure-CSS
-       toggle otherwise stays open after same-page taps). -->
+       toggle otherwise stays open after same-page taps).
+       T51 a11y: aria-expanded sync, Esc-to-close with focus returned to the
+       toggle, and a Tab trap while the sheet is open (a pure-checkbox sheet is
+       invisible to Esc/keyboard otherwise). Focus stays on the chosen nav item
+       after navigation — only Esc-close returns focus to the toggle. -->
   <script>
-    window.addEventListener('hashchange', function () {
-      var t = document.getElementById('cad-navtoggle');
-      if (t) t.checked = false;
-    });
+    (function () {
+      var toggle = document.getElementById('cad-navtoggle');
+      var label = document.querySelector('.cad-menubtn');
+      if (!toggle || !label) return;
+
+      function setExpanded(open) {
+        toggle.checked = open;
+        label.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      toggle.addEventListener('change', function () { setExpanded(toggle.checked); });
+
+      // label[tabindex] gets keyboard activation like a button
+      label.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          toggle.checked = !toggle.checked;
+          setExpanded(toggle.checked);
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (!toggle.checked) return;
+        var aside = document.querySelector('.cad-sidebar');
+        if (e.key === 'Escape') {
+          setExpanded(false);
+          toggle.focus(); // focus returns to the toggle on Esc-close
+        } else if (e.key === 'Tab' && aside) {
+          // trap: cycle Tab within the open sheet (menubtn + nav items)
+          var f = [].filter.call(
+            aside.querySelectorAll('.cad-menubtn, .cad-navitem, .cad-navtoggle'),
+            function (el) { return el.offsetParent !== null || el === toggle; }
+          );
+          if (!f.length) return;
+          var first = f[0], last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      });
+    })();
   </script>
 
   <!-- Boot the SPA: router fills #nav and mounts page modules into #view.
