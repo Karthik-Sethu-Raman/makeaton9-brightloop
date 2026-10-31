@@ -78,7 +78,8 @@ def test_second_run_bills_nothing_and_sql_cannot_double_bill(tmp_path):
     with pytest.raises(sqlite3.IntegrityError):     # the DB-level guard itself
         conn.execute(
             "INSERT INTO invoices (number,subscription_id,customer_id,issue_date,"
-            " due_date) VALUES ('INV-9999', 1, 1, ?, ?)", (TODAY, TODAY)
+            " due_date,created_at) VALUES ('INV-9999', 1, 1, ?, ?,"
+            " datetime('now','localtime'))", (TODAY, TODAY)
         )
     conn.close()
 
@@ -163,7 +164,8 @@ def test_concurrent_double_bill_is_absorbed_not_crashed(tmp_path):
     conn = _seeded(tmp_path)
     conn.execute(  # the 'winner' — same subscription, same issue day
         "INSERT INTO invoices (number,subscription_id,customer_id,issue_date,"
-        " due_date) VALUES ('INV-0099', 1, 1, ?, ?)", (TODAY, TODAY)
+        " due_date,created_at) VALUES ('INV-0099', 1, 1, ?, ?,"
+        " datetime('now','localtime'))", (TODAY, TODAY)
     )
     conn.commit()
     events = billing.bill_subscription(conn, 1)

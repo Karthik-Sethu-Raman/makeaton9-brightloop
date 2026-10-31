@@ -136,7 +136,10 @@ def seed_if_empty(conn: sqlite3.Connection) -> bool:
              4495.0, 0.0, 809.1, 5304.1, now),
             ("INV-0003", 3, 3, _d(-10), _d(20), "confirmed",
              15590.0, 1559.0, 2525.58, 16556.58, now),   # 10% multi-seat discount applied
-            ("INV-0004", 2, 2, _d(0), _d(15), "draft",
+            # Draft issued 4 days ago (not today): T20's UNIQUE(sub, issue_day)
+            # index must let the billing run invoice SUB-0002's due day even
+            # while a draft for that sub exists — a same-day draft would block it.
+            ("INV-0004", 2, 2, _d(-4), _d(11), "draft",
              4495.0, 0.0, 809.1, 5304.1, now),
         ],
     )
