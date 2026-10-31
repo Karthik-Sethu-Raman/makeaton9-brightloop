@@ -38,6 +38,15 @@ def test_validator_messages_pinned():
         assert f"{key}: '{sentence}'" in src, f"client message {key} drifted — update BOTH sides"
 
 
+def test_required_rule_template_pinned():
+    """T50: required(label) builds 'Enter <label>.' — the template is pinned here so
+    the server mirror (backend/api/validators.py, Karthik) cannot drift from it, and
+    the shipped example sentence 'a product name' -> 'Enter a product name.' (the copy
+    products.js hand-rolled) is pinned in the behavioral selftest."""
+    assert "Enter ${label}." in VJS.read_text(encoding="utf-8"), "required() template drifted — update BOTH sides"
+    assert "Enter a product name." in SELFTEST.read_text(encoding="utf-8"), "example sentence missing from selftest"
+
+
 def test_pure_rules_behavior():
     node = shutil.which("node")
     if node is None:
