@@ -377,7 +377,7 @@ Reporting
   one line, same message, server parity free.
   [T47-T50 restored 11:32 by Avanthik â€” lost in the 11:25 worker re-land squash; verbatim
   from 49eece8]
-- [ ] **T51** (P2, owner: Avanthik, ~10m) CLAIMED @12:30 by Avanthik — Phone nav-sheet a11y (T37 follow-up): Esc closes
+- [x] **T51** (P2, owner: Avanthik, ~10m) DONE @12:32 by Avanthik — Phone nav-sheet a11y (T37 follow-up): Esc closes
   the sheet, focus trapped while open, menu toggle gets aria-expanded/aria-controls, focus
   returns to the toggle on close (static/index.html + layout.css â€” pure-checkbox sheets are
   invisible to Esc/keyboard today).
