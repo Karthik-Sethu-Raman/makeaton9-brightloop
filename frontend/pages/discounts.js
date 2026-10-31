@@ -40,7 +40,7 @@
 //
 // Page-module API (router contract): export render(mount) -> cleanup().
 
-import { inr, pct, count, DASH } from '../components/fmt.js';
+import { inr, pct, count, istTime, DASH } from '../components/fmt.js';
 import { renderTable, renderTableSkeleton } from '../components/table.js';
 import { statusPill } from '../components/pill.js';
 import { authHeaders } from '../components/auth.js';
@@ -203,6 +203,7 @@ export function render(mount) {
   mount.innerHTML = '';
   let alive = true;
   let lastRows = null;        // last good list (survives a failed refresh)
+  let lastGoodAt = null;      // T49(d) law: when lastRows landed — quoted if a refresh fails
   let filterValue = 'all';
 
   const page = document.createElement('section');
@@ -290,10 +291,24 @@ export function render(mount) {
         ? body
         : (body && Array.isArray(body.discounts) ? body.discounts : []);
       lastRows = rows;
+      lastGoodAt = new Date(); // the stamp a failed refresh must quote
       paintList();
     } catch (e) {
       if (!alive) return;
-      if (lastRows && lastRows.length) return; // keep last-good list on a failed refresh
+      if (lastRows && lastRows.length) {
+        // keep the last-good list but SAY so — one sentence with the last-good
+        // time + Retry, inside the block (DESIGN error law). Never silent.
+        paintList();
+        const stale = document.createElement('div');
+        stale.className = 'cad-stateblock cad-stateblock--err';
+        stale.textContent = `Couldn’t refresh — showing rules as of ${istTime(lastGoodAt)}. `;
+        const r = document.createElement('button');
+        r.type = 'button'; r.className = 'cad-linkbtn'; r.textContent = 'Retry';
+        r.addEventListener('click', () => load());
+        stale.appendChild(r);
+        listSlot.appendChild(stale);
+        return;
+      }
       showState(stateBlock(e && e.message ? e.message : 'Couldn’t load discount rules.', true, true));
     }
   }
@@ -368,7 +383,9 @@ export function render(mount) {
     const cancel = document.createElement('button');
     cancel.type = 'button'; cancel.className = 'cad-btn cad-btn--ghost'; cancel.textContent = 'Cancel';
     const msg = document.createElement('span');
-    msg.className = 'cad-formmsg'; msg.setAttribute('role', 'status');
+    // this span only ever carries ERRORS (a successful save closes the form) —
+    // role=alert announces assertively, per the T47 flash convention.
+    msg.className = 'cad-formmsg'; msg.setAttribute('role', 'alert');
     foot.append(save, cancel, msg);
 
     form.append(
