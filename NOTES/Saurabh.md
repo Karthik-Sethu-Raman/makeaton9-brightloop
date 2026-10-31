@@ -179,3 +179,21 @@ Key choices I must be able to explain:
 - STATUS: renders live once T17 (/api/subscriptions) lands; error+Retry until then (same
   products/overview/plans precedent). Verified: module served 200, /api/subscriptions 404
   pre-T17, TEST_CMD 35/35.
+
+## 14:15 — module README accuracy (polish cycle, no task)
+- Context for Q&A: by this point all my own tasks (T04/T06/T12/T15/T18/T46/T00) were DONE,
+  and the pages I DIDN'T get to (invoices/discounts/payments/customers/portal) had been
+  reassigned to Avanthik/Karthik in the 12:50 ABSORB while my cycles were failing. Those
+  belong to them now — I did not take them back (only the integrator reassigns).
+- What I did: with no task of mine left, I did the sanctioned "nothing-left" chore — a
+  doc-only fix to `frontend/components/README.md`. It had drifted: it listed `form.js` and
+  `chart.js` (never built — validation lives in Avanthik's validators.js; charts are a
+  styles/overview task) and omitted the components that actually ship. Now it accurately
+  documents table.js, kpi.js, pill.js, fmt.js, poll.js, auth.js, dryrun.js with their
+  exports and the one-source rules (₹/IST via fmt.js, DESIGN table/pill rules, poll = the
+  dynamic-data must-have).
+- Why I touched nothing else: the open page-side audit findings (grey-dash wiring, poll
+  AbortController timeout, overview IST offset) all live in MY code files but are the scope
+  of T49, which Avanthik had CLAIMED. Editing those same files in parallel is exactly how
+  the re-land squashes ate work earlier today, so I stayed clear. Explain: good coordination
+  hygiene beat grabbing extra credit.
