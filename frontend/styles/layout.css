@@ -143,12 +143,19 @@ body {
   color: var(--negative); /* 4.5:1 on surface per DESIGN */
 }
 
-/* ---------- auth/reset standalone page (T33) — no sidebar: zero nav destinations,
-   so per DESIGN's shell rule it's a centred single card. 390px phone arithmetic:
-   390 − 2×24 (--pad) = 342 content; card is width:100% max-width:380 so it shrinks
-   to 342 with no horizontal scroll (phone media query below drops padding to
-   --gap 16px and raises the button to the 44px touch target). ---------- */
+/* ---------- auth screens: the ONE shared shell + card (T44) -----------------------
+   Canonical contract: <main class="auth-shell"> > .auth-brand + <section class="auth-card">.
+   Login (T46), static/reset.html and future forms reuse exactly these — no per-page
+   card CSS. The card is SELF-CONTAINED (surface/border/radius/padding) so a page needs
+   one class, not .cad-card + a modifier. No sidebar: auth has zero nav destinations
+   (DESIGN shell rule). T33's .cad-auth* names stay as aliases one release so in-flight
+   markup keeps working; login.js's scoped .cad-login* block carries the same token
+   values, so adopting these names later is a zero-visual-change swap.
+   390px phone arithmetic: 390 − 2×16 (--gap, phone media block) = 358 content; the
+   card is width:100% max-width:380 so it shrinks to 358 — single column, never a
+   horizontal scroll. */
 
+.auth-shell,
 .cad-auth {
   min-height: 100vh;
   display: flex;
@@ -159,31 +166,41 @@ body {
   padding: var(--pad);
 }
 
+.auth-brand,
 .cad-auth-brand {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+.auth-card,
 .cad-auth-card {
   width: 100%;
   max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
 }
 
+.auth-h1,
 .cad-auth-h1 {
   margin: 0 0 4px;
-  font-size: var(--fs-title);
+  font-size: var(--fs-title); /* the screen's single 24px h1 */
   font-weight: 600;
   color: var(--text);
 }
 
+.auth-lede,
 .cad-auth-lede {
   margin: 0 0 var(--gap);
   color: var(--muted);
 }
 
+.auth-form .cad-btn-primary,
 .cad-auth-form .cad-btn-primary {
   width: 100%;
+  margin-top: 4px;
 }
 
 /* ONE primary control per screen (DESIGN): near-black, white label */
@@ -209,16 +226,46 @@ body {
   outline-offset: 2px;
 }
 
+.auth-result,
 .cad-auth-result {
   margin-top: var(--gap);
   font-size: var(--fs-body);
 }
 
+.auth-result--ok,
 .cad-auth-result--ok { color: var(--muted); }
+
+.auth-result--err,
 .cad-auth-result--err { color: var(--negative); }
+
+.auth-linkline,
 .cad-auth-linkline { margin-top: 8px; }
 
+.auth-link,
 .cad-auth-link { color: var(--accent); }
+
+/* error summary (DESIGN forms: "error summary on top for long forms" — short forms
+   skip it and keep inline blur errors only). Rendered by validators.js
+   renderErrorSummary() into a .cad-error-summary div at the TOP of the form: a title
+   + plain list. Type only, no red fill — DESIGN bans full-screen red banners, and a
+   filled box would out-shout the inline errors it duplicates. Same --negative ink
+   and 4.5:1 as .cad-fielderror so summary + inline read as one system. */
+.cad-error-summary {
+  margin: 0 0 var(--gap);
+  color: var(--negative);
+  font-size: var(--fs-small);
+}
+
+.cad-error-summary-title {
+  margin: 0 0 4px;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: var(--negative);
+}
+
+.cad-error-summary ul { margin: 0; padding-left: 20px; }
+
+.cad-error-summary li + li { margin-top: 2px; }
 
 /* link-style text button (matches overview.js's injected definition so the two
    can never diverge in weight/size) */
@@ -269,7 +316,17 @@ body {
     overflow-x: auto; /* nav scrolls, the page never does */
   }
 
-  /* phone margins 16-20px (DESIGN) and 44px touch targets on the auth page */
+  /* phone margins 16-20px (DESIGN) and 44px touch targets on auth screens: inputs
+     AND buttons, not just the submit. .cad-login-form is login.js's class (T46,
+     Saurabh) — styled from here so the main input flow hits the target size without
+     waiting for that file's next touch; flagged in the T44 DONE note. */
+  .auth-shell,
   .cad-auth { padding: var(--gap); }
-  .cad-auth-form .cad-btn-primary { height: 44px; }
+
+  .auth-form .cad-input,
+  .auth-form .cad-btn-primary,
+  .cad-auth-form .cad-input,
+  .cad-auth-form .cad-btn-primary,
+  .cad-login-form .cad-input,
+  .cad-login-form .cad-btn-primary { height: 44px; }
 }
