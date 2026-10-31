@@ -86,6 +86,18 @@ function fmtDay(iso) {
   return Number.isNaN(d.getTime()) ? DASH : dayFmt.format(d);
 }
 
+// The simulator emits updated_at as a zoneless IST wall-clock 'YYYY-MM-DD HH:MM:SS'
+// (backend/livefeed/simulator.py:_now). Bare new Date() reads that as the BROWSER's
+// local time, so a non-IST machine shows the wrong "Updated HH:MM". Pin zoneless
+// stamps to +05:30 (same law as fmtDay); already-zoned strings pass through unchanged.
+function parseIstStamp(ts) {
+  if (!ts) return new Date();
+  const s = String(ts).trim();
+  const zoneless = /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}$/.test(s);
+  const d = new Date(zoneless ? `${s.replace(' ', 'T')}+05:30` : s);
+  return Number.isNaN(d.getTime()) ? new Date() : d;
+}
+
 // Round even y-step (1 / 2 / 2.5 / 5 x 10^k) aiming ~4 intervals — ticks land
 // 4-7 by construction and the TOP tick sits strictly above the max (DESIGN).
 function niceStep(maxV) {
@@ -446,9 +458,7 @@ export function render(mount) {
   const poller = createPoller(SUMMARY_URL, POLL_MS, {
     onData(data) {
       lastData = data;
-      const ts = field(data, 'updated_at');
-      const parsed = ts ? new Date(ts) : new Date();
-      lastTime = Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+      lastTime = parseIstStamp(field(data, 'updated_at'));
       errored = false;
       paintStatus();
       paintKpis();
