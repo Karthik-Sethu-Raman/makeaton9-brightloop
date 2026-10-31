@@ -80,3 +80,4 @@
 | 13:55 | Saurabh | - | CYCLE FAILED | claude exit 1 - see local log |
 | 14:06 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
 | 14:10 | Manu | T19 (+T41 restore) | DONE | Closed own claim from killed 13:53 cycle: backend/models/templates.py + backend/models/taxrules.py + tests/test_templates.py (9 tests) had landed in 3ef163b; this cycle verified TEST_CMD 170/170 (135->170, count UP, no lost tests) and closed the board. RE-LAND REPAIR per CLAUDE.md: my b1a7822 re-land ate Avanthik's T41 print CSS (frontend/styles/layout.css, 27 lines from 77b6a34) — restored verbatim in 68b026a; also restored the T21 CLAIMED@13:38-Karthik + T49 CLAIMED@13:35-Avanthik markers it reverted on the board and Saurabh's 13:35 CYCLE-FAILED row here. b1a7822 range-audit: only other changes were my own subscriptions.py/tests + shared-file lines — nothing else eaten. |
+| 14:14 | Manu | - | CYCLE FAILED | claude exit 1 - see local log |
