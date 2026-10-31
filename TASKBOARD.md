@@ -82,12 +82,21 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   discount) + __init__ exports ensure_db/seed_if_empty for T01/T03. Cycle-2 fix:
   discounts INSERT had 11 placeholders for 12 cols (never ran), INV-0003 GST
   corrected to 2525.58. tests/test_models.py + test_seed.py; TEST_CMD 12/12.
-- [ ] **T03** (P1, owner: Manu, ~15m) CLAIMED @10:52 by Manu — `backend/livefeed`: simulator thread (started in app
+- [x] **T03** (P1, owner: Manu, ~15m) DONE @11:12 by Manu — `backend/livefeed`: simulator thread (started in app
   lifespan) mutating DB every ~3s (payment lands, sub state advances) +
   `backend/livefeed/router.py` → `GET /api/live/summary` reading DB (never static JSON).
   GROOM(integrator 10:40): T01's lifespan now imports `start()`/`stop()` from
   `backend/livefeed/simulator.py` — put the thread there (export those two names) and the
   boot wiring is already done; main.py skips silently until the module exists.
+  DONE detail: simulator.py tick = bill ONE due active sub (idempotent: next_billing_date
+  pushed a full period the moment the invoice exists) + land ONE payment slice (30% /
+  min ₹500, oldest-due outstanding first, flips invoice paid at ≤1 paisa) + every 2nd
+  tick advance a sub one legal state; when nothing due & nothing owed, a billing day is
+  pulled to today — feed never goes quiet. Thread waits FIRST full interval (short-lived
+  boots mutate nothing; CADENCE_TICK_SECONDS tunes it). summary() = T04's polled
+  contract (+ recent activity list). tests/test_livefeed.py 8 tests; TEST_CMD 27/27;
+  in-process boot smoke: KPIs moved in 3s (revenue 15518.86→18822.96, overdue 1→0).
+  Code landed by killed 10:56 cycle (e12b29f/d5c9a3f); this cycle verified + closed.
 - [x] **T04** (P1, owner: Saurabh, ~10m) DONE @09:28 by Saurabh — Overview page: KPI strip (one container, 1px rules)
   + live numbers from `/api/live/summary`, poll 3s, freshness stamp, `.num` tabular.
   Code complete in frontend/pages/overview.js + components (fmt/kpi/poll). Renders live
@@ -270,6 +279,7 @@ Reporting
 `10:42 Avanthik claimed T44`
 `10:52 Manu claimed T03`
 `11:05 Avanthik claimed T07 (resume own PARTIAL — verify wiring landed, close out)`
+`11:12 Manu resumed T03 (own CLAIMED task — killed 10:56 cycle landed code but never closed the board)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
