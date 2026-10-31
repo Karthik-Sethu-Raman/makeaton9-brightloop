@@ -275,8 +275,17 @@ Reporting
   (5) NIT: overview.js parses zoneless IST 'YYYY-MM-DD HH:MM:SS' as browser-local — append '+05:30' (Manu:
   ISO-8601 w/ offset from simulator._now would fix at source); (6) NIT: kpi skeleton bars ~half real size.
   main pages per DESIGN (frame kept, one sentence, no shimmer).
-- [ ] **T37** (P3, owner: Avanthik, ~10m) CLAIMED @11:20 by Avanthik — Responsive 390px pass: sidebar folds to top bar
+- [x] **T37** (P3, owner: Avanthik, ~10m) DONE @11:33 by Avanthik — Responsive 390px pass: sidebar folds to top bar
   + sheet or bottom nav, tables → two-line rows, no horizontal scroll.
+  Detail: phone fold = 48px top bar + checkbox-driven menu SHEET (7 nav destinations > 5, so
+  bottom nav is out per DESIGN) — code by the 11:20 scheduled cycle (index.html checkbox/label/
+  hashchange-closer + layout.css .cad-navtoggle/.cad-menubtn/:checked~ rules, bar arithmetic
+  documented in-file), verified + closed interactively. Tables two-line fold = shared table.js
+  (<640px, T12). Auth pages 16px margins + 44px targets (T44/T45). No horizontal scroll at 390px
+  (arithmetic comments in layout.css; T36 audit verified state styles at phone widths).
+  TEST_CMD 35/35.
+  [DONE block restored @11:44 — the 11:34 wip re-land reverted it to CLAIMED; code itself
+  was never lost (index.html/layout.css untouched by that squash)]
 - [ ] **T38** (P3, owner: Avanthik, ~10m) Chart polish per DESIGN: 3-5 gridlines, 4-7 y
   ticks, no markers/fill >14%, 4-8 x labels never rotated.
 - [ ] **T39** (P3, owner: Manu, ~10m) Perf: seed ~3,000 subscriptions, add indexes, verify
@@ -301,10 +310,15 @@ Reporting
   static/index.html, :focus-visible ring via tokens + prefers-reduced-motion block in
   layout.css, nav landmark aria-label.
   GROOM(integrator 10:40): board supply — Avanthik was under 5 OPEN.
-- [ ] **T47** (P2, owner: Avanthik, ~10m) Shared inline-feedback classes (.cad-flash ok/err +
+- [x] **T47** (P2, owner: Avanthik, ~10m) DONE @11:44 by Avanthik — Shared inline-feedback classes (.cad-flash ok/err +
   form submit-busy state) in layout.css + styles README — the convention pages still lack for
   POST success feedback ("Saved", "Invoice confirmed") next to forms; Saurabh's pages consume.
   GROOM(integrator 11:35): board supply — Avanthik was at 3 OPEN.
+  DONE detail: landed 11:33 (d42b015 + bb1cd22 hex-comment fix — cycle token-guard caught it,
+  comments count), then REVERTED by the 11:34 wip re-land (stale-tree squash ate layout.css +
+  README hunks + this board's claim line); re-landed verbatim @11:44 (eec7771), token-guard
+  2/2 green. Pattern: busy() label-swap during flight → .cad-flash--ok role=status /
+  --err role=alert beside the form.
 - [ ] **T48** (P3, owner: Avanthik, ~10m) Shell head polish in static/index.html + reset.html:
   favicon from the existing SVG mark (any literal color must carry a comment naming the token
   it mirrors — hex otherwise lives only in tokens.css) + meta description.
