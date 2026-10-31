@@ -182,7 +182,7 @@ Subscriptions
   amount) with totals compute.
 - [ ] **T17** (P2, owner: Karthik, ~15m) Subscription API: create, list w/ filters
   (state, customer, plan), state-transition endpoint guarding legal moves only.
-- [ ] **T18** (P2, owner: Saurabh, ~10m) Subscriptions page: table + status pills + detail
+- [ ] **T18** (P2, owner: Saurabh, ~10m) CLAIMED @11:38 by Saurabh — Subscriptions page: table + status pills + detail
   view (lines, taxes, totals); state badge visible per DESIGN.
 - [ ] **T19** (P2, owner: Manu, ~10m) Quotation templates: template with plan/product
   lines valid N days; "new subscription from template" copy action.
