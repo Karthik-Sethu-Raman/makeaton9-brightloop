@@ -354,7 +354,7 @@ body {
   font-size: var(--fs-body);
 }
 
-.cad-flash--ok { color: var(--positive); }   /* #247b50 on surface ≈ 5.3:1 ✓ */
+.cad-flash--ok { color: var(--positive); }   /* on surface ≈ 5.3:1 ✓ */
 .cad-flash--err { color: var(--negative); }
 
 /* ---------- misc ---------- */
