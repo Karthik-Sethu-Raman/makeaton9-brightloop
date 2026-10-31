@@ -148,8 +148,9 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 
 ### P2 — the feature meat (statement scenes)
 Products & plans
-- [ ] **T10** (P2, owner: Karthik, ~10m) Products CRUD API: name, type, sales price, cost
-  price, notes; server validation (price ≥ 0, name required).
+- [ ] **T10** (P2, owner: Karthik, ~10m) CLAIMED @12:03 by Karthik (integrator cycle) —
+  Products CRUD API: name, type, sales price, cost price, notes; server validation
+  (price ≥ 0, name required).
 - [ ] **T11** (P2, owner: Manu, ~10m) Product variants: model + attribute price delta
   (seed: brand "Odoo" +₹560); included in plan line pricing.
 - [x] **T12** (P2, owner: Saurabh, ~10m) DONE @10:24 by Saurabh — Products page: table (right-aligned ₹, truncate)
@@ -332,6 +333,17 @@ Reporting
   discounts/customers forms coming). Coordinate w/ T10's server messages.
   [T47-T50 restored 11:32 by Avanthik — lost in the 11:25 worker re-land squash; verbatim
   from 49eece8]
+- [ ] **T51** (P2, owner: Avanthik, ~10m) Phone nav-sheet a11y (T37 follow-up): Esc closes
+  the sheet, focus trapped while open, menu toggle gets aria-expanded/aria-controls, focus
+  returns to the toggle on close (static/index.html + layout.css — pure-checkbox sheets are
+  invisible to Esc/keyboard today).
+  GROOM(integrator 12:03): board supply — Avanthik was at 3 OPEN.
+- [ ] **T52** (P2, owner: Avanthik, ~10m) Shared amount rule in validators.js +
+  backend/api/validators.py (mirror, selftest.mjs-pinned): amount ≥ 0, up to 2 decimals,
+  optional upper-bound context (payment ≤ outstanding) — the rule T27 (payments API) and
+  T28 (payments page) need. Pick the MSG once, pin BOTH sides + contract test (T07/T50
+  pattern); coordinate w/ T50's required rule so the table stays one-message-per-rule.
+  GROOM(integrator 12:03): board supply + unblocks payments validation parity.
 
 ## Claim log (append only)
 <!-- e.g. `12:35 Manu claimed T03` -->
@@ -347,6 +359,7 @@ Reporting
 `11:15 Saurabh claimed T00 (per-member dry-run share)`
 `11:20 Avanthik claimed T37`
 `12:03 Avanthik claimed T50`
+`12:03 Karthik claimed T10 (integrator cycle — executor for Karthik-owned tasks)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
@@ -360,3 +373,10 @@ screen had no owner but T31/T33 + graded validation must-have assume it), GROOM 
 No code fixes needed — main was green on arrival. Next: claiming T01 (Karthik executor).``11:20 Karthik claimed T08 (integrator cycle — executor for Karthik-owned tasks)`
 
 `11:20-11:35 [integrator] cycle: pulled (T00/T36/T37); TEST_CMD 27/27 GREEN on arrival, 48/48 after T08. Fixed ci.cmd (own file): unique pytest --basetemp per run — Avanthik's 11:15 note (session-finish WinError 5 on %TEMP% pytest symlink = false RED). git branch -r: only origin/main. No stale claims; all members active <60m (no HEALTH rows). Board supply: +T47/T48/T50 (Avanthik, was 3 OPEN), +T49 (Saurabh — T36 audit findings as claimable unit). README auth section un-staled (T08 landed; reset link lands in server log). EXECUTOR: T08 DONE — auth API + validators.js mirror + 19 tests, see T08 note. [restored 11:32 by Avanthik — lost in the 11:25 worker re-land squash]`
+
+`12:00 [integrator] cycle: pulled; TEST_CMD 54/54 GREEN on arrival — count matches the 11:54
+recovery note (no tests lost to the re-land squashes); git branch -r: only origin/main;
+harness in sync. No stale claims (T09 @11:32 by Manu = 28m, fresh); no HEALTH rows (all
+members have PROGRESS rows <60m; Manu's last PRODUCTIVE row 11:12 — watching, absorb only
+at 60+ quiet per constitution). Board supply: +T51/T52 (Avanthik, was 3 OPEN). EXECUTOR:
+claimed T10 — products CRUD API (T12's page is DONE and error-states until it lands).`
