@@ -240,7 +240,18 @@ Reporting
   (validation client AND server on the main input flow) needs this screen to exist.
 
 ### P3 — polish & hardening
-- [ ] **T36** (P3, owner: Avanthik, ~10m) CLAIMED @11:08 by Avanthik (partial pass 1: pages existing at 11:08) — States audit: empty/loading/error blocks on all
+- [ ] **T36** (P3, owner: Avanthik, ~10m) PARTIAL @11:18 by Avanthik (pass 1 of 2: overview/products/login/plans;
+  pass 2 after remaining pages land) — States audit: empty/loading/error blocks on all. SHARED FIXES DONE
+  (Avanthik modules): .cad-stateblock(+--err) + .cad-dash (grey dash, --faint 4.76:1) in layout.css; 44px
+  Retry hit-area on phones (.cad-linkbtn padding+negative-margin); reset.html Retry now re-submits in place
+  (form.requestSubmit) instead of reloading. PAGE-SIDE FINDINGS FOR SAURABH (17-finding audit, top 6):
+  (1) SHOULD: dash not grey anywhere — fmt.js DASH renders in --text; wire <span class="cad-dash"> in
+  table.js fillCell + kpi.js value when DASH (class now exists in layout.css); (2) SHOULD: products.js failed
+  refresh w/ last-good rows is fully silent, no last-good time stored — capture lastGoodAt, show in-block
+  sentence + Retry per DESIGN; (3) SHOULD: table.js:54 null renders '' not dash; (4) poll.js fetch has no
+  timeout/abort — hung first request traps loading forever, Retry no-ops (AbortController ~2× interval);
+  (5) NIT: overview.js parses zoneless IST 'YYYY-MM-DD HH:MM:SS' as browser-local — append '+05:30' (Manu:
+  ISO-8601 w/ offset from simulator._now would fix at source); (6) NIT: kpi skeleton bars ~half real size.
   main pages per DESIGN (frame kept, one sentence, no shimmer).
 - [ ] **T37** (P3, owner: Avanthik, ~10m) Responsive 390px pass: sidebar folds to top bar
   + sheet or bottom nav, tables → two-line rows, no horizontal scroll.

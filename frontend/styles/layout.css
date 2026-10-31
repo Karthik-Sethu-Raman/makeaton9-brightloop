@@ -314,6 +314,25 @@ body {
   }
 }
 
+/* ---------- states (T36 audit: shared State-law classes) ----------
+   .cad-stateblock: the Empty/Error workhorse (DESIGN: frame kept, one sentence,
+   error variant in --negative, never a banner). Pages currently hand-roll copies —
+   identical token values, so this is purely additive; drop page copies at will. */
+.cad-stateblock {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
+  color: var(--muted);
+  font-size: var(--fs-body);
+}
+
+.cad-stateblock--err { color: var(--negative); }
+
+/* Missing values: grey dash (DESIGN States/Tables). --faint is 4.76:1 on --surface,
+   passing the >=4.5 text law. Pages wrap the DASH glyph: <span class="cad-dash">—</span> */
+.cad-dash { color: var(--faint); }
+
 /* ---------- misc ---------- */
 
 :focus-visible {
@@ -362,4 +381,8 @@ body {
   .cad-auth-form .cad-btn-primary,
   .cad-login-form .cad-input,
   .cad-login-form .cad-btn-primary { height: 44px; }
+
+  /* 44px hit area for text Retry/Refresh buttons without changing their visual
+     line: padding expands the target, negative margins keep layout identical */
+  .cad-linkbtn { padding: 13px 10px; margin: -13px -10px; }
 }

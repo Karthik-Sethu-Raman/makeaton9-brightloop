@@ -112,3 +112,9 @@
   append-your-own-file territory per the board header — test_validators_contract.py is a NEW
   file, no one's test was edited.
 
+
+## 11:18 — T36 states audit, pass 1
+- Built: .cad-stateblock + .cad-dash in layout.css, 44px .cad-linkbtn hit-area (padding + negative margin trick), reset.html Retry re-submit.
+- Why this way: the audit fan-out (5 parallel readers) found the grey-dash law was UNIMPLEMENTABLE from shared CSS — no class existed. Adding it in layout.css means Saurabh's fix is one wrapper span, and every future screen gets states classes for free.
+- Must be able to explain: (1) the negative-margin hit-area trick — padding grows the touch target to 44px, margins pull the layout back so nothing moves; (2) why Retry now calls form.requestSubmit() — a reload discards typed input, re-submit keeps it and re-runs the validation gate; (3) --faint chosen for the dash: 4.76:1 on surface, above the 4.5:1 text law.
+

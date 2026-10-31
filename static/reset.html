@@ -85,7 +85,7 @@
     // the card; Retry (page reload) ONLY for transient/network failures — a server
     // detail (bad email, weak password, expired token) is corrected in-place, and
     // reloading would discard what the user typed.
-    function renderState(kind, text, extraEl) {
+    function renderState(kind, text, extraEl, onRetry) {
       result.innerHTML = '';
       if (!text && !extraEl) return;
       const block = document.createElement('div');
@@ -102,7 +102,8 @@
         retry.type = 'button';
         retry.className = 'cad-linkbtn';
         retry.textContent = 'Retry';
-        retry.addEventListener('click', () => location.reload());
+        // re-submit in place: a reload would discard what the user typed
+        retry.addEventListener('click', () => (onRetry ? onRetry() : location.reload()));
         block.appendChild(retry);
       }
       result.appendChild(block);
@@ -125,7 +126,10 @@
         busy(form, true);
         renderState(null);
         try { await submitFn(new FormData(form)); }
-        catch { renderState('retry', GENERIC); } // network failure — the only true Retry case
+        catch {
+          // network failure — the only true Retry case; re-submit keeps typed input
+          renderState('retry', GENERIC, null, () => form.requestSubmit());
+        }
         finally { busy(form, false); }
       });
     }
