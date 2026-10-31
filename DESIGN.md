@@ -6,23 +6,32 @@
 > If a design skill is available in your session, it refines this file via the integrator
 > only — workers never change tokens.
 
-## Fill-in (humans + lead agent, 09:30–10:00, ~20 min — do not skip)
-1. Run the ui-ux-pro-max design-system search for the chosen problem domain, e.g.:
-   `python <skill-path>/scripts/search.py "<product type> <domain> keywords" --design-system -p "<App>"`
-   Paste its palette/type into the tokens below (replace defaults).
-2. OR run the taste-skill app draw: `node <skill>/scripts/draw.mjs --app --kind <kind> --brief "<one line>" --screens overview,list,detail --options 3`, pick ONE style, take its tokens.
-3. Pick the accent by the subject (the problem's world), NOT default blue/violet/indigo.
-4. Name the app, draw its simple mark (monogram/symbol in the accent), write the screen's one question per view.
-5. Commit DESIGN.md. From then on it is LAW for all agents.
+## Fill-in — DONE at bootstrap (08:55, Karthik). Tokens below are final LAW.
+Ran the ui-ux-pro-max design-system search for the billing domain. Adopted: Swiss-minimal
+structure + slate neutrals (draw 2), Fira Sans grotesk (draw 1, "dashboard/data/precise"
+mood, real tabular figures) with local fallbacks (NO webfont fetch — offline demo).
+Rejected: draw-1 purple/orange (banned hues), draw-2 green accent (collides with
+--positive status semantics). Accent chosen from the subject's world: **coin copper**
+— the metal of money, invoices and bank statements.
 
-## Tokens (defaults pre-filled; replace in fill-in — every agent uses ONLY these)
+## Identity (set at bootstrap — do not change)
+- **App name: Cadence** — from "billing cadence" (daily / weekly / monthly / yearly), the
+  heartbeat of a subscription business. Tagline: "Run plans, subscriptions and recurring
+  billing in one place."
+- **Mark:** a 20px copper ring with one filled copper dot on its rim at the two-o'clock
+  tick — a billing cycle caught mid-turn. Plain SVG stroke+circle, no gradients. Wordmark
+  "Cadence" in Fira Sans 500 beside it.
+- **Currency:** ₹ with en-IN grouping (₹12,34,567), tabular figures everywhere numbers
+  render. Fixed decimals: money ₹2, percentages 0.0%, counts integers.
+
+## Tokens (FINAL — every agent uses ONLY these)
 ```css
 :root {
-  --ground:#f9fafb; --surface:#ffffff; --raised:#f9f9f9; --active:#eeeeee;
-  --border:#e8e8e8; --rule:#f2f2f2; --control:#d1d5db;
-  --text:#111111; --muted:#5f6368; --faint:#6b6b6b;
-  --primary:#1d1f20;            /* near-black primary button, white label. ONE per screen. */
-  --accent:__PICK__;            /* ONE hue from the subject's world. Data + at most one control. */
+  --ground:#f8fafc; --surface:#ffffff; --raised:#f7f8fa; --active:#e9edf1;
+  --border:#e4e7eb; --rule:#eef1f3; --control:#cdd5dc;
+  --text:#111827; --muted:#475569; --faint:#64748b;
+  --primary:#16191d;            /* near-black primary button, white label. ONE per screen. */
+  --accent:#b45309;             /* coin copper — data + at most one control per screen. */
   --positive:#247b50; --pill-positive-bg:#dcfae5; --pill-positive-ink:#04250e;
   --negative:#c4242a; --pill-negative-bg:#ffedea; --pill-negative-ink:#831c1e;
   --pill-warning-bg:#fffbeb; --pill-warning-ink:#92400e;
@@ -30,11 +39,21 @@
   --radius-card:8px; --radius-control:6px; --radius-chip:4px;
   --gap:16px; --card-pad:20px; --pad:24px;
   --control-height:32px; --row-height:48px;
-  --font:"__PICK__", system-ui, sans-serif;   /* one grotesk with real tabular figures */
+  --font:"Fira Sans","Segoe UI",system-ui,-apple-system,sans-serif; /* grotesk, tabular figures via .num */
   --fs-title:24px; --fs-section:16px; --fs-kpi:24px; --fs-body:14px; --fs-small:12px;
 }
 .num { font-variant-numeric: tabular-nums; }
 ```
+
+## Screens (one question each — the screen exists to answer it)
+- Overview (first screen): "How healthy is the recurring business right now?"
+- Subscriptions: "Where does every subscription stand today?"
+- Products & plans: "What are we selling, at what price, on what cadence?"
+- Invoices: "What was billed, and what is still unpaid?"
+- Payments: "Which money came in, against which invoice?"
+- Discounts: "Which price rules are live, and when do they stop?"
+- Customers: "Who buys from us, and what do they hold?"
+- Portal (customer login): "What am I paying for, and what comes next?"
 Rules of the tokens: accent ≤ ~3% of pixels, on DATA + at most one control. Never violet/indigo/brand-blue defaults. Text tiers all ≥ 4.5:1 contrast. Type scale: 12/14/16/24 + one 24px h1 per screen; no figure ≥ 48px; no landing-page hero.
 
 ## Shell
