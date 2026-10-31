@@ -115,8 +115,11 @@ function Test-Online {
     return ($LASTEXITCODE -eq 0)
 }
 # Re-land: recover from any divergence WITHOUT bare pull-rebase (which wedges).
-# Soft-reset to origin/main keeps every local change staged, loses nothing,
-# touches no pushed history, and structurally cannot conflict.
+# Soft-reset to origin/main keeps every local change staged, loses nothing, and
+# structurally cannot conflict — EXCEPT shared files, where resetting the tree to
+# the local state can eat lines others pushed in the gap. So: snapshot shared
+# coordination files first, restore origin's versions, then union-append the
+# local-only lines back (a line present on either side survives).
 function Reland([string]$reason) {
     git rebase --abort 2>$null; git merge --abort 2>$null
     git fetch origin --quiet
@@ -124,8 +127,28 @@ function Reland([string]$reason) {
     $ahead = (git rev-list --count origin/main..HEAD)
     $dirty = (git status --porcelain)
     if ([int]"$ahead" -gt 0 -or "$dirty".Trim()) {
+        $snap = Join-Path $env:TEMP "reland-$PID"
+        New-Item -ItemType Directory -Force $snap | Out-Null
+        $shared = @('TASKBOARD.md','PROGRESS.md') + @(Get-ChildItem NOTES -Filter *.md -ErrorAction SilentlyContinue | ForEach-Object { "NOTES/$($_.Name)" })
+        $map = @{}
+        foreach ($f in $shared) { if (Test-Path $f) { $s = Join-Path $snap (("f{0}" -f $map.Count) + '.txt'); Copy-Item $f $s -Force; $map[$f] = $s } }
         git reset --soft origin/main
         git add -A 2>$null
+        # v5: a re-land must NEVER delete files that exist on origin/main (stale-tree
+        # squashes can silently remove teammates' work - files AND their tests)
+        $deleted = (git diff --cached origin/main --diff-filter=D --name-only) 2>$null
+        foreach ($d in @("$deleted" -split "`n")) {
+            $d = "$d".Trim()
+            if ($d) { git checkout origin/main -- $d 2>$null; Log "reland: restored $d (stale tree would have deleted it)" }
+        }
+        git checkout origin/main -- TASKBOARD.md PROGRESS.md NOTES 2>$null
+        foreach ($f in $map.Keys) {
+            $originLines = @(Get-Content $f -ErrorAction SilentlyContinue)
+            $localLines  = @(Get-Content $map[$f])
+            $missing = @($localLines | Where-Object { $originLines -notcontains $_ })
+            if ($missing.Count) { Add-Content -Path $f -Value $missing -Encoding UTF8; Log "reland: union-appended $($missing.Count) line(s) to $f" }
+        }
+        git add TASKBOARD.md PROGRESS.md NOTES 2>$null
         git commit -m "wip($Member): re-land after $reason" --quiet
         git push --quiet
         if ($LASTEXITCODE -eq 0) { Log "reland($reason): recovered and pushed"; return 0 }

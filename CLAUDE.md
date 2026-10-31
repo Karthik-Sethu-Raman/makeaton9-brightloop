@@ -56,6 +56,13 @@ a design skill available in your session may inform your work but NEVER contradi
    resolve — keep BOTH sides and complete the push; they are routine coordination
    noise, never a reason to abort. Aborting is only for conflicts inside code
    modules you do not own.
+   If your cycle script created a `wip re-land` commit, you MUST immediately run
+   `git diff <pre-reland-origin-sha>..HEAD --stat` (the sha is in the script log):
+   a stale-tree re-land can DELETE teammates' files wholesale — code AND their
+   tests (the suite then looks green while features are gone). Restore anything
+   deleted or reverted outside your modules verbatim from the pre-reland origin,
+   commit, push. Run the full TEST_CMD and sanity-check the test COUNT against the
+   last noted count — a large drop means lost tests, not a fast suite.
 
 ## If things go wrong
 - Blocked >15 real minutes on a task → status `BLOCKED <reason>`, pick next task.
