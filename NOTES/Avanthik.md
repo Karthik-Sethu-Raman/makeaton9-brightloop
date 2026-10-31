@@ -197,3 +197,9 @@
 - Why a script instead of a one-off pass: the audit is RERUNNABLE — any future auth change re-proves the graded must-have in one command, and the 33 checks document exactly what 'client AND server validation, same messages' means operationally.
 - Must be able to explain: the J1/J2/L1 triple — weak password gets the exact mirrored sentence, the failed try does NOT burn the token (single-use only after SUCCESS), and a used token 404s with the expired sentence; and why DOM checks (focus log) belong in an audit, not just HTTP status asserts.
 
+
+## 14:15 — T49 anti-pattern fixes, shared-first
+- Built: print stylesheet (T41) + fillCell .cad-dash wrap (table.js) + five invoices.js fixes (loading flag, lastGoodAt+Retry, mergeFresh, 422 array, auth/IST/re-arm nits).
+- Why shared-first: every 20-min cycle that builds a page re-commits the same three anti-patterns (false-empty, silent refresh, black dash) because each page hand-rolls its states. Fixing fillCell once retires the dash pattern for every table past and future; the loading-flag and lastGoodAt patterns are now the documented page recipe (T22-verify + discounts already follow).
+- Must be able to explain: why mergeFresh DELETES keys (Object.assign keeps stale older values for keys the fresh response omits — a cancelled invoice kept showing its pre-cancel outstanding); the +05:30 date pinning (date-only strings parse as browser-local, one day off east of IST); and the two re-land eats + byte-exact restores (stale-tree re-lands remain the day's systemic hazard).
+
