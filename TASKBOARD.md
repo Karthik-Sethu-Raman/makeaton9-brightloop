@@ -380,7 +380,7 @@ Discounts
 - [ ] **T26** (P2, owner: Manu, ~10m) DROPPED @14:25 (14:16 TRIAGE) — Discount engine: auto-apply best eligible rule on
   next invoice, stop on expiry or exhaustion; tests.
 Payments & customers
-- [ ] **T27** (P2, owner: Manu [reassigned from Karthik @14:25 — the 14:16 TRIAGE "payments
+- [ ] **T27** (P2, owner: Manu [reassigned from Karthik @14:25] CLAIMED @15:32 by Manu [reassigned from Karthik @14:25 — the 14:16 TRIAGE "payments
   API → Manu"; the directive numbered it T25, but payments is T27's scope (ruling row in
   PROGRESS); T28's page depends on it], ~10m) Payments API: record (method, amount, date, note)
   against invoice; outstanding balance + overdue flag computed.
