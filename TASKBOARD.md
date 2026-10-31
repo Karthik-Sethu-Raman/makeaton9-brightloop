@@ -143,19 +143,8 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   TEST_CMD 48/48. T46 login.js + T33 reset.html are now live against real endpoints.
   [restored 11:32 by Avanthik — this DONE block was lost when the 11:25 worker re-land
   squashed TASKBOARD; verbatim from 49eece8]
-- [x] **T09** (P1, owner: Manu, ~10m) DONE @12:01 by Manu — Dress-rehearse make-demo-video.mjs against the live
+- [ ] **T09** (P1, owner: Manu, ~10m) CLAIMED @11:32 by Manu — Dress-rehearse make-demo-video.mjs against the live
   app (scenes 1-7), fix waits/pacing; log rehearsal result in PROGRESS.
-  DONE detail: full 7-scene rehearsal @11:53 CLEAN — zero warnings, nothing skipped:
-  scene 2 counter-wait caught 2 KPI changes, scene 3 real signup → post-signup redirect
-  observed (also live end-to-end proof the restored T08 works in a real browser), scene 4
-  inline .cad-fielderror on camera, scene 6 real #nav clicks (no hash fallback), end card
-  flushed. VIDEO READY: ..\makeaton9-video\demo.webm 1.7MB (~70s, spec 60-180s). Pacing
-  knobs needed NO further fixes — the killed 11:32 cycle's edits (signupRoute→#/login?mode=signup,
-  caption-after-navigation, fillAllPasswords for password+confirm) proved correct as landed.
-  FOR THE 16:10 PRODUCER: recorder is scene-ready; scenes 6 (subscriptions/invoices) and
-  products/plans pages will film richer once T10/T14/T17/T21/T27 APIs land — mechanics
-  unaffected. (Cycle also caught T08 eaten by the 11:34 stale-tree re-land; restored in
-  parallel with Avanthik's 11:54 RECOVERY — rebase deduped mine, main verified 54/54.)
 
 ### P2 — the feature meat (statement scenes)
 Products & plans
@@ -357,7 +346,6 @@ Reporting
 `11:12 Manu resumed T03 (own CLAIMED task — killed 10:56 cycle landed code but never closed the board)`
 `11:15 Saurabh claimed T00 (per-member dry-run share)`
 `11:20 Avanthik claimed T37`
-`11:50 Manu resumed T09 (own claim from killed 11:32 cycle — script edits had landed via wip re-land, rehearsal itself never ran)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
