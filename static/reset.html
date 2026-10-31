@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reset your password — Cadence</title>
+  <link rel="stylesheet" href="/frontend/styles/tokens.css">
+  <link rel="stylesheet" href="/frontend/styles/layout.css">
+</head>
+<body>
+  <!-- T33 (Avanthik): forgot-password / reset page. Standalone (no sidebar: zero nav
+       destinations — DESIGN shell rule "no sidebar if ≤5 destinations"). Two modes:
+       no ?token=  -> ask for the account email, POST /api/auth/forgot, show the reset
+                      link in the response (no mail server in the demo — statement's
+                      "reset link should arrive at their registered email" becomes a
+                      link shown in the UI response, per task line);
+       ?token=...  -> choose a new password, POST /api/auth/reset.
+
+       API CONTRACT for T08 (Karthik) — mirrors validators.js messages:
+         POST /api/auth/forgot  {email}                     (client validates email first)
+           -> 200 {"ok": true,  "reset_url": "/reset.html?token=<token>"}
+           -> 404 {"detail": "No account uses that email."}
+         POST /api/auth/reset   {token, password}           (client validates policy first)
+           -> 200 {"ok": true}
+           -> 400 {"detail": <MSG.password from validators.js>}   // policy, mirrored
+           -> 404 {"detail": "That reset link has expired. Request a new one."}
+       Until T08 lands this page correctly shows its error state with Retry. -->
+
+  <main class="cad-auth">
+    <div class="cad-auth-brand">
+      <svg class="cad-mark" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+        <circle class="cad-mark-ring" cx="10" cy="10" r="8"></circle>
+        <circle class="cad-mark-dot" cx="16.9" cy="6" r="2.2"></circle>
+      </svg>
+      <span class="cad-wordmark">Cadence</span>
+    </div>
+
+    <section class="cad-card cad-auth-card">
+      <h1 class="cad-auth-h1" id="heading">Reset your password</h1>
+      <p class="cad-auth-lede" id="lede">Enter your account email and we will generate a reset link.</p>
+
+      <form id="forgot-form" class="cad-auth-form" novalidate>
+        <div class="cad-field">
+          <label class="cad-label" for="email">Email</label>
+          <input class="cad-input" type="email" id="email" name="email" autocomplete="email">
+        </div>
+        <button class="cad-btn-primary" type="submit" id="forgot-submit">Send reset link</button>
+      </form>
+
+      <form id="reset-form" class="cad-auth-form" hidden novalidate>
+        <div class="cad-field">
+          <label class="cad-label" for="password">New password</label>
+          <input class="cad-input" type="password" id="password" name="password"
+                 autocomplete="new-password">
+        </div>
+        <button class="cad-btn-primary" type="submit" id="reset-submit">Set new password</button>
+      </form>
+
+      <div class="cad-auth-result" id="result" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { attachBlurError, validateForm, MSG } from '/frontend/validation/validators.js';
+
+    const token = new URLSearchParams(location.search).get('token');
+    const heading = document.getElementById('heading');
+    const lede = document.getElementById('lede');
+    const forgotForm = document.getElementById('forgot-form');
+    const resetForm = document.getElementById('reset-form');
+    const result = document.getElementById('result');
+
+    // DESIGN states: keep the frame, one sentence, no banners — this renders
+    // error ("Couldn't reach…" + Retry) and success blocks inside the card.
+    function renderState(kind, text, extraHtml) {
+      result.innerHTML = '';
+      if (!text && !extraHtml) return;
+      const block = document.createElement('div');
+      block.className = kind === 'error' ? 'cad-auth-result--err' : 'cad-auth-result--ok';
+      block.textContent = text || '';
+      if (extraHtml) {
+        const extra = document.createElement('div');
+        extra.className = 'cad-auth-linkline';
+        extra.innerHTML = extraHtml; // built below from constants only — never user input
+        block.appendChild(extra);
+      }
+      if (kind === 'error') {
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'cad-linkbtn';
+        retry.textContent = 'Retry';
+        retry.addEventListener('click', () => location.reload());
+        block.appendChild(retry);
+      }
+      result.appendChild(block);
+    }
+
+    function busy(form, on) {
+      const btn = form.querySelector('button[type="submit"]');
+      btn.disabled = on; // disabled stays legible; the sentence below says why
+      btn.textContent = on ? 'Working…' : btn.dataset.label;
+    }
+
+    function wire(form, submitFn) {
+      const btn = form.querySelector('button[type="submit"]');
+      btn.dataset.label = btn.textContent;
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!validateForm(form.fields)) return;
+        busy(form, true);
+        renderState(null); // clear previous result
+        try { await submitFn(new FormData(form)); }
+        catch { renderState('error', 'Couldn’t reach the server. '); }
+        finally { busy(form, false); }
+      });
+    }
+
+    if (token) {
+      // --- mode 2: choose a new password ---
+      heading.textContent = 'Choose a new password';
+      lede.textContent = 'Set a new password for your account. It must follow the password policy.';
+      forgotForm.hidden = true;
+      resetForm.hidden = false;
+      resetForm.fields = [{ input: resetForm.password, rule: 'password' }];
+      attachBlurError(resetForm.password, 'password');
+      wire(resetForm, async (data) => {
+        const response = await fetch('/api/auth/reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, password: String(data.get('password') ?? '') }),
+        });
+        const body = await response.json().catch(() => ({}));
+        if (response.ok) {
+          resetForm.hidden = true;
+          renderState('ok', 'Password updated. You can sign in with the new password now.');
+        } else if (response.status === 400) {
+          renderState('error', body.detail || MSG.password + ' ');
+        } else {
+          renderState('error', (body.detail || 'That reset link has expired. Request a new one.') + ' ');
+        }
+      });
+    } else {
+      // --- mode 1: request the reset link ---
+      forgotForm.fields = [{ input: forgotForm.email, rule: 'email' }];
+      attachBlurError(forgotForm.email, 'email');
+      wire(forgotForm, async (data) => {
+        const response = await fetch('/api/auth/forgot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: String(data.get('email') ?? '').trim() }),
+        });
+        const body = await response.json().catch(() => ({}));
+        if (response.ok && body.reset_url) {
+          forgotForm.hidden = true;
+          renderState('ok', 'Reset link generated (email isn’t wired in the demo):',
+            `<a class="cad-auth-link" href="${body.reset_url}">Open reset link</a>`);
+        } else {
+          renderState('error', (body.detail || 'No account uses that email.') + ' ');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

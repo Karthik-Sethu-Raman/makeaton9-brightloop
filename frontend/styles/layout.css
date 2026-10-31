@@ -143,6 +143,95 @@ body {
   color: var(--negative); /* 4.5:1 on surface per DESIGN */
 }
 
+/* ---------- auth/reset standalone page (T33) — no sidebar: zero nav destinations,
+   so per DESIGN's shell rule it's a centred single card; 380px fits 390px phones
+   (390 - 2×16 page padding = 358 content) ---------- */
+
+.cad-auth {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap);
+  padding: var(--pad);
+}
+
+.cad-auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cad-auth-card {
+  width: 100%;
+  max-width: 380px;
+}
+
+.cad-auth-h1 {
+  margin: 0 0 4px;
+  font-size: var(--fs-title);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cad-auth-lede {
+  margin: 0 0 var(--gap);
+  color: var(--muted);
+}
+
+.cad-auth-form .cad-btn-primary {
+  width: 100%;
+}
+
+/* ONE primary control per screen (DESIGN): near-black, white label */
+.cad-btn-primary {
+  height: 38px;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 500;
+  color: var(--surface);
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+.cad-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.cad-btn-primary:focus-visible {
+  outline: 2px solid var(--muted);
+  outline-offset: 2px;
+}
+
+.cad-auth-result {
+  margin-top: var(--gap);
+  font-size: var(--fs-body);
+}
+
+.cad-auth-result--ok { color: var(--muted); }
+.cad-auth-result--err { color: var(--negative); }
+.cad-auth-linkline { margin-top: 8px; }
+
+.cad-auth-link { color: var(--accent); }
+
+/* link-style text button (matches overview.js's injected definition so the two
+   can never diverge in weight/size) */
+.cad-linkbtn {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fs-small);
+  color: var(--accent);
+  text-decoration: underline;
+}
+
 /* ---------- misc ---------- */
 
 :focus-visible {
