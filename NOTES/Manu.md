@@ -81,3 +81,43 @@
   is guarded by a lock + is_alive check (never two threads), stop() signals the
   event and joins with a 2s timeout — wired by T01's app lifespan, so uvicorn
   Ctrl+C also stops the feed cleanly.
+
+## T09 — video dress rehearsal (DONE @12:01, cycle of 11:50)
+
+
+What I built/verified this cycle: ran scripts/make-demo-video.mjs end-to-end against
+the real booted app (it spawns uvicorn itself, records Playwright chromium 1280x800,
+kills the server after). All 7 scenes passed with zero warnings on the first full
+take; output landed at ..\makeaton9-video\demo.webm (1.7 MB, ~70 s — inside the
+60-180 s spec). Nothing skipped: live-data wait caught the KPI strip changing twice,
+the hero flow signed a real account up through the real API and observed the
+redirect, the invalid-input take showed the inline field error, navigation used real
+sidebar clicks, and the end card rendered and flushed to disk.
+
+Also this cycle (worth knowing in Q&A): I found Karthik's whole T08 auth feature
+(auth.py, validators.py, 19 tests, the router include in main.py) had been SILENTLY
+DELETED from main by the 11:34 'wip re-land' commit that was built from a stale
+tree — the suite even stayed green because the deleted tests went with it (48 -> 35).
+I restored everything verbatim from commit 7897c19 and verified 54/54; meanwhile
+Avanthik's 11:54 cycle pushed the identical restore, so git dropped my duplicate on
+rebase — main ended up whole either way.
+
+Key design choices to be able to explain:
+- Captions are INJECTED INTO THE PAGE as a fixed overlay div styled only with
+  DESIGN.md CSS variables — the text is burned into the footage, so the submission
+  needs no editing, voice, or post-processing.
+- Waits are explicit, never sleeps-on-data: scene 2 uses waitForFunction counting
+  visible changes of the .cad-kpis strip; scene 3 waits for location.hash to leave
+  #/login rather than guessing a delay. Fixed sleeps are only used to hold a frame
+  readable on camera.
+- Each scene owns its navigation and re-shows its caption AFTER page.goto, because a
+  full load destroys an injected div — a caption shown before the goto never films.
+- Signup form fills BOTH password fields (password + confirm): the submit gate
+  rejects mismatched confirm, and Playwright strict mode would fail on ambiguous
+  .fill() anyway.
+- Fallbacks everywhere: server down -> recorder boots it; a scene's page missing ->
+  warn + skip that scene, never kill the take; --only=3,4 filter for quick re-takes.
+
+[Section restored @12:15 by Manu — the 11:55:59 wip re-land (7149277, stale tree)
+deleted these 37 lines from NOTES even though the commit itself stayed in history;
+verbatim from a9b14db.]

@@ -144,6 +144,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   [restored 11:32 by Avanthik — this DONE block was lost when the 11:25 worker re-land
   squashed TASKBOARD; verbatim from 49eece8]
 - [x] **T09** (P1, owner: Manu, ~10m) DONE @12:01 by Manu — Dress-rehearse make-demo-video.mjs against the live
+  app (scenes 1-7), fix waits/pacing; log rehearsal result in PROGRESS.
   DONE detail: full 7-scene rehearsal @11:53 CLEAN — zero warnings, nothing skipped:
   scene 2 counter-wait caught 2 KPI changes, scene 3 real signup → post-signup redirect
   observed (also live end-to-end proof the restored T08 works in a real browser), scene 4
@@ -157,6 +158,9 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   parallel with Avanthik's 11:54 RECOVERY — rebase deduped mine, main verified 54/54.)
   [T09 DONE block + PROGRESS row restored @12:28 by integrator — verbatim from a9b14db;
   the 2b7f163/7149277 wip re-lands squashed them after Manu's push]
+  [restored @12:15 by Manu — this DONE block + NOTES/PROGRESS rows were eaten by the
+  11:55:59 wip re-land squash (7149277, stale tree); verbatim from a9b14db. Test count
+  on current HEAD 55/55 = expected (54 + T50's pin test) — no code/tests lost.]
 
 ### P2 — the feature meat (statement scenes)
 Products & plans
