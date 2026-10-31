@@ -27,6 +27,11 @@ MSG = {
     "priceBad": "Price must be ₹0 or more, with up to 2 decimals.",
     "qtyEmpty": "Enter a quantity.",
     "qtyBad": "Quantity must be a whole number of 0 or more.",
+    "minQtyEmpty": "Enter a minimum quantity.",  # T36 pass 2 — pinned here in the T52 cycle
+    "minQtyBad": "Minimum quantity must be a whole number of 1 or more.",
+    "amtEmpty": "Enter an amount.",  # T52 — payments rule (T27 API + T28 page)
+    "amtBad": "Amount must be ₹0 or more, with up to 2 decimals.",
+    "amtMax": "Amount must be no more than the outstanding balance.",
     "dateOrder": "The end date must be on or after the start date.",
     "usageLimit": "Usage limit must be a whole number of 1 or more.",
 }
