@@ -426,7 +426,7 @@ Reporting
 - [x] **T48** (P3, owner: Avanthik, ~10m) DONE @11:50 by Avanthik â€” Shell head polish in static/index.html + reset.html:
   favicon from the existing SVG mark (any literal color must carry a comment naming the token
   it mirrors â€” hex otherwise lives only in tokens.css) + meta description.
-- [ ] **T49** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Page-side fixes from T36's audit (6 findings listed on
+- [ ] **T49** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) CLAIMED @13:35 by Avanthik (scope now: T36 audit + T22-verify findings — shared-layer first) — Page-side fixes from T36's audit (6 findings listed on
   the T36 note): .cad-dash for DASH/null in table.js fillCell + kpi.js value, lastGoodAt
   sentence + Retry on failed refresh, poll.js fetch timeout via AbortController (~2Ã— interval).
   GROOM(integrator 11:35): makes the audit actionable as its own claimable unit.
