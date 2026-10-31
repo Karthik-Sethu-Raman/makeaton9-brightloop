@@ -1,0 +1,5 @@
+#!/bin/sh
+# Keep the contributors panel human: strip AI attribution trailers from commit messages.
+# Installed via `git config core.hooksPath .githooks` (set by every cycle per CLAUDE.md).
+grep -viE '^(Co-Authored-By: .*(claude|anthropic|noreply@anthropic\.com)|.. Generated with .*)' "$1" > "$1.tmp" 2>/dev/null && mv "$1.tmp" "$1"
+exit 0

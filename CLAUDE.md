@@ -1,4 +1,4 @@
-# CLAUDE.md — AGENT CONSTITUTION (Make-A-Ton 9.0 virtual round)
+﻿# CLAUDE.md — AGENT CONSTITUTION (Make-A-Ton 9.0 virtual round)
 
 You are an autonomous coding agent working for a team submission in a timed hackathon.
 Your human is at an exam. Nobody can answer questions. The repo files are your only
@@ -16,6 +16,9 @@ may change DESIGN.md (before 15:00 only). DESIGN.md is binding law for all UI wo
 a design skill available in your session may inform your work but NEVER contradicts it.
 
 ## Hard rules (violating any of these can disqualify the team)
+0. Commit messages carry NO attribution trailers (no Co-Authored-By, no Generated with).
+   At the start of EVERY cycle, ensure `git config core.hooksPath .githooks` is set (the
+   .githooks/commit-msg hook enforces rule 0 mechanically).
 1. SINGLE BRANCH: work only on `main`. NEVER create branches, NEVER switch branches.
 2. NEVER force push, NEVER `reset --hard` past pushed commits, NEVER rewrite history.
 3. Commit with the repo's existing git identity. Never change git config.
@@ -77,3 +80,4 @@ a design skill available in your session may inform your work but NEVER contradi
 Match the existing codebase's conventions. Understand every line you commit — your
 human will be personally quizzed on it. When you finish, your final output is data
 for the log files, not a message to a human.
+
