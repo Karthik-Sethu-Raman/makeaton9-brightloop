@@ -110,12 +110,14 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   they light up automatically as those page modules land. ✅ BOOT SEAM closed @10:26 by
   Avanthik: index.html loads router.js before </body>; boot import graph (11 URLs — styles,
   router, overview/products pages, components, validators) verified 200 over HTTP.
-- [ ] **T07** (P1, owner: Avanthik, ~15m) CLAIMED @11:05 by Avanthik (resuming own PARTIAL for close-out) — validators.js + form CSS complete and
-  adversarially verified (all rules: email, password >8/upper/lower/special, price/qty ≥0, dateOrder, usageLimit;
-  blur inline errors, form-level render+focus-first-error; TEST_CMD 4/4). REMAINING: (a) wire into the signup form
-  — no form exists yet, pages are Saurabh's module (signup lands with T08/T31; hookup is 3 lines via
-  attachBlurError/validateForm); (b) server half: backend/api/validators.py must mirror the MSG table — contract
-  + traps documented in frontend/validation/README.md (T08, Karthik).
+- [x] **T07** (P1, owner: Avanthik, ~15m) DONE @11:15 by Avanthik — validators.js + form CSS (all rules: email,
+  password >8/upper/lower/special, price/qty ≥0, dateOrder, usageLimit; blur inline errors under fields,
+  form-level render+focus-first-error, a11y aria wiring). PARTIAL closed: (a) signup wiring landed via T46
+  (login.js:18/160-161/191-197 — attachBlurError + validateForm, gate on `.ok`); (b) server mirror is T08's own
+  line (Karthik); contract + traps in frontend/validation/README.md. NEW: frontend/validation/selftest.mjs (all
+  pure-rule behaviors incl. mirror traps, runs under plain node) + tests/test_validators_contract.py (runs the
+  selftest inside TEST_CMD — node-missing = loud skip; pins all 9 MSG strings verbatim so drift fails CI before
+  T08 lands). TEST_CMD 27/27.
   password policy (>8 chars, upper, lower, special), price/qty ≥ 0, date order; blur-time
   inline errors under fields; wired into the signup form.
 - [ ] **T08** (P1, owner: Karthik, ~15m) Auth API: POST /api/auth/signup (unique email +

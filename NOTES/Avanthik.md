@@ -93,3 +93,22 @@
 - Why this way: the link is the FIRST focusable element so Tab before anything else offers the skip; it lives off-screen (left:-9999px) and only enters view on :focus, so mouse users never see it. The reduced-motion block is a guard for future component CSS — nothing animates yet.
 - Must be able to explain: why :focus (not :focus-visible) on the skip link — it must appear for ANY focus, including Click-me-TAB flows; and why the global motion kill uses !important (component animations must lose to the OS preference, always).
 
+## 11:15 — T07 validators close-out (own PARTIAL → DONE)
+- Built: frontend/validation/selftest.mjs + tests/test_validators_contract.py (+ one README line)
+- Why this way: T07's two REMAINING items were cross-module and both resolved OUTSIDE my dirs —
+  signup wiring landed with Saurabh's T46 login.js (verified: it imports attachBlurError/
+  validateForm and gates the POST on `v.ok`, the same dead-gate bug I caught on reset.html),
+  and the server mirror is T08's own line per the board. What was actually missing was
+  REPEATABLE proof: my "adversarially verified" was a one-time manual pass. The selftest
+  executes the pure rules under plain node (no DOM needed — setError/blur wiring is browser
+  work), and the pytest file runs it inside TEST_CMD while pinning all 9 MSG strings
+  verbatim, so any edit that breaks client/server message parity fails CI before T08 lands.
+- Must be able to explain: (1) the emoji password case '\u{1F600}Abcdef!' — it is 8 code
+  points but 9 UTF-16 units, so it FAILS the >8 policy under correct code-point counting
+  while a buggy `.length` implementation would PASS it; Python's len() counts code points
+  too, which is why the mirror is safe; (2) why the pytest SKIPS instead of failing when
+  node is absent — the always-on guard is the pinned message strings; the behavioral run is
+  bonus, and a skip can never turn main RED on a machine without node; (3) tests/ is
+  append-your-own-file territory per the board header — test_validators_contract.py is a NEW
+  file, no one's test was edited.
+
