@@ -258,6 +258,9 @@ Subscriptions
   amount) with totals compute.
 - [ ] **T17** (P2, owner: Karthik, ~15m) Subscription API: create, list w/ filters
   (state, customer, plan), state-transition endpoint guarding legal moves only.
+  GROOM(integrator 14:25): per the 14:16 TRIAGE — take ONLY if a slot remains after the
+  criticals (T35/T31, Manu's T20+T27); the subscriptions page (T18) stays error-state if
+  this stays unfunded, and that is an accepted endgame trade.
 - [x] **T18** (P2, owner: Saurabh, ~10m) DONE @11:46 by Saurabh â€” Subscriptions page: table + status pills + detail
   view (lines, taxes, totals); state badge visible per DESIGN.
   Built `frontend/pages/subscriptions.js` (router already lazy-imports it): shared table
@@ -295,7 +298,9 @@ Invoicing
 - [ ] **T20** (P2, owner: Manu, ~15m) Billing run: generate due invoices from active
   subscriptions â€” idempotent (never twice, never skipped), taxes auto from tax_rules;
   `tests/test_billing_run.py`.
-- [ ] **T21** (P2, owner: Karthik, ~10m) CLAIMED @13:38 by Karthik (integrator cycle) — Invoice API: list/detail, confirm/cancel/send/
+- [x] **T21** (P2, owner: Karthik, ~10m) DONE @14:25 by Karthik (integrator cycle — code landed
+  as a72a90e by the killed 13:38 cycle; this cycle verified TEST_CMD 170/170 incl. its 9 tests
+  + router wired in main.py, and closed it) — Invoice API: list/detail, confirm/cancel/send/
   print actions, state Draftâ†’Confirmedâ†’Paid guards.
 - [x] **T22** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @13:20 by Avanthik —
   Invoices page: table (paid/outstanding/overdue filter) + detail with lines/taxes/totals + actions.
@@ -320,18 +325,21 @@ Invoicing
   error+Retry until then — real uvicorn boot on a throwaway DB verified: module 200, shell 200,
   /api/invoices 404 pre-T21. node --check OK; TEST_CMD 135/135 (120 + Manu's T13 model tests —
   count UP, no drop).
-- [ ] **T23** (P2, owner: Karthik, ~10m) Tax rules API (admin-only): rate % scoped by
+- [ ] **T23** (P2, owner: Karthik, ~10m) DROPPED @14:25 (14:16 TRIAGE) — Tax rules API (admin-only): rate % scoped by
   product/type; applied automatically at billing.
 Discounts
 - [ ] **T24** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) CLAIMED @13:20 by Avanthik —
   Discounts page (admin-only): rules table + create form (fixed/%, min purchase/qty, dates, usage limit, scope).
-- [ ] **T25** (P2, owner: Karthik, ~15m) Discount rules API: fixed or percentage, minimum
+- [ ] **T25** (P2, owner: Manu [reassigned from Karthik @14:25 — T24's live page needs this
+  API; queue after T20 + payments], ~15m) Discount rules API: fixed or percentage, minimum
   purchase/quantity, start/end, usage limit, product or whole-subscription scope;
   admin-only guard + tests.
-- [ ] **T26** (P2, owner: Manu, ~10m) Discount engine: auto-apply best eligible rule on
+- [ ] **T26** (P2, owner: Manu, ~10m) DROPPED @14:25 (14:16 TRIAGE) — Discount engine: auto-apply best eligible rule on
   next invoice, stop on expiry or exhaustion; tests.
 Payments & customers
-- [ ] **T27** (P2, owner: Karthik, ~10m) Payments API: record (method, amount, date, note)
+- [ ] **T27** (P2, owner: Manu [reassigned from Karthik @14:25 — the 14:16 TRIAGE "payments
+  API → Manu"; the directive numbered it T25, but payments is T27's scope (ruling row in
+  PROGRESS); T28's page depends on it], ~10m) Payments API: record (method, amount, date, note)
   against invoice; outstanding balance + overdue flag computed.
 - [ ] **T28** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Payments page: record form (client+server
   validation) + paid/outstanding/overdue views.
@@ -340,7 +348,7 @@ Payments & customers
 - [ ] **T30** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Customers page (internal team view).
 - [ ] **T31** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) Customer portal page: after signup/login shows
   ONLY own subscriptions + invoices (statement's portal scene).
-- [ ] **T32** (P2, owner: Karthik, ~10m) RBAC dependency: admin/staff/customer routes;
+- [ ] **T32** (P2, owner: Karthik, ~10m) DROPPED @14:25 (14:16 TRIAGE) — RBAC dependency: admin/staff/customer routes;
   only admin can create staff; 401/403 tests.
 - [x] **T33** (P2, owner: Avanthik, ~10m) DONE @10:34 by Avanthik â€” `static/reset.html`: standalone reset page (no
   sidebar per DESIGN â‰¤5-destination rule), dual-mode by ?token= (request link â†’ set password), validators.js wired
@@ -351,7 +359,8 @@ Payments & customers
   Phone: 16px margins + 44px target in layout.css media block. TEST_CMD 8/8.
   in UI response/log â€” no external mail).
 Reporting
-- [ ] **T34** (P2, owner: Manu, ~10m) Reports API: active subscriptions count, revenue
+- [ ] **T34** (P2, owner: Manu, ~10m) DROPPED @14:25 (14:16 TRIAGE — T35 ships the one
+  report the demo walks, /api/reports/finance, inside its own scope) — Reports API: active subscriptions count, revenue
   collected, still owed, overdue invoice list; date filters.
 - [ ] **T35** (P2, owner: Karthik [absorbed from Saurabh @12:50 — integrator takes], ~10m) CLAIMED @14:22 by Karthik (integrator cycle — critical #1 per the 14:16 TRIAGE directive) — Finance overview upgrade: KPIs + revenue-over-time
   chart (accent hue only, DESIGN chart rules) + overdue table + "View all".
@@ -377,7 +386,7 @@ Reporting
   (validation client AND server on the main input flow) needs this screen to exist.
 
 ### P3 â€” polish & hardening
-- [ ] **T36** (P3, owner: Avanthik, ~10m) PARTIAL @11:18
+- [ ] **T36** (P3, owner: Avanthik, ~10m) PARTIAL @11:18 — pass 3 DROPPED @14:25 (14:16 TRIAGE)
   PASS 2 @12:17 by Avanthik (subscriptions T18 + plans T15 audited; invoices/payments/
   discounts/customers/portal = pass 3 when they land). MINE-SIDE FIX DONE: rules.minQuantity
   in validators.js — audit caught plans.js:231 wired to 'quantity' (allows 0) while schema
@@ -408,17 +417,21 @@ Reporting
   TEST_CMD 35/35.
   [DONE block restored @11:44 â€” the 11:34 wip re-land reverted it to CLAIMED; code itself
   was never lost (index.html/layout.css untouched by that squash)]
-- [ ] **T38** (P3, owner: Avanthik, ~10m) Chart polish per DESIGN: 3-5 gridlines, 4-7 y
+- [ ] **T38** (P3, owner: Avanthik, ~10m) DROPPED @14:25 (14:16 TRIAGE — T35 applies the
+  chart law itself while building the overview chart) — Chart polish per DESIGN: 3-5 gridlines, 4-7 y
   ticks, no markers/fill >14%, 4-8 x labels never rotated.
-- [ ] **T39** (P3, owner: Manu, ~10m) Perf: seed ~3,000 subscriptions, add indexes, verify
+- [ ] **T39** (P3, owner: Manu, ~10m) DROPPED @14:25 (14:16 TRIAGE) — Perf: seed ~3,000 subscriptions, add indexes, verify
   list/report endpoints < 2s (statement's "under two seconds").
-- [ ] **T40** (P3, owner: Karthik, ~10m) Root README: setup, RUN_CMD, TEST_CMD, demo
+- [ ] **T40** (P3, owner: Karthik, ~10m) DROPPED as a worker task @14:25 (14:16 TRIAGE) —
+  the integrator FINAL pass (15:45+) still refreshes the README + "Demo in 60 seconds"
+  block itself, per the integrator contract — Root README: setup, RUN_CMD, TEST_CMD, demo
   script, architecture, stack rationale.
-- [ ] **T41** (P3, owner: Avanthik, ~10m) Invoice print CSS (browser print) â€” the "print
+- [ ] **T41** (P3, owner: Avanthik, ~10m) DROPPED @14:25 (14:16 TRIAGE) — print stylesheet
+  itself already landed (restored 68b026a + wired via T49); nothing further owed — Invoice print CSS (browser print) â€” the "print
   any invoice" action produces a clean page.
-- [ ] **T42** (P3, owner: Karthik, ~10m) API test hardening: billing idempotency, discount
+- [ ] **T42** (P3, owner: Karthik, ~10m) DROPPED @14:25 (14:16 TRIAGE) — API test hardening: billing idempotency, discount
   expiry, RBAC 401/403, validation parity client/server.
-- [ ] **T43** (P3, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Overview polish: deltas with named windows
+- [ ] **T43** (P3, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DROPPED @14:25 (14:16 TRIAGE) — Overview polish: deltas with named windows
   ("vs prior 30 days"), billing-day annotation on chart, answer figure 30-36px.
 - [x] **T44** (P2, owner: Avanthik, ~10m) DONE @10:51 by Avanthik â€” Auth + reset styling pass: shared .auth-shell /
   .auth-card classes in layout.css (login T46, static/reset.html and future forms share one
@@ -515,6 +528,7 @@ Reporting
 `13:10 Manu claimed T13`
 `13:20 Avanthik claimed T24`
 `13:33 Manu claimed T16`
+`14:22 Karthik claimed T35 (integrator cycle — critical #1 per the 14:16 TRIAGE directive)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
@@ -552,3 +566,15 @@ only. Board supply: Karthik 10 / Manu 8 / Avanthik 8 OPEN (>=5 each). README: st
 DONE — plans API; plans + products pages both live; NEXT highest-value Karthik task =
 T17 subscription API (T18's page has been waiting since 11:46).`
 `14:10 Manu closed T19 (own claim from 13:53; code verified 170/170, no new code needed) + restored T41 print CSS / T21+T49 claim markers / Saurabh 13:35 row eaten by b1a7822 re-land`
+`14:15-14:30 [integrator] cycle: pulled (T21 a72a90e landed by my killed 13:38 cycle;
+T49 DONE e7a3103; 14:16 TRIAGE directive 4eed05e). TEST_CMD 170/170 GREEN on arrival;
+wip commits 00efb04/f0660f7 audited = pure 1-line PROGRESS adds, nothing eaten;
+git branch -r: origin/main only. Harness self-update: NO local harness dir exists on
+this machine (C:\dev holds only makeaton9; no G:) — nothing to diff/sync. GROOM per
+the 14:16 TRIAGE: DROPPED in place T23/T26/T32/T34/T36-pass3/T38/T39/T40/T41/T42/T43;
+T25 + T27 owner tags -> Manu (T27 = the directive's "payments API", misnumbered T25 in
+the directive — ruling row in PROGRESS; T25 rides along: T24's page needs it); T17
+slot-remaining note. OPEN per member is now intentionally <5 — the endgame order
+shrinks the board on purpose; no new tasks minted against "PARTIAL beats perfect".
+T21 verified + closed DONE (9 tests in the 170, router wired) — T22's invoices page
+is LIVE end-to-end. EXECUTOR: claimed T35 (TRIAGE critical #1, finance overview).`
