@@ -48,3 +48,34 @@
   - Lifespan (not import time) does ensure_db + seed_if_empty: importing the module (e.g.
     pytest collecting another test) must never touch the DB; only a running app does.
   - Tests point CADENCE_DB at a tmp dir so they never write the real data/cadence.db.
+
+## 13:05 — T14 plans API + validator mirrors (integrator cycle)
+
+- **Built:** `backend/api/plans.py` (GET newest-first / POST / PATCH / DELETE with a
+  409 while a subscription or template still references the plan), the py mirrors for
+  Avanthik's T36/T50/T52 handoffs in `backend/api/validators.py` (minQuantity,
+  required(label), amount, paymentAmount(outstanding)), one line in plans.js (minQty
+  rule 'quantity' → 'minQuantity'), `tests/test_plans.py` (37 cases).
+- **Why this way:** T15's plans page was DONE-but-error-state since 11:08 — every
+  Karthik-owned API task lights an already-built page, the highest demo value per
+  minute left in the window.
+- **Key design choice (the one to explain):** the browser sends JSON NUMBERS while
+  the shared rules were written for field STRINGS. For minQuantity, numeric 0 must
+  land on "Minimum quantity must be a whole number of 1 or more." — not the empty
+  message — so the py mirror uses `value is None` (JS `value ?? ''`) instead of the
+  older `value or ""` idiom, under which int 0 collapses to "" and diverges from the
+  client on exactly the case the rule exists for. PATCH re-checks dateOrder against
+  the STORED other side of the window so a one-sided edit can't create from > to.
+- **Q&A proof of the graded "client AND server validation":** tests assert the exact
+  sentence on both sides — show `tests/test_plans.py` MSG_ constants next to
+  plans.js checkName / validators.js MSG.
+
+## Catch-up (notes for T08/T10 were missing from this file — added 13:05)
+
+- **T08 auth API (DONE 11:35):** `backend/api/auth.py` — signup/login/me, PBKDF2
+  (stdlib), one login message (no user enumeration), reset tokens single-use 30-min,
+  reset URL also printed to the server log (the demo's second channel).
+  `validators.py` IS the validators.js mirror — same rules, same sentences.
+- **T10 products API (DONE 12:26):** `backend/api/products.py` — CRUD, DELETE 409s
+  while subscription/template lines reference the product (FK guard turned into an
+  explainable demo moment), name message verbatim from products.js.

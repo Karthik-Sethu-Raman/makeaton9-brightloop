@@ -41,7 +41,19 @@ Installs deps if missing, then runs `python -m pytest -q`.
 | staff | staff@brightloop.test | Staff@12345 |
 | customer | shop@aralamstores.test | Shop@12345 |
 
-(Auth endpoints land with T08; the accounts are in the seed data already.)
+(Auth: `POST /api/auth/signup` / `/login` / `/me`, plus forgot/reset via `/reset.html` —
+reset links are also printed to the server log so the demo never needs email.)
+
+## What's live
+
+- **Live finance overview** — KPIs poll `/api/live/summary` every 3s; a simulator
+  thread bills due subscriptions and lands payments, so numbers move on their own.
+- **Auth** — signup/login/password-reset, roles (admin/staff/customer), client AND
+  server validation with identical messages (pinned by tests).
+- **Products & plans** — full CRUD pages backed by `/api/products` and `/api/plans`;
+  product variants (e.g. brand +₹560) feed subscription line pricing.
+- **Subscriptions** — page with state filter + detail (lines, taxes, totals); its API
+  is the next task. Invoices/payments/discounts/customers pages are in progress.
 
 ## Architecture (one breath)
 

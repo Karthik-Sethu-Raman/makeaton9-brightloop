@@ -204,9 +204,27 @@ Products & plans
 - [ ] **T13** (P2, owner: Manu, ~10m) Plans model: billing frequency daily/weekly/monthly/
   yearly, min quantity, available from/to, close policy (auto-close on end / early close /
   pause / renew) per plan.
-- [ ] **T14** (P2, owner: Karthik, ~10m) CLAIMED @12:51 by Karthik (integrator cycle) —
-  Plans CRUD API + validation (from â‰¤ to, price â‰¥ 0,
-  frequency enum); tests.
+- [x] **T14** (P2, owner: Karthik, ~10m) DONE @13:05 by Karthik (integrator cycle) —
+  Plans CRUD API + validation (from â‰¤ to, price â‰¥ 0, frequency enum); tests.
+  DONE detail: `backend/api/plans.py` — GET (newest first: a just-created plan is
+  instantly the top table row), POST 201, PATCH /{id}, DELETE /{id} (409 while any
+  subscription or quotation template references the plan). Validation mirrors the
+  client verbatim: 'Enter a plan name.' (plans.js checkName), shared price +
+  minQuantity + dateOrder rules, frequency + close-policy enums ('Choose a billing
+  frequency.' / 'Choose a close policy.'); price/min_quantity optional at the API
+  (page parseFloat/parseInt NaNâ†'null case; schema defaults 0/1) but checked whenever
+  present; PATCH re-checks dateOrder against the STORED other side (one-sided patch
+  can't create from > to). ALSO landed the py mirrors Avanthik's T36/T50/T52 notes
+  handed to Karthik: min_quantity, required(label), amount, payment_amount(outstanding)
+  — with the numeric-0 branch FIXED vs the handoff sketch (`v or ""` sends int 0 to
+  the EMPTY message; JS String(0 ?? '')='0' takes the minQtyBad branch — test-pinned).
+  [integrator] plans.js minQty guard rewired 'quantity' -> 'minQuantity'
+  (Saurabh's absorbed module; the T36 pass-2 parity break: client allowed 0, schema
+  CHECKs >=1, sentences diverged). tests/test_plans.py 37 cases; TEST_CMD 120/120;
+  real uvicorn smoke: 5 seeded plans served live, both graded parity sentences exact.
+  **T15's plans page is now LIVE** (API matches its documented contract
+  field-for-field) — both P2 catalog pages now render live (products: T12 page + T10
+  API; plans: T15 page + T14 API).
 - [x] **T15** (P2, owner: Saurabh, ~10m) DONE @11:08 by Saurabh â€” Plans page: list + create form incl. close-policy
   control and frequency; states.
   Built `frontend/pages/plans.js`: shared table (name/billing/price â‚¹ right/min qty/
@@ -448,3 +466,18 @@ members have PROGRESS rows <60m; Manu's last PRODUCTIVE row 11:12 â€” watch
 at 60+ quiet per constitution). Board supply: +T51/T52 (Avanthik, was 3 OPEN). EXECUTOR:
 claimed T10 â€” products CRUD API (T12's page is DONE and error-states until it lands).`
 `12:32 Manu claimed T11`
+
+`12:45-13:05 [integrator] cycle: pulled; TEST_CMD 83/83 GREEN on arrival (count UP from
+73 = T53's audit checks, nothing lost). Wip re-land audit (2247e9a Saurabh / ff2003e
+Manu / 3d23d3b Avanthik): all PURE ADDITIONS, no eaten files (git show --stat + range
+diff 7b92d8e..HEAD). Harness: runtime files (agent-cycle.ps1 + cycle-prompt-*) in sync
+vs the G: launcher dir; the bootstrap staging files that also live there (stale
+TASKBOARD/DECISIONS copies) were NOT shipped — reverted, only runtime files sync per
+constitution. ENACTED the 12:15 ABSORB on the board (owner tags edited in place, no
+reorder): T35/T31 -> Karthik, T22/T24/T28/T30/T43/T49 -> Avanthik. Saurabh still
+all-fail (12:55) — ABSORB stands; no RESTORED yet. No stale claims (T11 @12:32 and
+T53 @12:41 were both closed DONE by their owners mid-cycle). git branch -r: origin/main
+only. Board supply: Karthik 10 / Manu 8 / Avanthik 8 OPEN (>=5 each). README: stale
+'auth endpoints land with T08' line fixed + What's-live section added. EXECUTOR: T14
+DONE — plans API; plans + products pages both live; NEXT highest-value Karthik task =
+T17 subscription API (T18's page has been waiting since 11:46).`
