@@ -60,6 +60,14 @@ bad('usageLimit', '2.5', 'usageLimit');
 good('usageLimit', '1');
 good('usageLimit', '03');
 
+// minQuantity (plans) — schema CHECK >= 1: 0 invalid, empty invalid (NOT NULL)
+bad('minQuantity', '', 'minQtyEmpty');
+bad('minQuantity', '0', 'minQtyBad');       // the plans.js divergence the audit caught
+bad('minQuantity', '-1', 'minQtyBad');
+bad('minQuantity', '2.5', 'minQtyBad');
+good('minQuantity', '1');
+good('minQuantity', '03');                  // leading zeros accepted, = 3
+
 // dateOrder — pair rule; either side empty = ok (requiredness is a different rule)
 good('dateOrder', ['2026-01-01', '2026-01-02']);
 good('dateOrder', ['', '2026-01-02']);

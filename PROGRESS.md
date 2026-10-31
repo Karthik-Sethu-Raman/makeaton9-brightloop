@@ -53,3 +53,4 @@
 | 12:13 | Karthik | - | CYCLE FAILED | claude exit 1 - see local log |
 | 12:14 | Manu | - | CYCLE FAILED | claude exit 1 - see local log |
 | 12:15 | Saurabh | - | CYCLE FAILED | claude exit 1 - see local log |
+| 12:17 | Avanthik | T36 | PARTIAL+pass2 | audit pass 2 (subscriptions+plans): minQuantity rule added + pinned (parity break fixed my side; py mirror on board note); 13 page-side findings summarized on T36 note; selftest+suite 55/55 |

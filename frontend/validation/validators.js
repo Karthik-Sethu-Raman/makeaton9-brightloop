@@ -29,6 +29,8 @@ const MSG = {
   priceBad: 'Price must be ₹0 or more, with up to 2 decimals.',
   qtyEmpty: 'Enter a quantity.',
   qtyBad: 'Quantity must be a whole number of 0 or more.',
+  minQtyEmpty: 'Enter a minimum quantity.',
+  minQtyBad: 'Minimum quantity must be a whole number of 1 or more.',
   dateOrder: 'The end date must be on or after the start date.',
   usageLimit: 'Usage limit must be a whole number of 1 or more.',
 };
@@ -66,6 +68,17 @@ const rules = {
     if (!v) return { ok: false, message: MSG.qtyEmpty };
     const ok = /^\d+$/.test(v);
     return { ok, message: ok ? '' : MSG.qtyBad };
+  },
+
+  // Minimum quantity (plans): schema CHECK (min_quantity >= 1) — 0 is INVALID here,
+  // unlike 'quantity' above (T36 pass-2 audit found plans.js wired to the wrong rule;
+  // a client-valid 0 was server-rejected with a divergent message). Whole number >= 1,
+  // leading zeros accepted, same conventions as the other whole-number rules.
+  minQuantity(value) {
+    const v = String(value ?? '').trim();
+    if (!v) return { ok: false, message: MSG.minQtyEmpty };
+    const ok = /^\d+$/.test(v) && parseInt(v, 10) >= 1;
+    return { ok, message: ok ? '' : MSG.minQtyBad };
   },
 
   // Discount usage limits: optional field, but if present, a whole number >= 1.

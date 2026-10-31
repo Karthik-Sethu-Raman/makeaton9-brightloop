@@ -149,3 +149,9 @@
 - Why a factory instead of a parameterized rule: the dispatcher keeps its (ruleName, value) shape — built rules compose like any other, and the label carries its article at the call site where the copywriter (page owner) controls the sentence.
 - Must be able to explain: how the factory dodges extending validate()'s signature; why the template is pinned in a pytest test (message drift between js/py fails CI before demo); and the products.js migration being one line.
 
+
+## 12:17 — T36 pass 2 (subscriptions + plans)
+- Built: rules.minQuantity + 2 MSG sentences + selftest cases; audit summary for page owners.
+- Why: the audit's best catch — plans.js validated min-quantity with the >=0 rule while the DB schema CHECKs >=1. The client said yes, the server said no, with a DIFFERENT sentence — exactly what the graded client/server parity requirement forbids. New rule: empty fails 'Enter a minimum quantity.' (NOT NULL column), 0/2.5/-1 fail 'Minimum quantity must be a whole number of 1 or more.', leading zeros ok.
+- Must be able to explain: why quantity (>=0) and minQuantity (>=1) are separate rules instead of one parameterized rule — each rule is one fixed message pair, and the mirror contract pins message-per-rule; and how the audit found it (page's own header comment cited the schema CHECK).
+
