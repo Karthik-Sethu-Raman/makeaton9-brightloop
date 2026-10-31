@@ -277,7 +277,7 @@ Invoicing
 - [ ] **T20** (P2, owner: Manu, ~15m) Billing run: generate due invoices from active
   subscriptions â€” idempotent (never twice, never skipped), taxes auto from tax_rules;
   `tests/test_billing_run.py`.
-- [ ] **T21** (P2, owner: Karthik, ~10m) Invoice API: list/detail, confirm/cancel/send/
+- [ ] **T21** (P2, owner: Karthik, ~10m) CLAIMED @13:38 by Karthik (integrator cycle) — Invoice API: list/detail, confirm/cancel/send/
   print actions, state Draftâ†’Confirmedâ†’Paid guards.
 - [x] **T22** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @13:20 by Avanthik —
   Invoices page: table (paid/outstanding/overdue filter) + detail with lines/taxes/totals + actions.
@@ -485,6 +485,7 @@ Reporting
 `13:10 Manu claimed T13`
 `13:20 Avanthik claimed T24`
 `13:33 Manu claimed T16`
+`13:38 Karthik claimed T21 (integrator cycle — executor for Karthik-owned tasks)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
