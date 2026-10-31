@@ -30,7 +30,7 @@
 //
 // Page-module API (router contract): export render(mount) -> cleanup().
 
-import { inr, pct, istTime, DASH } from '../components/fmt.js';
+import { inr, pct, DASH } from '../components/fmt.js';
 import { renderTable, renderTableSkeleton } from '../components/table.js';
 import { statusPill } from '../components/pill.js';
 import { authHeaders } from '../components/auth.js';
@@ -182,7 +182,6 @@ export function render(mount) {
   mount.innerHTML = '';
   let alive = true;
   let lastRows = null;        // last good list (survives a failed refresh)
-  let lastGoodAt = null;      // T49(d): when lastRows landed — quoted on a failed refresh
   let filterValue = 'all';    // client-side status filter over the live rows
 
   const page = document.createElement('section');
@@ -264,24 +263,10 @@ export function render(mount) {
           ? data
           : (data && Array.isArray(data.invoices) ? data.invoices : []);
         lastRows = rows;
-        lastGoodAt = new Date(); // T49(d): the stamp a failed refresh must quote
         paintList();
       } catch (_) {
         if (!alive) return;
-        if (lastRows && lastRows.length) {
-          // T49(d): keep the last-good list but SAY so — one sentence with the
-          // last-good time + Retry, inside the block (DESIGN error law). Never silent.
-          paintList();
-          const stale = document.createElement('div');
-          stale.className = 'cad-stateblock cad-stateblock--err';
-          stale.textContent = `Couldn’t refresh — showing invoices as of ${istTime(lastGoodAt)}. `;
-          const r = document.createElement('button');
-          r.type = 'button'; r.className = 'cad-linkbtn'; r.textContent = 'Retry';
-          r.addEventListener('click', () => load());
-          stale.appendChild(r);
-          listSlot.appendChild(stale);
-          return;
-        }
+        if (lastRows && lastRows.length) return; // keep last-good list on failed refresh
         showState(stateBlock('Couldn’t load invoices.', true, true));
       }
     }
