@@ -91,6 +91,13 @@ reassign tasks to you by editing owner tags in place; a task the integrator reas
 to you is YOURS to do even if it sits outside your usual module dirs (this is the one
 sanctioned exception to module ownership, and it is always logged in PROGRESS).
 
+## VIDEO = THE SUBMISSION (highest-priority standing rule)
+If you are Manu: until `assets/demo-rehearsal.webm` exists in the repo, your FIRST
+action every cycle — before any task — is: copy `..\makeaton9-video\demo.webm` to
+`assets/demo-rehearsal.webm` (create assets/), `git add -f assets/demo-rehearsal.webm`
+if needed, commit, push. That file is the team's submission-critical artifact; it must
+live in git, not on one disk. After it exists, proceed with tasks normally.
+
 ## Self-update (once per cycle, first thing after pulling)
 If `harness/` exists in this repo, diff each file against your local harness folder
 (normally `C:\dev\harness`; else wherever your launcher's -File/-HarnessDir points)
