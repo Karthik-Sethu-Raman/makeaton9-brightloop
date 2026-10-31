@@ -357,33 +357,6 @@ body {
 .cad-flash--ok { color: var(--positive); }   /* on surface ≈ 5.3:1 ✓ */
 .cad-flash--err { color: var(--negative); }
 
-/* ---------- print (T41): "print any invoice" must produce a clean page ----------
-   Browser print hides the app chrome and prints the content: sidebar, toolbars,
-   action buttons, skip link and the phone menu never print; table cells un-
-   truncate; ground goes white. Token-free zone by necessity — print paper has
-   no tokens, so we use the plain `white` keyword, not a hex literal. */
-@media print {
-  .cad-sidebar,
-  .skip-link,
-  .cad-navtoggle,
-  .cad-menubtn,
-  .cad-toolbar,
-  .cad-actions,
-  .cad-danger,
-  .cad-pagehead .cad-linkbtn,
-  .cad-pagehead .cad-btn,
-  .cad-flash { display: none; }
-
-  body { background: var(--surface); }
-
-  .cad-table td,
-  .cad-table th {
-    max-width: none;
-    overflow: visible;
-    text-overflow: clip;
-  }
-}
-
 /* ---------- misc ---------- */
 
 :focus-visible {

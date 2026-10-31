@@ -253,7 +253,7 @@ Products & plans
   (/api/plans) lands, error+Retry until then (products/overview precedent). node --check
   OK; served 200, /api/plans 404 (pre-T14) verified; TEST_CMD 24/24.
 Subscriptions
-- [ ] **T16** (P2, owner: Manu, ~10m) CLAIMED @13:33 by Manu — Subscription model: SUB-0001 numbering sequence,
+- [x] **T16** (P2, owner: Manu, ~10m) DONE @13:47 by Manu — Subscription model: SUB-0001 numbering sequence,
   states Draftâ†’Quotationâ†’Confirmedâ†’Activeâ†’Closed, lines (product, qty, unit price, tax,
   amount) with totals compute.
 - [ ] **T17** (P2, owner: Karthik, ~15m) Subscription API: create, list w/ filters
@@ -277,7 +277,7 @@ Invoicing
 - [ ] **T20** (P2, owner: Manu, ~15m) Billing run: generate due invoices from active
   subscriptions â€” idempotent (never twice, never skipped), taxes auto from tax_rules;
   `tests/test_billing_run.py`.
-- [ ] **T21** (P2, owner: Karthik, ~10m) CLAIMED @13:38 by Karthik (integrator cycle) — Invoice API: list/detail, confirm/cancel/send/
+- [ ] **T21** (P2, owner: Karthik, ~10m) Invoice API: list/detail, confirm/cancel/send/
   print actions, state Draftâ†’Confirmedâ†’Paid guards.
 - [x] **T22** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @13:20 by Avanthik —
   Invoices page: table (paid/outstanding/overdue filter) + detail with lines/taxes/totals + actions.
@@ -426,7 +426,7 @@ Reporting
 - [x] **T48** (P3, owner: Avanthik, ~10m) DONE @11:50 by Avanthik â€” Shell head polish in static/index.html + reset.html:
   favicon from the existing SVG mark (any literal color must carry a comment naming the token
   it mirrors â€” hex otherwise lives only in tokens.css) + meta description.
-- [ ] **T49** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) CLAIMED @13:35 by Avanthik (scope now: T36 audit + T22-verify findings — shared-layer first) — Page-side fixes from T36's audit (6 findings listed on
+- [ ] **T49** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Page-side fixes from T36's audit (6 findings listed on
   the T36 note): .cad-dash for DASH/null in table.js fillCell + kpi.js value, lastGoodAt
   sentence + Retry on failed refresh, poll.js fetch timeout via AbortController (~2Ã— interval).
   GROOM(integrator 11:35): makes the audit actionable as its own claimable unit.
@@ -485,7 +485,6 @@ Reporting
 `13:10 Manu claimed T13`
 `13:20 Avanthik claimed T24`
 `13:33 Manu claimed T16`
-`13:38 Karthik claimed T21 (integrator cycle — executor for Karthik-owned tasks)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
