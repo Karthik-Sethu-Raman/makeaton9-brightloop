@@ -70,11 +70,14 @@ def create_app() -> FastAPI:
 
         app.include_router(livefeed_router)
 
-    # /api/auth (T08) — registered BEFORE the "/" static mount: routes match in
-    # order, so anything added after app.mount("/") would be shadowed by it.
+    # /api/auth (T08) + /api/products (T10) — registered BEFORE the "/" static
+    # mount: routes match in order, so anything added after app.mount("/") would
+    # be shadowed by it.
     from backend.api.auth import router as auth_router
+    from backend.api.products import router as products_router
 
     app.include_router(auth_router)
+    app.include_router(products_router)
 
     # Mount order matters: "/" catches everything, so /frontend goes first.
     app.mount("/frontend", StaticFiles(directory=ROOT / "frontend"), name="frontend")
