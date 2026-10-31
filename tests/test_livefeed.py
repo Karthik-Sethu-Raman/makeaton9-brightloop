@@ -122,3 +122,20 @@ def test_start_stop_thread_lifecycle(monkeypatch):
         sim.stop()                                      # idempotent shutdown
     finally:
         sim.stop()
+
+
+def test_live_summary_endpoint_serves_the_contract(tmp_path, monkeypatch):
+    """Through the real app: T01's lifespan auto-wires the router AND starts
+    the feed thread; with a 60 s first wait the thread mutates nothing."""
+    monkeypatch.setenv("CADENCE_DB", str(tmp_path / "t.db"))
+    monkeypatch.setenv("CADENCE_TICK_SECONDS", "60")
+    from fastapi.testclient import TestClient
+
+    from backend.api.main import create_app
+
+    with TestClient(create_app()) as client:
+        body = client.get("/api/live/summary").json()
+    assert set(body["kpis"]) == KPI_KEYS
+    assert body["kpis"]["active_subscriptions"] == 3    # seeded books, unmuted
+    assert body["kpis"]["overdue_invoices"] == 1
+    assert body["updated_at"]
