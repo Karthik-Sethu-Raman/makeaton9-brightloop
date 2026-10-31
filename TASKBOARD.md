@@ -143,14 +143,39 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   TEST_CMD 48/48. T46 login.js + T33 reset.html are now live against real endpoints.
   [restored 11:32 by Avanthik — this DONE block was lost when the 11:25 worker re-land
   squashed TASKBOARD; verbatim from 49eece8]
-- [ ] **T09** (P1, owner: Manu, ~10m) CLAIMED @11:32 by Manu — Dress-rehearse make-demo-video.mjs against the live
-  app (scenes 1-7), fix waits/pacing; log rehearsal result in PROGRESS.
+- [x] **T09** (P1, owner: Manu, ~10m) DONE @12:01 by Manu — Dress-rehearse make-demo-video.mjs against the live
+  DONE detail: full 7-scene rehearsal @11:53 CLEAN — zero warnings, nothing skipped:
+  scene 2 counter-wait caught 2 KPI changes, scene 3 real signup → post-signup redirect
+  observed (also live end-to-end proof the restored T08 works in a real browser), scene 4
+  inline .cad-fielderror on camera, scene 6 real #nav clicks (no hash fallback), end card
+  flushed. VIDEO READY: ..\makeaton9-video\demo.webm 1.7MB (~70s, spec 60-180s). Pacing
+  knobs needed NO further fixes — the killed 11:32 cycle's edits (signupRoute→#/login?mode=signup,
+  caption-after-navigation, fillAllPasswords for password+confirm) proved correct as landed.
+  FOR THE 16:10 PRODUCER: recorder is scene-ready; scenes 6 (subscriptions/invoices) and
+  products/plans pages will film richer once T10/T14/T17/T21/T27 APIs land — mechanics
+  unaffected. (Cycle also caught T08 eaten by the 11:34 stale-tree re-land; restored in
+  parallel with Avanthik's 11:54 RECOVERY — rebase deduped mine, main verified 54/54.)
+  [T09 DONE block + PROGRESS row restored @12:28 by integrator — verbatim from a9b14db;
+  the 2b7f163/7149277 wip re-lands squashed them after Manu's push]
 
 ### P2 — the feature meat (statement scenes)
 Products & plans
-- [ ] **T10** (P2, owner: Karthik, ~10m) CLAIMED @12:03 by Karthik (integrator cycle) —
+- [x] **T10** (P2, owner: Karthik, ~10m) DONE @12:26 by Karthik (integrator cycle) —
   Products CRUD API: name, type, sales price, cost price, notes; server validation
   (price ≥ 0, name required).
+  DONE detail: `backend/api/products.py` — GET /api/products (DB rows, newest first:
+  a just-created product is instantly the top table row), POST 201, PATCH /{id},
+  DELETE /{id}. Validation mirrors the client (graded must-have): name message =
+  products.js checkName VERBATIM ('Enter a product name.'), prices flow through
+  validators.price (the validators.js mirror — same sentence both sides, drift fails
+  CI); prices optional at the API (default 0 — the page's parseFloat(NaN)→null case)
+  but validated whenever present; DELETE 409s with a sentence when subscription_lines/
+  quotation_template_lines reference the product (FKs are ON — refusing turns the
+  would-be IntegrityError into an explainable demo moment). No auth gate yet — T32's
+  RBAC adds it. tests/test_products.py 18 cases; TEST_CMD 73/73 (54 + T50's pin + 18);
+  real uvicorn smoke: 4 seeded rows served live, empty-name → 400 mirrored sentence.
+  **T12's products page is now LIVE** (no page change needed — API matches its
+  documented contract field-for-field).
 - [ ] **T11** (P2, owner: Manu, ~10m) Product variants: model + attribute price delta
   (seed: brand "Odoo" +₹560); included in plan line pricing.
 - [x] **T12** (P2, owner: Saurabh, ~10m) DONE @10:24 by Saurabh — Products page: table (right-aligned ₹, truncate)
@@ -351,6 +376,12 @@ Reporting
   T28 (payments page) need. Pick the MSG once, pin BOTH sides + contract test (T07/T50
   pattern); coordinate w/ T50's required rule so the table stays one-message-per-rule.
   GROOM(integrator 12:03): board supply + unblocks payments validation parity.
+- [ ] **T53** (P2, owner: Avanthik, ~10m) End-to-end auth-flow audit against the LIVE T08
+  API (reset.html + login.js + validators): every mirrored message renders identically
+  client/server on real 400/401/409s, weak reset try does NOT burn the token, focus-first-
+  error works on all three forms, session survives reload. Fix findings in YOUR modules
+  (validation/static/styles), hand page-side findings to Saurabh as a note (T36 pattern).
+  GROOM(integrator 12:28): board supply — T50 went DONE; keeps Avanthik at 5 OPEN.
 
 ## Claim log (append only)
 <!-- e.g. `12:35 Manu claimed T03` -->

@@ -92,11 +92,10 @@ to you is YOURS to do even if it sits outside your usual module dirs (this is th
 sanctioned exception to module ownership, and it is always logged in PROGRESS).
 
 ## Self-update (once per cycle, first thing after pulling)
-If `harness/agent-cycle.ps1` exists in this repo and differs from your local copy,
-copy the repo version over the local one. Local copy is normally
-`C:\dev\harness\agent-cycle.ps1`; if unsure, find your launcher's path from the
-parent process command line. This is how the supervisor ships mechanical fixes
-(v4: union-merging re-lands that no longer drop shared-file lines). Copying affects
+If `harness/` exists in this repo, diff each file against your local harness folder
+(normally `C:\dev\harness`; else wherever your launcher's -File/-HarnessDir points)
+and copy over every differing file — `agent-cycle.ps1` AND all `cycle-prompt-*.txt`.
+This is how the supervisor ships mechanical and behavioral fixes. Copying affects
 only FUTURE cycles — never the one currently running.
 
 ## Style

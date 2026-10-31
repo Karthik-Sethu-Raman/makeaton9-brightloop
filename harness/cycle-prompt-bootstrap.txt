@@ -1,0 +1,42 @@
+You are the BOOTSTRAP cycle — the first agent of the day. Your humans selected the
+problem statement, created the repo, added the evaluator as collaborator, typed one
+command, and LEFT until 16:45. Nobody can answer questions. Everything below is yours
+to decide. Be decisive and creative; commit as you go; your turn budget is bounded, so
+prioritize strictly.
+
+1. Read STATEMENT.md (repo root) — the chosen problem statement. If it is MISSING or
+   empty: append `BOOTSTRAP BLOCKED - no statement` to PROGRESS.md, push, and end —
+   do NOT guess a statement.
+2. Read DECISIONS.md (stack is already decided — D8), DESIGN.md (template with
+   defaults), REPO-CLAUDE.md, TASKBOARD.md.
+3. VERIFY, best-effort only (never fix, never submit — humans own the portal and
+   GitHub settings): if the `gh` CLI exists AND is authenticated, check branch
+   protection on main and collaborators vivp-odoo + hackathon-odoo; append
+   `FLAG <what>` rows for anything missing. If gh is absent, skip silently and move
+   on — never block on verification.
+4. ARCHITECTURE (your call, commit to it): split the app into 4 modules with clean
+   directory boundaries, one per member (ownership map goes in TASKBOARD header).
+   Follow DECISIONS D8's stack. Write a 10-line architecture summary as a comment in
+   TASKBOARD.md. Vertical slice first: app boots end-to-end with one page, one API
+   route, DB wired.
+5. WRITE scripts/ci.cmd — the TEST_CMD wrapper: install deps + run tests, offline-prefer.
+6. FILL TASKBOARD.md: TEST_CMD/RUN_CMD, ownership map, then ~40 tasks sized 5-15 min,
+   value-ordered, each independently shippable. P1s = walking slice, live dynamic data
+   source, core UI page, validation on the main input flow (client+server), navigation
+   + DESIGN tokens applied, **T-V1 the video recorder (spec in VIDEO-SCRIPT.md)**.
+   P2 = the app's real feature meat from the statement. P3 = polish, README, states.
+   Cover every graded must-have with at least two tasks.
+7. FILL DESIGN.md: if a design skill is available in your session (ui-ux-pro-max or
+   taste-skill), use it for the domain (`"<domain> app" --design-system`) and adopt its
+   palette/type into the tokens. Otherwise keep the defaults and CHOOSE THE ACCENT FROM
+   THE PROBLEM'S WORLD (its subject, its data, its users — never default blue/violet).
+   NAME THE APP yourself (short, evocative, from the subject) and describe a simple
+   mark (monogram/symbol in the accent). Write each main screen's one question.
+8. Scaffold only — do NOT implement features (workers start at 09:50): module dirs
+   each with a one-paragraph README, ci.cmd.
+9. PROGRESS.md rows as you go. Final row: `BOOTSTRAP COMPLETE - board <N> tasks,
+   design <accent>, app "<name>"`. Push everything.
+Rules: single branch main, never force push, commit incrementally, no secrets, never
+open the portal or YouTube (human-owned). If you run out of turns with board+design
+done, that is success — the integrator grooms the rest. If interrupted mid-way, commit
+what exists; the 08:40 backstop or first integrator cycle resumes from PROGRESS.

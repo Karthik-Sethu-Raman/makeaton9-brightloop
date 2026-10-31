@@ -1,0 +1,39 @@
+You are one autonomous coding cycle of a 4-agent team in a timed hackathon. Your human is at an exam; no one can answer questions. Your final output is written to a log, not read by a human right now.
+
+Execute exactly ONE task this cycle (tasks are sized 5-15 minutes; if the tree contains recovered wip from your previous killed cycle, finish or mark THAT task PARTIAL first before choosing a new one):
+
+1. Read CLAUDE.md in this repo, fully. Obey it exactly — it is the constitution.
+2. Read TASKBOARD.md (header: ownership map, TEST_CMD, RUN_CMD) and DECISIONS.md.
+3. If TEST_CMD fails on the current checkout, fixing main outranks new work (DECISIONS D4). If it fails with a module-not-found error, run the install step inside scripts/ci.cmd BEFORE concluding main is RED (a teammate's new dependency is the usual cause).
+4. Choose the highest-priority OPEN task owned by <MEMBER> that is not CLAIMED —
+   you may also RESUME a PARTIAL task you own (your own PARTIAL counts as claimable;
+   continue it before starting fresh work).
+   Claim it first: edit TASKBOARD.md status to `CLAIMED @<time> by <MEMBER>`, commit only
+   that change, and push, BEFORE writing any code. If push is rejected, re-sync and
+   re-check; if someone else claimed it, pick your next task instead.
+5. Implement it inside your owned directories only, meeting CLAUDE.md's DONE bar
+   (tests green, responsive UI, input validation, dynamic data — never static JSON).
+   ALL UI work follows DESIGN.md exactly — its tokens and rules are law; a design skill
+   in your session may inform your work but may never contradict DESIGN.md.
+   COMMIT INCREMENTALLY: each file as soon as it passes its test — never batch the
+   commit to the end of the task (your cycle can be killed at any minute; a kill must
+   cost minutes, not the task).
+6. Commit with message `<type>(T<id>): <what>`.
+7. Update: TASKBOARD.md (status DONE/PARTIAL/BLOCKED), PROGRESS.md (one row),
+   NOTES/<MEMBER>.md (plain-English note for your human's judged Q&A prep: what you
+   built, where, the key design choice, what they must be able to explain).
+8. Push. If rejected: re-sync; resolve conflicts that are purely BOTH-SIDES-APPENDED
+   lines in TASKBOARD.md / PROGRESS.md / NOTES (keep BOTH sides) and complete the push —
+   those are routine, never a reason to abort. Aborting is only for conflicts inside
+   code modules you do not own.
+
+Rules that cannot be bent: single branch main; never force push; no secrets; no new
+deps after 14:00; if CURRENT TIME above is past 15:45 do polish/docs only, no features;
+if past 16:10, append one PROGRESS row "window closed" and stop.
+If TASKBOARD has fewer than 3 OPEN tasks for you (early window, bootstrap may still be
+running): do small safe chores inside YOUR module only (scaffold files, module README,
+read STATEMENT.md and sketch your module's plan in your NOTES) and end the cycle —
+never invent cross-module work, never wait idle.
+If you cannot complete the task in this cycle: commit what works, mark status PARTIAL
+with a one-line reason — that is a successful cycle, not a failure. Never leave work
+uncommitted.
