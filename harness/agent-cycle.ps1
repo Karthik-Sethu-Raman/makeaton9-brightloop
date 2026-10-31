@@ -22,19 +22,46 @@ $LogFile = Join-Path $env:TEMP "makeaton-cycle-$Member.log"
 
 function Log($msg) {
     $line = "{0} [{1}/{2}] {3}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Member, $Mode, $msg
-    Add-Content -Path $LogFile -Value $line -Encoding UTF8
+    try { Add-Content -Path $LogFile -Value $line -Encoding UTF8 -ErrorAction Stop }
+    catch { try { Add-Content -Path "$LogFile.$PID" -Value $line -Encoding UTF8 } catch {} }   # locked by a concurrent cycle: per-PID fallback
 }
 function Fail($code, $msg) { Log "EXIT $code - $msg"; exit $script:code }
 
-# --- 0. machine-wide mutex: never two cycles in one repo, whatever the schedule ----
+# --- 0. repo file lock: never two cycles in one working tree, whatever the schedule ----
+# (atomic CreateNew beats a named mutex: no Global-namespace quirks, works per-repo,
+#  and a stale lock from a killed cycle is detectable by age)
 $waitMin = if ($Mode -eq 'worker') { 3 } else { 12 }   # FINAL waits long enough to still fit its cap
-$mtx = $null
-$owned = $false
-try {
-    $mtx = New-Object System.Threading.Mutex($false, 'Global\MakeATONCycle')
-    $owned = $mtx.WaitOne([timespan]::FromMinutes($waitMin))
-} catch { $owned = $true }   # mutex problems must not stop the cycle
-if (-not $owned) { Log "another cycle holds the repo - deferring to next fire"; exit 0 }
+$LockPath = Join-Path $RepoPath '.harness-cycle.lock'
+$lockStream = $null
+$lockDeadline = (Get-Date).AddMinutes($waitMin)
+while ($true) {
+    try {
+        $lockStream = [System.IO.File]::Open($LockPath, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+        break   # acquired
+    } catch [System.IO.IOException] {
+        # liveness probe: the holder opened Share::None; if we can open it at all, its process died
+        $holderAlive = $true
+        try {
+            $probe = [System.IO.File]::Open($LockPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+            $probe.Close(); $holderAlive = $false
+        } catch { $holderAlive = $true }
+        if (-not $holderAlive) {
+            Remove-Item $LockPath -Force -ErrorAction SilentlyContinue
+            Log 'removed orphaned cycle lock (holder process dead)'
+            continue
+        }
+        if (Test-Path $LockPath) {
+            $age = (Get-Date) - (Get-Item $LockPath -ErrorAction SilentlyContinue).LastWriteTime
+            if ($age -gt [timespan]::FromMinutes(45)) {   # no cycle may legitimately run this long
+                Remove-Item $LockPath -Force -ErrorAction SilentlyContinue
+                Log 'removed stale cycle lock (>45min old)'
+                continue
+            }
+        }
+        if ((Get-Date) -ge $lockDeadline) { Log "another cycle holds the repo - deferring to next fire"; exit 0 }
+    } catch { break }   # unexpected error type: proceed unlocked rather than dead
+    Start-Sleep -Seconds 5
+}
 
 $script:code = 0
 try {
@@ -88,8 +115,11 @@ function Test-Online {
     return ($LASTEXITCODE -eq 0)
 }
 # Re-land: recover from any divergence WITHOUT bare pull-rebase (which wedges).
-# Soft-reset to origin/main keeps every local change staged, loses nothing,
-# touches no pushed history, and structurally cannot conflict.
+# Soft-reset to origin/main keeps every local change staged, loses nothing, and
+# structurally cannot conflict — EXCEPT shared files, where resetting the tree to
+# the local state can eat lines others pushed in the gap. So: snapshot shared
+# coordination files first, restore origin's versions, then union-append the
+# local-only lines back (a line present on either side survives).
 function Reland([string]$reason) {
     git rebase --abort 2>$null; git merge --abort 2>$null
     git fetch origin --quiet
@@ -97,8 +127,28 @@ function Reland([string]$reason) {
     $ahead = (git rev-list --count origin/main..HEAD)
     $dirty = (git status --porcelain)
     if ([int]"$ahead" -gt 0 -or "$dirty".Trim()) {
+        $snap = Join-Path $env:TEMP "reland-$PID"
+        New-Item -ItemType Directory -Force $snap | Out-Null
+        $shared = @('TASKBOARD.md','PROGRESS.md') + @(Get-ChildItem NOTES -Filter *.md -ErrorAction SilentlyContinue | ForEach-Object { "NOTES/$($_.Name)" })
+        $map = @{}
+        foreach ($f in $shared) { if (Test-Path $f) { $s = Join-Path $snap (("f{0}" -f $map.Count) + '.txt'); Copy-Item $f $s -Force; $map[$f] = $s } }
         git reset --soft origin/main
         git add -A 2>$null
+        # v5: a re-land must NEVER delete files that exist on origin/main (stale-tree
+        # squashes can silently remove teammates' work - files AND their tests)
+        $deleted = (git diff --cached origin/main --diff-filter=D --name-only) 2>$null
+        foreach ($d in @("$deleted" -split "`n")) {
+            $d = "$d".Trim()
+            if ($d) { git checkout origin/main -- $d 2>$null; Log "reland: restored $d (stale tree would have deleted it)" }
+        }
+        git checkout origin/main -- TASKBOARD.md PROGRESS.md NOTES 2>$null
+        foreach ($f in $map.Keys) {
+            $originLines = @(Get-Content $f -ErrorAction SilentlyContinue)
+            $localLines  = @(Get-Content $map[$f])
+            $missing = @($localLines | Where-Object { $originLines -notcontains $_ })
+            if ($missing.Count) { Add-Content -Path $f -Value $missing -Encoding UTF8; Log "reland: union-appended $($missing.Count) line(s) to $f" }
+        }
+        git add TASKBOARD.md PROGRESS.md NOTES 2>$null
         git commit -m "wip($Member): re-land after $reason" --quiet
         git push --quiet
         if ($LASTEXITCODE -eq 0) { Log "reland($reason): recovered and pushed"; return 0 }
@@ -183,6 +233,9 @@ if ($LASTEXITCODE -ne 0) {
 Log 'cycle complete'
 
 } finally {
-    if ($owned -and $mtx) { try { $mtx.ReleaseMutex() } catch {} }
+    if ($lockStream) {
+        try { $lockStream.Close() } catch {}
+        Remove-Item $LockPath -Force -ErrorAction SilentlyContinue
+    }
 }
 exit $script:code
