@@ -222,3 +222,11 @@
 - Status pill law: green Live (between dates, under limit, active), amber Scheduled (future start), grey for Ended/Exhausted/Off — none of those are emergencies, they're history; DESIGN's one-mark-per-row held (no second badge for kind/scope).
 - Must be able to explain: (1) admin-only is two halves — the PAGE sends x-auth-token and shows the server's 401/403 sentence verbatim; the guard itself is T25's server half (page works for admin once it lands, degrades to error+Retry until then); (2) optional thresholds = blank passes, any typed value runs the shared shape rule — the server validates identically "when present"; (3) why the product picker fetches /api/products LIVE (D1: dynamic data, never a hardcoded dropdown) with its own loading/error/Retry; (4) honest bookkeeping at close: TEST_CMD was 179/4-RED from Manu's in-flight T20 — I verified MY module's pinned tests all passed, smoke-tested the real app, and logged the D4 fallback rather than touching another member's mid-flight backend.
 
+
+## 15:16 — Q&A study map (evening prep index — 92 commits, grouped)
+- Design law + shell: entries T05 (tokens verbatim, 224px shell, grid sums), T44 (.auth-* canonical), T48 (favicon hex exception), T51 (nav-sheet a11y).
+- Validation engine: T07 (MSG mirror contract + traps), T50 (required factory), T52 (amount + paisa ceiling), T36p2 (minQuantity parity break), T53 (33-check live audit). Study these TOGETHER — they are one story: one message table, both sides, CI-pinned.
+- Pages: T33 reset (gate bug + injection fix), T28 payments (link-error + dead-ceiling lessons), T30 customers, T22/T49 fixes (anti-patterns + shared-layer kills).
+- Ops stories evaluators may probe: the FOUR re-land deletions + restores (T08 auth, T47 CSS, payments.js, customers.js) and the post-reland deletion-audit habit; the two overclaimed test rows + the read-before-claim rule; flaky-but-alive cycles (unrecognized_model but real work); ABSORB (Saurabh's queue inherited then restored).
+- Command for the evening: git log --author=avanthikc@gmail.com --stat — walk it top-down; every group maps to an entry above.
+
