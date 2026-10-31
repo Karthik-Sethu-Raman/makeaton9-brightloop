@@ -174,7 +174,13 @@ Payments & customers
   ONLY own subscriptions + invoices (statement's portal scene).
 - [ ] **T32** (P2, owner: Karthik, ~10m) RBAC dependency: admin/staff/customer routes;
   only admin can create staff; 401/403 tests.
-- [ ] **T33** (P2, owner: Avanthik, ~10m) CLAIMED @10:26 by Avanthik — Forgot-password: token + reset page (link shown
+- [x] **T33** (P2, owner: Avanthik, ~10m) DONE @10:34 by Avanthik — `static/reset.html`: standalone reset page (no
+  sidebar per DESIGN ≤5-destination rule), dual-mode by ?token= (request link → set password), validators.js wired
+  (email + password rules, blur + submit gate + focus-first-error), all 4 DESIGN states, status-matched errors,
+  Retry only on transient failures, pre-paint mode toggle, reset link DOM-built with contract-shape check.
+  API contract for forgot/reset endpoints documented in-file for T08 (Karthik) incl. the task line's server-side
+  log channel. Renders live once T08 lands (T04 precedent: page DONE against contract, dependency pending).
+  Phone: 16px margins + 44px target in layout.css media block. TEST_CMD 8/8.
   in UI response/log — no external mail).
 Reporting
 - [ ] **T34** (P2, owner: Manu, ~10m) Reports API: active subscriptions count, revenue

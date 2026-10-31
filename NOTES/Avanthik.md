@@ -59,3 +59,19 @@
   router.js lazy-imports per route and catches the failure into a DESIGN empty-state; (3) until
   T01+T03 land, Overview correctly shows its ERROR state (fetch /api/live/summary 404s) — that is
   the designed degraded behaviour, not a bug.
+
+## 10:34 — T33 forgot-password / reset page
+- Built: static/reset.html (+ auth-page section in frontend/styles/layout.css: .cad-auth*, .cad-btn-primary,
+  phone 16px margins + 44px touch target).
+- Why this way: one standalone page covers the whole statement scene — no ?token= asks the email (POST
+  /api/auth/forgot) and shows the generated link in the response (no mail server in the demo); ?token= sets the
+  new password (POST /api/auth/reset). No sidebar: the screen has zero nav destinations, which DESIGN's shell
+  rule explicitly allows. The API contract lives in a comment at the top of the file for Karthik's T08, including
+  the server-side stdout log of the link (the task line's "response/log" second channel).
+- Must be able to explain: (1) the gate bug the verify pass caught — validateForm returns {ok, first}, an object,
+  so `!validateForm(...)` was ALWAYS false and invalid input still POSTed; the gate must be `.ok`;
+  (2) why the reset link is built with createElement + textContent and only accepted when it starts with
+  '/reset.html?token=' — response data is never parsed as HTML (injection vector) and the shape check enforces
+  the contract + same-origin; (3) why Retry reloads ONLY on network failure — a reload would discard what the
+  user typed on a correctable error like a weak password; (4) the synchronous pre-paint script that flips forms
+  for ?token= visitors so they never see the email form flash while the module loads.
