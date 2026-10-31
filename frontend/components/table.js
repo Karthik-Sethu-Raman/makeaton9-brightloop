@@ -11,6 +11,9 @@
 // columns: [{ key, label, align?: 'right', num?: bool, identity?: bool,
 //             render?: (row) => string|Node }]
 // rows:    array of row objects. render() wins over row[key] when present.
+// opts:    { onRowClick?: (row) => void } — when given, rows become keyboard-
+//          operable buttons (Enter/Space) with a pointer+hover affordance, for
+//          list -> detail drill-down (Subscriptions, Invoices). Omitted = static.
 
 const STYLE_ID = 'cad-table-style';
 
@@ -29,6 +32,9 @@ function ensureStyle() {
     'border-top:1px solid var(--rule);vertical-align:middle;', // 1px row rules
     'max-width:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}', // truncate one line
     '.cad-table tbody tr:first-child td{border-top:0}',
+    '.cad-table tr.cad-row--click{cursor:pointer}',
+    '.cad-table tr.cad-row--click:hover td{background:var(--raised)}',
+    '.cad-table tr.cad-row--click:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}',
     '.cad-table td.cad-col--right{text-align:right}',
     '.cad-table .cad-col--id{width:40%;color:var(--text)}', // identity column ~1/3–1/2
     '.cad-table .cad-cell__sub{display:none}', // line-2 label hidden on desktop
@@ -56,10 +62,11 @@ function fillCell(td, col, row) {
 
 // Build the table element. `rows` may be []; caller shows its own empty block
 // (keeps the frame+header, per DESIGN states) rather than an empty table.
-export function renderTable(columns, rows) {
+export function renderTable(columns, rows, opts = {}) {
   ensureStyle();
   const wrap = document.createElement('div');
   wrap.className = 'cad-tablewrap';
+  const onRowClick = typeof opts.onRowClick === 'function' ? opts.onRowClick : null;
 
   const table = document.createElement('table');
   table.className = 'cad-table';
@@ -77,6 +84,15 @@ export function renderTable(columns, rows) {
   const tbody = document.createElement('tbody');
   for (const row of rows) {
     const tr = document.createElement('tr');
+    if (onRowClick) {
+      tr.classList.add('cad-row--click');
+      tr.tabIndex = 0;
+      tr.setAttribute('role', 'button');
+      tr.addEventListener('click', () => onRowClick(row));
+      tr.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row); }
+      });
+    }
     for (const col of columns) {
       const td = document.createElement('td');
       if (col.identity) td.classList.add('cad-col--id');
