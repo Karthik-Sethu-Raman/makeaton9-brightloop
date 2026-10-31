@@ -131,7 +131,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   T08 lands). TEST_CMD 27/27.
   password policy (>8 chars, upper, lower, special), price/qty ≥ 0, date order; blur-time
   inline errors under fields; wired into the signup form.
-- [ ] **T08** (P1, owner: Karthik, ~15m) Auth API: POST /api/auth/signup (unique email +
+- [ ] **T08** (P1, owner: Karthik, ~15m) CLAIMED @11:20 by Karthik (integrator cycle) — Auth API: POST /api/auth/signup (unique email +
   full password policy SERVER-side, same messages as client), /login, /me with role;
   `tests/test_auth.py` incl. one invalid-password and one duplicate-email case.
 - [ ] **T09** (P1, owner: Manu, ~10m) Dress-rehearse make-demo-video.mjs against the live
@@ -304,4 +304,4 @@ Reporting
 Board supply: +T44/T45 (Avanthik, was 4 OPEN), +T46 (Saurabh — auth UI gap: login/signup
 screen had no owner but T31/T33 + graded validation must-have assume it), GROOM note on T03
 (simulator seam = backend/livefeed/simulator.py start()/stop(), auto-wired by T01 lifespan).
-No code fixes needed — main was green on arrival. Next: claiming T01 (Karthik executor).`
+No code fixes needed — main was green on arrival. Next: claiming T01 (Karthik executor).``11:20 Karthik claimed T08 (integrator cycle — executor for Karthik-owned tasks)`
