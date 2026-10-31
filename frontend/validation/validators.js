@@ -1,11 +1,19 @@
 // validators.js — the single client-side source for every input rule (owner: Avanthik, T07).
 //
-// GRADED MUST-HAVE: client AND server validate with the SAME messages. The messages
-// below are the canonical strings — backend/api/validators.py mirrors this file 1:1
-// (same rules, same messages). Change one, change both.
+// GRADED MUST-HAVE: client AND server validate with the SAME messages. The MSG table
+// below is the canonical contract — backend/api/validators.py MUST mirror these rules
+// and messages 1:1 (T08, owner Karthik). Change one, change both.
 //
-// Rules are pure functions: (value[, extra]) -> {ok: boolean, message: string}.
-// A rule always returns the same message for the same input, so parity is testable.
+// Mirror traps for the Python side (documented so the mirror cannot drift):
+//   1. JS `\d` is ASCII-only; Python re `\d` matches Unicode digits (e.g. '１２３').
+//      The mirror must use [0-9], not \d.
+//   2. Password length is counted in CODE POINTS ([...v].length here, len() there) —
+//      not UTF-16 units — so '😀Aa!bcd' fails on both sides alike.
+//   3. Leading zeros are ACCEPTED in whole-number rules ('03' = 3); thresholds are
+//      value-based, not regex-shaped.
+//
+// Rules are pure functions: (value[, extra]) -> {ok, message}. A rule always returns
+// the same message for the same input, so parity is testable.
 // Pages wire up in three lines:
 //   import { attachBlurError } from '/frontend/validation/validators.js';
 //   attachBlurError(emailInput, 'email');
@@ -34,11 +42,11 @@ const rules = {
   },
 
   // Statement's exact policy: MORE than 8 chars (so 9+), upper, lower, special.
-  // "Special" = anything non-alphanumeric. One message for the whole policy —
-  // the server sends the same single sentence.
+  // "Special" = anything non-alphanumeric. Length in code points (mirror trap #2).
+  // One message for the whole policy — the server sends the same single sentence.
   password(value) {
     const v = String(value ?? '');
-    const ok = v.length > 8 && /[A-Z]/.test(v) && /[a-z]/.test(v) && /[^A-Za-z0-9]/.test(v);
+    const ok = [...v].length > 8 && /[A-Z]/.test(v) && /[a-z]/.test(v) && /[^A-Za-z0-9]/.test(v);
     return { ok, message: ok ? '' : MSG.password };
   },
 
@@ -51,6 +59,7 @@ const rules = {
   },
 
   // Quantities: whole numbers, 0 allowed (a real 0 is legal, it prints "0").
+  // Leading zeros accepted ('03' = 3) — mirror trap #3.
   quantity(value) {
     const v = String(value ?? '').trim();
     if (!v) return { ok: false, message: MSG.qtyEmpty };
@@ -59,10 +68,11 @@ const rules = {
   },
 
   // Discount usage limits: optional field, but if present, a whole number >= 1.
+  // Leading zeros accepted ('03' = 3) — same convention as quantity.
   usageLimit(value) {
     const v = String(value ?? '').trim();
     if (!v) return { ok: true, message: '' }; // empty = no limit
-    const ok = /^[1-9]\d*$/.test(v);
+    const ok = /^\d+$/.test(v) && parseInt(v, 10) >= 1;
     return { ok, message: ok ? '' : MSG.usageLimit };
   },
 };
@@ -80,72 +90,91 @@ rules.dateOrder = function dateOrder(fromValue, toValue) {
   return { ok, message: ok ? '' : MSG.dateOrder };
 };
 
+const PAIR_RULES = new Set(['dateOrder']);
+
 // --- dispatcher ---------------------------------------------------------------------
-// validate('price', '12.50')            -> {ok, message}
-// validate('dateOrder', [fromVal, toVal]) -> pair rules take an array
+// validate('price', '12.50')              -> {ok, message}
+// validate('dateOrder', [fromVal, toVal]) -> pair rules REQUIRE the array
 export function validate(ruleName, value) {
   const rule = rules[ruleName];
   if (!rule) throw new Error(`validators: unknown rule "${ruleName}"`);
+  if (PAIR_RULES.has(ruleName) && !Array.isArray(value)) {
+    throw new Error(`validators: rule "${ruleName}" takes [from, to]`);
+  }
   return Array.isArray(value) ? rule(value[0], value[1]) : rule(value);
+}
+
+// --- shared inline rendering: error div UNDER the field (DESIGN forms spec) ---------
+// Used by attachBlurError AND validateForm so the two can never diverge.
+let uid = 0;
+
+export function setError(input, message) {
+  let errorEl = document.getElementById(input.getAttribute('aria-err') || '');
+  if (!errorEl) {
+    const errorId = `${input.id || input.name || 'field'}-error-${++uid}`;
+    errorEl = document.createElement('div');
+    errorEl.id = errorId;
+    errorEl.className = 'cad-fielderror';
+    errorEl.setAttribute('role', 'alert');
+    input.insertAdjacentElement('afterend', errorEl);
+    input.setAttribute('aria-err', errorId);
+    // append to (not overwrite) any pre-existing describedby, e.g. a field hint
+    const orig = input.getAttribute('aria-describedby');
+    input.setAttribute('aria-describedby', (orig ? `${orig} ` : '') + errorId);
+  }
+  errorEl.textContent = message;
+  input.setAttribute('aria-invalid', 'true');
+}
+
+export function clearErrorFor(input) {
+  const errorId = input.getAttribute('aria-err');
+  if (errorId) {
+    const errorEl = document.getElementById(errorId);
+    if (errorEl) errorEl.remove();
+    input.removeAttribute('aria-err');
+  }
+  input.removeAttribute('aria-invalid');
+  // restore the describedby list minus our id
+  const described = (input.getAttribute('aria-describedby') || '').split(/\s+/)
+    .filter((id) => id && id !== errorId);
+  if (described.length) input.setAttribute('aria-describedby', described.join(' '));
+  else input.removeAttribute('aria-describedby');
 }
 
 // --- blur wiring: inline error UNDER the field (DESIGN forms spec) ------------------
 // Shows the message on blur, clears it as soon as the input becomes valid.
-// Sets aria-invalid + aria-describedby so screen readers announce the error.
+// For the dateOrder pair: wire the END-date input (error belongs there) and pass
+// getPairValue returning the START-date value.
 export function attachBlurError(input, ruleName, getPairValue) {
-  const errorId = `${input.id || input.name || 'field'}-error`;
-  let errorEl = null;
-
-  function showError(message) {
-    if (!errorEl) {
-      errorEl = document.createElement('div');
-      errorEl.id = errorId;
-      errorEl.className = 'cad-fielderror';
-      errorEl.setAttribute('role', 'alert');
-      input.insertAdjacentElement('afterend', errorEl);
-      input.setAttribute('aria-describedby', errorId);
-    }
-    errorEl.textContent = message;
-    input.setAttribute('aria-invalid', 'true');
-  }
-
-  function clearError() {
-    if (errorEl) { errorEl.remove(); errorEl = null; }
-    input.removeAttribute('aria-invalid');
-    input.removeAttribute('aria-describedby');
+  if (ruleName === 'dateOrder' && typeof getPairValue !== 'function') {
+    throw new Error('validators: dateOrder needs getPairValue returning the start date');
   }
 
   function run() {
-    const value = ruleName === 'dateOrder'
-      ? [input.value, getPairValue ? getPairValue() : '']
-      : input.value;
+    const value = ruleName === 'dateOrder' ? [getPairValue(), input.value] : input.value;
     const result = validate(ruleName, value);
-    if (result.ok) clearError(); else showError(result.message);
+    if (result.ok) clearErrorFor(input); else setError(input, result.message);
     return result.ok;
   }
 
   input.addEventListener('blur', run);
   // Clear the moment the fix lands (DESIGN: never leave a stale error up).
-  input.addEventListener('input', () => { if (errorEl) run(); });
+  input.addEventListener('input', () => { if (input.getAttribute('aria-err')) run(); });
 
-  return { run, clearError }; // forms can re-run on submit
-};
+  return { run, clearError: () => clearErrorFor(input) }; // forms may re-run on submit
+}
 
-// --- form-level: run all rules, focus jumps to the FIRST error (DESIGN) -------------
-// fields: [{ input, rule, getPairValue? }]
+// --- form-level: run all rules, render every error, focus jumps to the FIRST error --
+// Self-sufficient: renders/clears messages itself; no wiring handles required.
+// fields: [{ input, rule, getPairValue? }]  (for dateOrder: input = END field,
+// getPairValue returns the START value)
 export function validateForm(fields) {
   let firstBad = null;
   for (const f of fields) {
-    const value = f.rule === 'dateOrder'
-      ? [f.input.value, f.getPairValue ? f.getPairValue() : '']
-      : f.input.value;
+    const value = f.rule === 'dateOrder' ? [f.getPairValue(), f.input.value] : f.input.value;
     const result = validate(f.rule, value);
-    if (result.ok) {
-      f.input.removeAttribute('aria-invalid');
-      continue;
-    }
-    // reuse attachBlurError's rendering by dispatching through it when present
-    if (f.wired) f.wired.run();
+    if (result.ok) { clearErrorFor(f.input); continue; }
+    setError(f.input, result.message);
     if (!firstBad) firstBad = f.input;
   }
   if (firstBad) firstBad.focus();
@@ -153,4 +182,4 @@ export function validateForm(fields) {
 };
 
 export { rules, MSG };
-export default { rules, MSG, validate, attachBlurError, validateForm };
+export default { rules, MSG, validate, setError, clearErrorFor, attachBlurError, validateForm };

@@ -127,8 +127,14 @@ body {
 }
 
 .cad-input:focus {
-  outline: none;
   border-color: var(--control);
+}
+
+/* re-arm the keyboard ring explicitly: .cad-input:focus above would otherwise
+   out-rank the global :focus-visible rule and hide keyboard focus entirely */
+.cad-input:focus-visible {
+  outline: 2px solid var(--muted);
+  outline-offset: 2px;
 }
 
 .cad-fielderror {
