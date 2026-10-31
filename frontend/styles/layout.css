@@ -101,6 +101,42 @@ body {
   padding: var(--card-pad);
 }
 
+/* ---------- forms (DESIGN: label ABOVE field, inputs 38-40px white 1px radius 8,
+   error UNDER the failing field in --negative; wired by validators.js T07) ---------- */
+
+.cad-field {
+  margin-bottom: var(--gap);
+}
+
+.cad-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.cad-input {
+  height: 38px; /* DESIGN 38-40px */
+  padding: 0 10px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card); /* DESIGN forms: radius 8 */
+}
+
+.cad-input:focus {
+  outline: none;
+  border-color: var(--control);
+}
+
+.cad-fielderror {
+  margin-top: 4px;
+  font-size: var(--fs-small);
+  color: var(--negative); /* 4.5:1 on surface per DESIGN */
+}
+
 /* ---------- misc ---------- */
 
 :focus-visible {
