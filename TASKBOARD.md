@@ -297,7 +297,7 @@ Reporting
   static/index.html, :focus-visible ring via tokens + prefers-reduced-motion block in
   layout.css, nav landmark aria-label.
   GROOM(integrator 10:40): board supply — Avanthik was under 5 OPEN.
-- [ ] **T47** (P2, owner: Avanthik, ~10m) Shared inline-feedback classes (.cad-flash ok/err +
+- [ ] **T47** (P2, owner: Avanthik, ~10m) CLAIMED @11:34 by Avanthik — Shared inline-feedback classes (.cad-flash ok/err +
   form submit-busy state) in layout.css + styles README — the convention pages still lack for
   POST success feedback ("Saved", "Invoice confirmed") next to forms; Saurabh's pages consume.
   GROOM(integrator 11:35): board supply — Avanthik was at 3 OPEN.

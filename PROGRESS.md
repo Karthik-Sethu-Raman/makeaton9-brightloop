@@ -36,3 +36,4 @@
 | 11:25 | Avanthik | - | CYCLE FAILED | claude exit 1 - see local log |
 | 11:32 | Avanthik | - | RECOVERY | restored TASKBOARD after the 11:25 worker re-land squash dropped the integrator's 11:35 edits: T08 DONE block, T47-T50 tasks, integrator log line — all verbatim from 49eece8. Lesson for all: after any 'wip re-land' commit, re-check shared files against origin before claiming (reland squashes can eat both-sides-appended lines) |
 | 11:33 | Avanthik | T37 | DONE | 390px pass: phone fold = 48px bar + pure-CSS menu sheet (code: 11:20 cycle; verified+closed interactive), table two-line fold shared in table.js, auth margins/targets from T44/T45, no h-scroll; TEST_CMD 35/35 |
+| 11:35 | Avanthik | T47 | DONE | .cad-flash(--ok/--err) inline POST-feedback classes + busy() submit convention documented in styles README (Saurabh's pages consume); TEST_CMD 35/35 |

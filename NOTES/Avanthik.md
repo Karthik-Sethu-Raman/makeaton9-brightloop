@@ -124,3 +124,9 @@
 - Why the sheet, not bottom nav: DESIGN caps bottom nav at 5 destinations; the app has 7 — so the sanctioned alternative (48px top bar + menu sheet) is the one legal fold. Pure CSS via #cad-navtoggle:checked ~ .cad-nav keeps it working even if JS dies; the tiny hashchange script only CLOSES the sheet after navigation.
 - Must be able to explain: (1) the sibling-selector trick — the checkbox must sit BEFORE the nav in the DOM so :checked ~ reaches it; (2) why the checkbox stays focusable (screen-reader/keyboard users Tab to it, :focus-visible + .cad-menubtn shows the ring); (3) the re-land squash: how a push-rejection recovery (reset --soft + add -A + commit) can silently drop the OTHER side's both-sides-appended board lines, and why you re-diff shared files against origin after any wip re-land.
 
+
+## 11:35 — T47 inline-feedback classes
+- Built: .cad-flash/--ok/--err in layout.css + consumption convention in styles README.
+- Why: every list-page form (products create, discounts, plans) needs the same 'Saved'/'failed' line; one class keeps the whole app's POST feedback identical and token-pure (--positive ≈5.3:1, --negative, no new hex). role=status (ok) vs role=alert (err) so screen readers announce errors assertively but successes politely.
+- Must be able to explain: why the a11y roles differ between ok and err variants; and that the busy() pattern (label swap + disabled with legible opacity) comes from reset.html and is the documented convention.
+

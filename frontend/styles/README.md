@@ -12,3 +12,10 @@ no-sidebar page column — DESIGN allows no sidebar at ≤5 destinations) wrappi
 and `.field-error`/error-summary typography matching the validators.js message contract.
 `cad-auth*` spellings are kept as aliases — do not use them in new code. Phone block
 drops page padding to `--gap` and raises buttons to the 44px touch target.
+
+Inline POST feedback (T47, for forms on list screens): after a create/update call,
+swap the submit label + disable during flight (the `busy()` pattern in
+static/reset.html), then render `<div class="cad-flash cad-flash--ok" role="status">`
+(or `--err` with `role="alert"`) beside/under the form — "Saved", "Invoice confirmed".
+Never a full-screen banner. State blocks (empty/error with Retry) use `.cad-stateblock`
+/ `--err`; missing values use `.cad-dash` (T36).
