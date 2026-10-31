@@ -294,7 +294,9 @@ export function render(mount) {
 
     // One POST action. Busy = label swap + disabled (T47 convention); the result
     // lands in the flash line (ok announces politely, err assertively).
-    async function fire(verb, inv, btn) {
+    // T49(f): FastAPI 422 bodies put an ARRAY in detail — never render [object Object].
+    // fire() accepts an optional onError callback (used by the cancel arm to re-arm).
+    async function fire(verb, inv, btn, onError) {
       const orig = btn.textContent;
       btn.disabled = true; btn.textContent = 'Working…';
       flash = null;
@@ -304,14 +306,15 @@ export function render(mount) {
         let out = null;
         try { out = await res.json(); } catch (_) { /* non-JSON error body */ }
         if (!res.ok) {
-          const msg = out && (out.detail || out.message);
+          let msg = out && (out.detail || out.message);
+          if (Array.isArray(msg)) msg = 'Check the invoice and try again.'; // 422 detail array
           throw new Error(msg || `Couldn’t ${verb} the invoice (HTTP ${res.status}).`);
         }
-        const merged = Object.assign({}, inv, out && typeof out === 'object' ? out : {});
+        const merged = mergeFresh(inv, out);
         // keep the list cache in step so Back shows the new state without a refetch
         if (lastRows) {
           const i = lastRows.findIndex((r) => r.id === merged.id);
-          if (i >= 0) lastRows[i] = Object.assign({}, lastRows[i], merged);
+          if (i >= 0) lastRows[i] = mergeFresh(lastRows[i], merged);
         }
         flash = {
           kind: 'ok',
@@ -327,7 +330,21 @@ export function render(mount) {
         btn.disabled = false; btn.textContent = orig;
         flash = { kind: 'err', text: e && e.message ? e.message : 'Action failed.' };
         paintFlash();
+        if (typeof onError === 'function') onError();
       }
+    }
+
+    // T49(e): derived fields (outstanding/overdue) go STALE across merges — if the
+    // fresh response doesn't carry them, drop the old values so outstandingOf/
+    // isOverdue re-derive from the new state instead of showing a cancelled
+    // invoice as still owed.
+    function mergeFresh(oldInv, fresh) {
+      const base = Object.assign({}, oldInv);
+      const f = fresh && typeof fresh === 'object' ? fresh : {};
+      for (const k of ['outstanding', 'overdue']) {
+        if (!(k in f)) delete base[k];
+      }
+      return Object.assign(base, f);
     }
 
     // The flash line: created/replaced in a fixed slot so it never moves layout.
@@ -513,7 +530,7 @@ export function render(mount) {
         const full = await res.json();
         if (!alive) return;
         flash = null; // a fresh load clears a stale action result
-        paint(Object.assign({}, rowStub, full));
+        paint(mergeFresh(rowStub, full));
       } catch (_) {
         if (!alive) return;
         // The stub is still painted; surface a quiet line + Retry under it.
