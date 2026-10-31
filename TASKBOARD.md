@@ -62,7 +62,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   Full app rehearsal = T09 once T01/T03 land.
 
 ### P1 — walking skeleton + graded must-haves
-- [ ] **T01** (P1, owner: Karthik, ~15m) Vertical slice: `backend/api/main.py` app factory,
+- [ ] **T01** (P1, owner: Karthik, ~15m) CLAIMED @10:42 by Karthik — Vertical slice: `backend/api/main.py` app factory,
   `GET /api/health`, static/ + frontend/ mounted, index.html served, CORS off (same-origin);
   `tests/test_health.py` green; RUN_CMD boots end-to-end.
 - [x] **T02** (P1, owner: Manu, ~15m) DONE @10:37 by Manu — `backend/models`: db.py (sqlite3 conn, WAL, dict rows),
@@ -231,6 +231,7 @@ Reporting
 `09:57 Saurabh claimed T06`
 `10:13 Manu claimed T02`
 `10:24 Avanthik claimed T06-boot-seam (index.html router script line — flagged Avanthik/static in T06 DONE note)`
+`10:42 Karthik claimed T01`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
