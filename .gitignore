@@ -13,3 +13,6 @@ coverage/
 *.webm
 makeaton9-video/
 .venv/
+
+.harness-cycle.lock/
+.harness-cycle.lock

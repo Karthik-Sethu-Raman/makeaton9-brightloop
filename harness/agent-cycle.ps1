@@ -22,19 +22,46 @@ $LogFile = Join-Path $env:TEMP "makeaton-cycle-$Member.log"
 
 function Log($msg) {
     $line = "{0} [{1}/{2}] {3}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Member, $Mode, $msg
-    Add-Content -Path $LogFile -Value $line -Encoding UTF8
+    try { Add-Content -Path $LogFile -Value $line -Encoding UTF8 -ErrorAction Stop }
+    catch { try { Add-Content -Path "$LogFile.$PID" -Value $line -Encoding UTF8 } catch {} }   # locked by a concurrent cycle: per-PID fallback
 }
 function Fail($code, $msg) { Log "EXIT $code - $msg"; exit $script:code }
 
-# --- 0. machine-wide mutex: never two cycles in one repo, whatever the schedule ----
+# --- 0. repo file lock: never two cycles in one working tree, whatever the schedule ----
+# (atomic CreateNew beats a named mutex: no Global-namespace quirks, works per-repo,
+#  and a stale lock from a killed cycle is detectable by age)
 $waitMin = if ($Mode -eq 'worker') { 3 } else { 12 }   # FINAL waits long enough to still fit its cap
-$mtx = $null
-$owned = $false
-try {
-    $mtx = New-Object System.Threading.Mutex($false, 'Global\MakeATONCycle')
-    $owned = $mtx.WaitOne([timespan]::FromMinutes($waitMin))
-} catch { $owned = $true }   # mutex problems must not stop the cycle
-if (-not $owned) { Log "another cycle holds the repo - deferring to next fire"; exit 0 }
+$LockPath = Join-Path $RepoPath '.harness-cycle.lock'
+$lockStream = $null
+$lockDeadline = (Get-Date).AddMinutes($waitMin)
+while ($true) {
+    try {
+        $lockStream = [System.IO.File]::Open($LockPath, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+        break   # acquired
+    } catch [System.IO.IOException] {
+        # liveness probe: the holder opened Share::None; if we can open it at all, its process died
+        $holderAlive = $true
+        try {
+            $probe = [System.IO.File]::Open($LockPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+            $probe.Close(); $holderAlive = $false
+        } catch { $holderAlive = $true }
+        if (-not $holderAlive) {
+            Remove-Item $LockPath -Force -ErrorAction SilentlyContinue
+            Log 'removed orphaned cycle lock (holder process dead)'
+            continue
+        }
+        if (Test-Path $LockPath) {
+            $age = (Get-Date) - (Get-Item $LockPath -ErrorAction SilentlyContinue).LastWriteTime
+            if ($age -gt [timespan]::FromMinutes(45)) {   # no cycle may legitimately run this long
+                Remove-Item $LockPath -Force -ErrorAction SilentlyContinue
+                Log 'removed stale cycle lock (>45min old)'
+                continue
+            }
+        }
+        if ((Get-Date) -ge $lockDeadline) { Log "another cycle holds the repo - deferring to next fire"; exit 0 }
+    } catch { break }   # unexpected error type: proceed unlocked rather than dead
+    Start-Sleep -Seconds 5
+}
 
 $script:code = 0
 try {
@@ -183,6 +210,9 @@ if ($LASTEXITCODE -ne 0) {
 Log 'cycle complete'
 
 } finally {
-    if ($owned -and $mtx) { try { $mtx.ReleaseMutex() } catch {} }
+    if ($lockStream) {
+        try { $lockStream.Close() } catch {}
+        Remove-Item $LockPath -Force -ErrorAction SilentlyContinue
+    }
 }
 exit $script:code
