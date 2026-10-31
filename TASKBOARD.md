@@ -255,7 +255,7 @@ Reporting
   (5) NIT: overview.js parses zoneless IST 'YYYY-MM-DD HH:MM:SS' as browser-local — append '+05:30' (Manu:
   ISO-8601 w/ offset from simulator._now would fix at source); (6) NIT: kpi skeleton bars ~half real size.
   main pages per DESIGN (frame kept, one sentence, no shimmer).
-- [ ] **T37** (P3, owner: Avanthik, ~10m) Responsive 390px pass: sidebar folds to top bar
+- [ ] **T37** (P3, owner: Avanthik, ~10m) CLAIMED @11:20 by Avanthik — Responsive 390px pass: sidebar folds to top bar
   + sheet or bottom nav, tables → two-line rows, no horizontal scroll.
 - [ ] **T38** (P3, owner: Avanthik, ~10m) Chart polish per DESIGN: 3-5 gridlines, 4-7 y
   ticks, no markers/fill >14%, 4-8 x labels never rotated.
@@ -294,6 +294,7 @@ Reporting
 `11:05 Avanthik claimed T07 (resume own PARTIAL — verify wiring landed, close out)`
 `11:12 Manu resumed T03 (own CLAIMED task — killed 10:56 cycle landed code but never closed the board)`
 `11:15 Saurabh claimed T00 (per-member dry-run share)`
+`11:20 Avanthik claimed T37`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
