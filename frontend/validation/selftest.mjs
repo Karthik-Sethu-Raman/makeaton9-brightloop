@@ -79,6 +79,18 @@ good('amount', '12.5');
 good('amount', '1299.99');
 good('amount', '03.50'); // leading zeros accepted, mirror trap #3
 
+// percent (discounts, T24) — 0–100 inclusive, up to 2 decimals, leading zeros OK
+bad('percent', '', 'pctEmpty');
+bad('percent', '-1', 'pctBad');
+bad('percent', '100.5', 'pctBad');
+bad('percent', '12.345', 'pctBad');
+bad('percent', '1,299', 'pctBad'); // no thousands separators, same as price
+good('percent', '0');
+good('percent', '10');
+good('percent', '12.5');
+good('percent', '100'); // the ceiling itself is legal: the whole price off
+good('percent', '07.50'); // leading zeros accepted, mirror trap #3
+
 // paymentAmount(outstanding) — T52 factory: shape above + payment <= outstanding.
 // Ceiling is captured at BUILD time (build per render); shape errors always win
 // over the ceiling so a malformed value never reports amtMax.

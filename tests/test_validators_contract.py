@@ -34,6 +34,8 @@ MSG = {
     "amtMax": "Amount must be no more than the outstanding balance.",
     "dateOrder": "The end date must be on or after the start date.",
     "usageLimit": "Usage limit must be a whole number of 1 or more.",
+    "pctEmpty": "Enter a percentage.",  # T24 — discounts (T25 API + discounts page)
+    "pctBad": "Percentage must be no more than 100, with up to 2 decimals.",
 }
 
 

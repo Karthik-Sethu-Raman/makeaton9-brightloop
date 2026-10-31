@@ -36,6 +36,8 @@ const MSG = {
   amtMax: 'Amount must be no more than the outstanding balance.',
   dateOrder: 'The end date must be on or after the start date.',
   usageLimit: 'Usage limit must be a whole number of 1 or more.',
+  pctEmpty: 'Enter a percentage.',
+  pctBad: 'Percentage must be no more than 100, with up to 2 decimals.',
 };
 
 const rules = {
@@ -102,6 +104,17 @@ const rules = {
     if (!v) return { ok: true, message: '' }; // empty = no limit
     const ok = /^\d+$/.test(v) && parseInt(v, 10) >= 1;
     return { ok, message: ok ? '' : MSG.usageLimit };
+  },
+
+  // Discount percentages (T24): 0–100 inclusive, up to 2 decimals. 100 = the whole
+  // price off; anything above is a pricing mistake, not a deeper discount. Same
+  // shape as price (leading digit required, no thousands separators, leading
+  // zeros accepted — mirror trap #3), plus the 100 ceiling.
+  percent(value) {
+    const v = String(value ?? '').trim();
+    if (!v) return { ok: false, message: MSG.pctEmpty };
+    const ok = /^\d+(\.\d{1,2})?$/.test(v) && parseFloat(v) <= 100;
+    return { ok, message: ok ? '' : MSG.pctBad };
   },
 };
 
