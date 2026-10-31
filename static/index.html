@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadence — recurring billing</title>
+  <link rel="stylesheet" href="/frontend/styles/tokens.css">
+  <link rel="stylesheet" href="/frontend/styles/layout.css">
+</head>
+<body>
+  <div class="cad-shell">
+
+    <aside class="cad-sidebar">
+      <div class="cad-brand">
+        <!-- Cadence mark: 20px copper ring, filled dot on the rim at the
+             two-o'clock tick (a billing cycle caught mid-turn). Plain SVG,
+             colors via tokens in layout.css. -->
+        <svg class="cad-mark" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+          <circle class="cad-mark-ring" cx="10" cy="10" r="8"></circle>
+          <circle class="cad-mark-dot" cx="16.9" cy="6" r="2.2"></circle>
+        </svg>
+        <span class="cad-wordmark">Cadence</span>
+      </div>
+      <div class="cad-scope">Internal workspace</div>
+
+      <!-- T06 (Saurabh): hash router fills this nav and applies .is-active. -->
+      <nav class="cad-nav" id="nav" aria-label="Primary"></nav>
+    </aside>
+
+    <main class="cad-main" id="main">
+      <!-- T06 mounts page modules (render(mount) -> cleanup()) into #view
+           and replaces this placeholder on first navigation. -->
+      <div class="cad-boot" id="view">
+        <noscript>Cadence needs JavaScript to run — the demo requires it.</noscript>
+      </div>
+    </main>
+
+  </div>
+</body>
+</html>
