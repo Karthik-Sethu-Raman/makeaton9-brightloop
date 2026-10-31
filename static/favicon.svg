@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
+  <!-- T48: favicon = the shell's brand mark (static/index.html .cad-mark), same
+       geometry (ring r=8 at 10,10 + rim dot at the two-o'clock tick). Favicons
+       cannot load tokens.css, so the two literals below are the ONE sanctioned
+       hex location outside tokens.css: #b45309 mirrors --accent (coin copper)
+       from frontend/styles/tokens.css. -->
+  <circle cx="10" cy="10" r="8" fill="none" stroke="#b45309" stroke-width="2"/>
+  <circle cx="16.9" cy="6" r="2.2" fill="#b45309"/>
+</svg>
