@@ -54,6 +54,13 @@ export function renderKpiStrip(items) {
       const bar = document.createElement('span');
       bar.className = 'cad-kpi__skel';
       val.appendChild(bar);
+    } else if (it.value == null || it.value === '—') {
+      // T36 pass-3: a missing KPI value renders as a GREY dash (same law as
+      // table.js fillCell) — plain textContent would print '—' in --text.
+      const d = document.createElement('span');
+      d.className = 'cad-dash';
+      d.textContent = '—';
+      val.appendChild(d);
     } else {
       val.textContent = it.value;
     }
