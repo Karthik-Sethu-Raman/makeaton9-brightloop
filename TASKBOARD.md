@@ -168,7 +168,7 @@ Payments & customers
   ONLY own subscriptions + invoices (statement's portal scene).
 - [ ] **T32** (P2, owner: Karthik, ~10m) RBAC dependency: admin/staff/customer routes;
   only admin can create staff; 401/403 tests.
-- [ ] **T33** (P2, owner: Avanthik, ~10m) Forgot-password: token + reset page (link shown
+- [ ] **T33** (P2, owner: Avanthik, ~10m) CLAIMED @10:26 by Avanthik — Forgot-password: token + reset page (link shown
   in UI response/log — no external mail).
 Reporting
 - [ ] **T34** (P2, owner: Manu, ~10m) Reports API: active subscriptions count, revenue
