@@ -113,7 +113,9 @@ const dateFmt = new Intl.DateTimeFormat('en-IN', {
 });
 function fmtDateEl(v) {
   if (!v) return dash();
-  const d = new Date(String(v).length <= 10 ? `${v}T00:00:00` : v);
+  // date-only strings carry no zone: pin them to IST explicitly so machines east
+  // of +05:30 don't render the previous calendar day (T49 nit).
+  const d = new Date(String(v).length <= 10 ? `${v}T00:00:00+05:30` : v);
   return Number.isNaN(d.getTime()) ? dash() : document.createTextNode(dateFmt.format(d));
 }
 
@@ -255,7 +257,7 @@ export function render(mount) {
     async function load() {
       if (!lastRows) showState(renderTableSkeleton(COLUMNS, 5));
       try {
-        const res = await fetch(LIST_URL, { headers: { accept: 'application/json' } });
+        const res = await fetch(LIST_URL, { headers: authHeaders({ accept: 'application/json' }) });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         if (!alive) return;
@@ -519,7 +521,16 @@ export function render(mount) {
             return;
           }
           clearTimeout(timer);
-          fire('cancel', inv, cbtn);
+          // T49 nit: a FAILED cancel must not leave the button armed forever —
+          // re-arm visually and restart the 6s disarm via fire()'s onError hook.
+          fire('cancel', inv, cbtn, () => {
+            cbtn.classList.add('cad-btn--danger');
+            cbtn.textContent = `Really cancel ${inv.number || 'this invoice'}?`;
+            timer = setTimeout(() => {
+              armed = false; cbtn.classList.remove('cad-btn--danger');
+              cbtn.textContent = 'Cancel invoice';
+            }, 6000);
+          });
         });
         dz.append(p, cbtn);
         body.appendChild(dz);
@@ -533,7 +544,7 @@ export function render(mount) {
       if (rowStub.id == null) return;
       try {
         const res = await fetch(`${LIST_URL}/${encodeURIComponent(rowStub.id)}`,
-          { headers: { accept: 'application/json' } });
+          { headers: authHeaders({ accept: 'application/json' }) });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const full = await res.json();
         if (!alive) return;
