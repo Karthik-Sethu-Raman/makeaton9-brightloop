@@ -78,6 +78,9 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
 - [ ] **T03** (P1, owner: Manu, ~15m) `backend/livefeed`: simulator thread (started in app
   lifespan) mutating DB every ~3s (payment lands, sub state advances) +
   `backend/livefeed/router.py` → `GET /api/live/summary` reading DB (never static JSON).
+  GROOM(integrator 10:40): T01's lifespan now imports `start()`/`stop()` from
+  `backend/livefeed/simulator.py` — put the thread there (export those two names) and the
+  boot wiring is already done; main.py skips silently until the module exists.
 - [x] **T04** (P1, owner: Saurabh, ~10m) DONE @09:28 by Saurabh — Overview page: KPI strip (one container, 1px rules)
   + live numbers from `/api/live/summary`, poll 3s, freshness stamp, `.num` tabular.
   Code complete in frontend/pages/overview.js + components (fmt/kpi/poll). Renders live
@@ -187,6 +190,13 @@ Reporting
   collected, still owed, overdue invoice list; date filters.
 - [ ] **T35** (P2, owner: Saurabh, ~10m) Finance overview upgrade: KPIs + revenue-over-time
   chart (accent hue only, DESIGN chart rules) + overdue table + "View all".
+- [ ] **T46** (P1, owner: Saurabh, ~10m) Login+signup screen (auth UI seam T31/T33 assume):
+  #/login route + form (email, password, confirm on signup) wired to validators.js
+  (attachBlurError/validateForm — T07 API), POST /api/auth/signup + /login (T08), token →
+  localStorage, role redirect (admin/staff → #/overview, customer → #/portal), sidebar
+  logout + current-user line; 401 error state. Links to /reset.html per T33 contract.
+  GROOM(integrator 10:40): new task — auth UI had no owner; graded must-have
+  (validation client AND server on the main input flow) needs this screen to exist.
 
 ### P3 — polish & hardening
 - [ ] **T36** (P3, owner: Avanthik, ~10m) States audit: empty/loading/error blocks on all
@@ -205,6 +215,15 @@ Reporting
   expiry, RBAC 401/403, validation parity client/server.
 - [ ] **T43** (P3, owner: Saurabh, ~10m) Overview polish: deltas with named windows
   ("vs prior 30 days"), billing-day annotation on chart, answer figure 30-36px.
+- [ ] **T44** (P2, owner: Avanthik, ~10m) Auth + reset styling pass: shared .auth-shell /
+  .auth-card classes in layout.css (login T46, static/reset.html and future forms share one
+  DESIGN-compliant card on page ground, 390px single column, 44px targets), error-summary +
+  inline-error typography per validators.js contract; document classes in styles README.
+  GROOM(integrator 10:40): board supply — Avanthik was under 5 OPEN.
+- [ ] **T45** (P3, owner: Avanthik, ~10m) Shell a11y: skip-to-content link in
+  static/index.html, :focus-visible ring via tokens + prefers-reduced-motion block in
+  layout.css, nav landmark aria-label.
+  GROOM(integrator 10:40): board supply — Avanthik was under 5 OPEN.
 
 ## Claim log (append only)
 <!-- e.g. `12:35 Manu claimed T03` -->
@@ -217,3 +236,9 @@ Reporting
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
 
 `10:17 Saurabh claimed T12`
+`10:40 [integrator] cycle: pulled (T02, T33 landed); TEST_CMD 12/12 GREEN; no stale claims
+(>45m), all members active <60m (no HEALTH rows); origin has only main (no stray branches).
+Board supply: +T44/T45 (Avanthik, was 4 OPEN), +T46 (Saurabh — auth UI gap: login/signup
+screen had no owner but T31/T33 + graded validation must-have assume it), GROOM note on T03
+(simulator seam = backend/livefeed/simulator.py start()/stop(), auto-wired by T01 lifespan).
+No code fixes needed — main was green on arrival. Next: claiming T01 (Karthik executor).`
