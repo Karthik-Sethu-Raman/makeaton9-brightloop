@@ -9,8 +9,11 @@ from .seed import seed_if_empty
 
 # T19: template repo + copy action, and the shared auto-tax law (the
 # simulator's billing helper delegates to it). Imported by name, never *.
-from . import taxrules, templates
+# T20: billing run — THE law for due invoices from active subscriptions
+# (the livefeed tick delegates to it with limit=1).
+from . import billing, taxrules, templates
 
 __all__ = [
-    "connect", "db_path", "ensure_db", "seed_if_empty", "taxrules", "templates",
+    "connect", "db_path", "ensure_db", "seed_if_empty", "billing", "taxrules",
+    "templates",
 ]

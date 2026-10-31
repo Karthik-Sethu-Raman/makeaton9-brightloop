@@ -18,15 +18,14 @@ from __future__ import annotations
 
 import logging
 import os
-import re
 import sqlite3
 import threading
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
+from ..models import billing
 from ..models import connect
 from ..models import taxrules
-from ..models.plans import add_period
 
 IST = ZoneInfo("Asia/Kolkata")
 logger = logging.getLogger("cadence.livefeed")
@@ -59,7 +58,10 @@ def _r2(x: float) -> float:
 
 
 def next_number(conn: sqlite3.Connection, table: str, prefix: str) -> str:
-    """SUB-/INV- continuation per schema.py: MAX(numeric suffix) + 1."""
+    """Numbering law moved to the model layer (T20): models.billing owns
+    INV- continuation; kept as a thin redirect so no caller breaks."""
+    if (table, prefix) == ("invoices", "INV-"):
+        return billing.next_invoice_number(conn)
     rows = conn.execute(
         f"SELECT number FROM {table} WHERE number LIKE ?", (prefix + "%",)
     ).fetchall()
@@ -122,62 +124,19 @@ def tax_percent_for(conn: sqlite3.Connection, product_id: int, fallback: float) 
 
 
 def bill_due_subscription(conn: sqlite3.Connection) -> dict | None:
-    """Invoice ONE active sub whose next_billing_date is due, then push the date
-    a full period forward — that push IS the idempotency guard (never twice)."""
-    sub = conn.execute(
-        "SELECT s.id, s.number, s.customer_id, s.payment_terms, p.billing_frequency"
-        " FROM subscriptions s JOIN plans p ON p.id = s.plan_id"
-        " WHERE s.state='active' AND s.next_billing_date <= ?"
-        " ORDER BY s.next_billing_date, s.id LIMIT 1", (_today(),),
+    """Invoice ONE due active sub — DELEGATED to models.billing (T20's shared
+    law: idempotent date push in the same commit, auto tax from tax_rules,
+    UNIQUE-indexed against double-billing). limit=1 keeps the tick's demo
+    pacing: one invoice per beat; the batch run catches up the rest."""
+    row = conn.execute(
+        "SELECT id FROM subscriptions WHERE state='active'"
+        " AND next_billing_date IS NOT NULL AND next_billing_date <= ?"
+        " ORDER BY next_billing_date, id LIMIT 1", (_today(),),
     ).fetchone()
-    if sub is None:
+    if row is None:
         return None
-    lines = conn.execute(
-        "SELECT sl.product_id, sl.description, sl.quantity, sl.unit_price,"
-        " sl.tax_percent, sl.amount FROM subscription_lines sl"
-        " WHERE sl.subscription_id=? ORDER BY sl.id", (sub["id"],),
-    ).fetchall()
-    if not lines:  # nothing to bill: just move the date so it never blocks the queue
-        conn.execute(
-            "UPDATE subscriptions SET next_billing_date=? WHERE id=?",
-            (add_period(_today(), sub["billing_frequency"]), sub["id"]),
-        )
-        conn.commit()
-        return None
-
-    today = _today()
-    m = re.search(r"(\d+)", sub["payment_terms"] or "")  # "Net 15" -> 15
-    net_days = int(m.group(1)) if m else 15
-    number = next_number(conn, "invoices", "INV-")
-    cur = conn.execute(
-        "INSERT INTO invoices (number,subscription_id,customer_id,issue_date,due_date,"
-        " state,subtotal,discount_total,tax_total,total,created_at)"
-        " VALUES (?,?,?,?,?,'confirmed',0,0,0,0,?)",
-        (number, sub["id"], sub["customer_id"], today,
-         _shift(today, net_days), _now()),
-    )
-    subtotal = tax_total = 0.0
-    for ln in lines:
-        pct = tax_percent_for(conn, ln["product_id"], ln["tax_percent"])
-        conn.execute(
-            "INSERT INTO invoice_lines (invoice_id,description,quantity,unit_price,"
-            " tax_percent,discount_amount,amount) VALUES (?,?,?,?,?,0,?)",
-            (cur.lastrowid, ln["description"], ln["quantity"], ln["unit_price"],
-             pct, ln["amount"]),
-        )
-        subtotal = _r2(subtotal + ln["amount"])
-        tax_total = _r2(tax_total + ln["amount"] * pct / 100)
-    conn.execute(
-        "UPDATE invoices SET subtotal=?, tax_total=?, total=? WHERE id=?",
-        (subtotal, tax_total, _r2(subtotal + tax_total), cur.lastrowid),
-    )
-    conn.execute(
-        "UPDATE subscriptions SET next_billing_date=? WHERE id=?",
-        (add_period(today, sub["billing_frequency"]), sub["id"]),
-    )
-    conn.commit()
-    return {"kind": "invoice", "number": number, "subscription": sub["number"],
-            "total": _r2(subtotal + tax_total)}
+    events = billing.bill_subscription(conn, row["id"], limit=1)
+    return events[0] if events else None
 
 
 def _reschedule_billing_day(conn: sqlite3.Connection) -> dict | None:

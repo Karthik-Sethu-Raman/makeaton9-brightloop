@@ -180,6 +180,11 @@ CREATE INDEX IF NOT EXISTS ix_invoices_state   ON invoices(state);
 CREATE INDEX IF NOT EXISTS ix_invoices_customer ON invoices(customer_id);
 CREATE INDEX IF NOT EXISTS ix_invlines_invoice ON invoice_lines(invoice_id);
 CREATE INDEX IF NOT EXISTS ix_payments_invoice ON payments(invoice_id);
+-- T20's "never twice" made physical: one invoice per subscription per issue
+-- day. Catch-up invoices carry distinct back-dated issue days, so this never
+-- blocks a legal run — it only refuses a double-billed period.
+CREATE UNIQUE INDEX IF NOT EXISTS ux_invoices_sub_issue
+    ON invoices(subscription_id, issue_date);
 """
 
 # Tables the taskboard T02 names explicitly — tests assert every one exists.
