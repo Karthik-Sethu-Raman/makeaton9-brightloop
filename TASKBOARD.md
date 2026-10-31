@@ -271,7 +271,7 @@ Subscriptions
   optional `onRowClick` (keyboard+hover, backward-compat â€” products/plans unaffected). Renders
   live once T17 lands, error+Retry until then (served 200, /api/subscriptions 404 pre-T17
   verified). node --check OK; TEST_CMD 35/35.
-- [ ] **T19** (P2, owner: Manu, ~10m) Quotation templates: template with plan/product
+- [ ] **T19** (P2, owner: Manu, ~10m) CLAIMED @13:53 by Manu — Quotation templates: template with plan/product
   lines valid N days; "new subscription from template" copy action.
 Invoicing
 - [ ] **T20** (P2, owner: Manu, ~15m) Billing run: generate due invoices from active
