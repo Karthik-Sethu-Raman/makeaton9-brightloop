@@ -84,7 +84,12 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   #view mount. Grid sums commented per DESIGN. TEST_CMD green (4 passed).
 - [ ] **T06** (P1, owner: Saurabh, ~10m) Hash router + sidebar nav for all 7 sections,
   active item = grey pill per DESIGN; works from Overview in one click.
-- [ ] **T07** (P1, owner: Avanthik, ~15m) CLAIMED @09:44 by Avanthik — `frontend/validation/validators.js`: email format,
+- [ ] **T07** (P1, owner: Avanthik, ~15m) PARTIAL @09:52 by Avanthik — validators.js + form CSS complete and
+  adversarially verified (all rules: email, password >8/upper/lower/special, price/qty ≥0, dateOrder, usageLimit;
+  blur inline errors, form-level render+focus-first-error; TEST_CMD 4/4). REMAINING: (a) wire into the signup form
+  — no form exists yet, pages are Saurabh's module (signup lands with T08/T31; hookup is 3 lines via
+  attachBlurError/validateForm); (b) server half: backend/api/validators.py must mirror the MSG table — contract
+  + traps documented in frontend/validation/README.md (T08, Karthik).
   password policy (>8 chars, upper, lower, special), price/qty ≥ 0, date order; blur-time
   inline errors under fields; wired into the signup form.
 - [ ] **T08** (P1, owner: Karthik, ~15m) Auth API: POST /api/auth/signup (unique email +

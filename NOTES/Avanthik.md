@@ -25,3 +25,20 @@
   the sidebar into a 48px top bar so 390px never scrolls horizontally (T37 does the full pass);
   (4) mark geometry: dot sits at the two-o'clock tick — cx 16.9/cy 6 on a r=8 ring around
   (10,10), i.e. 10+8·sin60°, 10−8·cos60°.
+
+## 09:52 — T07 client validators (PARTIAL)
+- Built: frontend/validation/validators.js, forms section of frontend/styles/layout.css,
+  mirror contract in frontend/validation/README.md
+- Why this way: one MSG table is the canonical contract — the server (T08, Karthik) copies it
+  byte-for-byte so client and server literally cannot disagree. Blur shows the error under the
+  field; validateForm re-renders on submit and focuses the FIRST error (DESIGN forms law).
+  Status honestly PARTIAL: signup-form wiring waits for the page (Saurabh) and the server mirror
+  waits for T08 — neither is my module.
+- Must be able to explain: (1) the mirror traps — JS `\d` is ASCII-only but Python's matches
+  Unicode digits (so the Python side must use `[0-9]`), and password length counts CODE POINTS
+  (`[...v].length` in JS = `len()` in Python; UTF-16 `.length` would disagree on emoji);
+  (2) why one message per rule, not per failure-reason — identical client/server strings are the
+  graded requirement, and one sentence per rule makes parity testable; (3) the a11y wiring —
+  aria-invalid + aria-describedby APPENDED (never clobbering a field hint) and restored on clear;
+  (4) dateOrder takes [from, to] strictly and throws on a bare value so a forgotten pair can
+  never silently validate as ok.

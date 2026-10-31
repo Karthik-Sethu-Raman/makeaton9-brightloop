@@ -11,3 +11,4 @@
 | 09:07 | Manu | - | CYCLE FAILED | claude exit 1 - deliberate arming dry-run (max-turns 3 cap hit): pipeline verified OK, not a real failure - ignore |
 | 09:27 | Saurabh | - | CYCLE FAILED | claude exit 1 - see local log |
 | 09:37 | Avanthik | T05 | DONE | tokens.css (DESIGN :root verbatim) + layout.css (224px shell, grey pill, cards, 390px fold) + index.html (mark+wordmark, #nav slot for T06, #view mount); TEST_CMD 4/4; done interactively pre-first-cycle, tree clean and pushed before 10:00 fire |
+| 09:52 | Avanthik | T07 | PARTIAL | validators.js complete+verified (email/password/price/qty/dateOrder/usageLimit, blur + form rendering, a11y wiring; TEST_CMD 4/4); remaining: signup-form wiring (needs page owner) + server mirror per README contract (T08) |
