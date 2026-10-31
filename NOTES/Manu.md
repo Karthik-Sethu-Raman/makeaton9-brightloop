@@ -146,3 +146,29 @@ verbatim from a9b14db.]
   indistinguishable in the invoices UI. (2) list_for_product orders cheapest delta
   first so UI dropdowns are stable. (3) The 4 seeded variants: Books brand Odoo +560,
   Books brand Tally +0, Inventory brand Odoo +560, Inventory tier Multi-warehouse +400.
+
+## VIDEO cycle 16:10 — final demo.webm recorded (VIDEO READY row in PROGRESS @16:22)
+
+- What: ran scripts/make-demo-video.mjs (committed recorder) against the app at HEAD,
+  fresh-seeded DB, server booted via `python -m uvicorn backend.api.main:app --port 8000`.
+  Output: `..\makeaton9-video\demo.webm`, 67.4s, 3.2MB, all 7 VIDEO-SCRIPT scenes, no warns.
+- Q&A must be able to explain: the video is the real app, no voice/no editing — captions
+  are a fixed overlay div injected into the page (styled only with DESIGN.md tokens) so
+  they are burned into Playwright's chromium screen recording; "live data" scene waits
+  for the KPI strip TEXT to change twice, it does not fake anything.
+- If a RE-RECORD is ever needed (link updates allowed to 17:30), the committed recorder
+  has two traps I hit and fixed locally (then reverted, so they are BACK in the committed
+  version — re-apply before re-recording):
+  1. Fresh DB each time: stop server, delete data/cadence.db, boot again. Two reasons:
+     (a) the app FAILS to boot on a used DB — the SEED block in backend/models/schema.py
+     re-inserts an invoice that already exists → sqlite UNIQUE(subscription_id, issue_date);
+     (b) even when it boots, the simulator pays down ALL outstanding within ~4 min and
+     KPIs go static — film in the first ~3 minutes after a fresh seed or scene 2 shows
+     frozen numbers under the "Live data" caption.
+  2. Scene 6 nav clicks time out because scene 4 clears the session and the auth screen
+     hides #nav. Fix (what I ran): keep the demo creds from scene 3 in a `lastCreds`
+     variable, and at the top of scene 6's run(): goto `BASE_URL/#/login`, fill email +
+     password, click submit, waitForFunction hash not starting #/login — then the #nav
+     clicks work. Also lengthened holds (sceneHoldMs 6_000→10_500, scene2 hold 4_000→6_500,
+     scene4 hold 4_000→6_500, scene7 8_000→13_000, nav clicks 2_500→3_000) to clear 60s.
+- The stale dev DB from the morning is preserved at data/cadence.db.reel-backup (untracked).
