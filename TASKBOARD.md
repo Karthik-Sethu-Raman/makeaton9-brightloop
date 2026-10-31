@@ -328,8 +328,34 @@ Invoicing
 - [ ] **T23** (P2, owner: Karthik, ~10m) DROPPED @14:25 (14:16 TRIAGE) — Tax rules API (admin-only): rate % scoped by
   product/type; applied automatically at billing.
 Discounts
-- [ ] **T24** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) CLAIMED @13:20 by Avanthik —
+- [x] **T24** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) DONE @15:10 by Avanthik —
   Discounts page (admin-only): rules table + create form (fixed/%, min purchase/qty, dates, usage limit, scope).
+  DONE detail: `frontend/pages/discounts.js` (code landed across 13:20-14:15 cycles incl. a2ea430
+  T49 never-silent-refresh law; this cycle verified end-to-end + closed). Rules table: name /
+  value (₹-off or %-off per kind, fmt.pct 0.0% law) / scope (product NAME via join, else
+  "Whole subscription") / minimum (₹ + qty thresholds joined w/ ·) / window (dates, grey dash
+  when open-ended) / used (n of limit, dash when unlimited) / ONE status pill per row:
+  Live=positive, Scheduled=warning, Ended/Exhausted/Off=neutral (statusOf derives from
+  active flag + dates + used>=limit vs IST today). Filter select (all/live/scheduled/stopped)
+  with LIVE counts in option labels. Create form (hidden until "New rule"): name, kind
+  fixed|percentage, value (rule FOLLOWS kind — 'price' vs 'percent', relabels + re-runs on
+  kind change), scope subscription|product + product picker populated from LIVE /api/products
+  (T10, never hardcoded), optional min purchase (amount rule when present), optional min qty
+  (quantity rule when present), start (required) + optional end (dateOrder pair), usage limit
+  (blank = unlimited). All client validation via validators.js blur + submit gate +
+  focus-first-error; server-sentence VERBATIM in form msg (role=alert, T47 convention) on
+  400/409; x-auth-token sent on GET+POST (admin-only guard is T25's server half — page
+  surfaces the 401/403 sentence). /api/discounts contract + T25 py-mirror sketch documented
+  in the file header (incl. percent rule 0-100, 2dp). All 4 states + lastGoodAt never-silent
+  refresh. Phone: form folds to 1 column <640px, table two-line via shared table.js.
+  Verified: node --check, validators selftest 9 rules + factories green, every import/
+  signature exists (percent/usageLimit/required, fmt 5 exports, authHeaders(extra), router
+  lazy-import), live uvicorn smoke on throwaway DB — module 200, /api/products 200 (4 rows),
+  /api/discounts 404 = designed pre-T25 error state w/ Retry. TEST_CMD at close: 179 passed /
+  4 failed — ALL 4 are Manu's in-flight T20 billing (tests/test_billing_run.py +
+  test_livefeed.py, created_at NOT NULL — ALERT already on PROGRESS @15:02); zero failures in
+  this module or any frontend/validation test. D4 fallback taken: frontend task independent
+  of the break. Page renders live the moment T25 lands.
 - [ ] **T25** (P2, owner: Manu [reassigned from Karthik @14:25 — T24's live page needs this
   API; queue after T20 + payments], ~15m) Discount rules API: fixed or percentage, minimum
   purchase/quantity, start/end, usage limit, product or whole-subscription scope;
