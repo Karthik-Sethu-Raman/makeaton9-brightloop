@@ -82,8 +82,15 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   cards, 390px fold to 48px top bar; var(--...) only, zero color literals) + `static/index.html`
   shell with SVG copper-ring mark + Cadence wordmark + scope, empty #nav slot for T06 router,
   #view mount. Grid sums commented per DESIGN. TEST_CMD green (4 passed).
-- [ ] **T06** (P1, owner: Saurabh, ~10m) CLAIMED @09:57 by Saurabh — Hash router + sidebar nav for all 7 sections,
+- [x] **T06** (P1, owner: Saurabh, ~10m) DONE @10:04 by Saurabh — Hash router + sidebar nav for all 7 sections,
   active item = grey pill per DESIGN; works from Overview in one click.
+  `frontend/pages/router.js`: fills #nav (7 sections), lazy `import()` per route, mounts
+  `render(mount)->cleanup()` into #view, runs prev cleanup() on swap (stops overview poller),
+  default `#/overview`, `aria-current`+`.is-active` grey pill. Unbuilt screens (products/
+  invoices/payments/discounts/customers/subscriptions) show DESIGN empty-state placeholder;
+  they light up automatically as those page modules land. ⚠️ BOOT SEAM (Avanthik, static/):
+  index.html needs `<script type="module" src="/frontend/pages/router.js"></script>` before
+  </body> — nothing loads the SPA until that one line is added (contract at top of router.js).
 - [ ] **T07** (P1, owner: Avanthik, ~15m) PARTIAL @09:52 by Avanthik — validators.js + form CSS complete and
   adversarially verified (all rules: email, password >8/upper/lower/special, price/qty ≥0, dateOrder, usageLimit;
   blur inline errors, form-level render+focus-first-error; TEST_CMD 4/4). REMAINING: (a) wire into the signup form
@@ -182,6 +189,7 @@ Reporting
 ## Claim log (append only)
 <!-- e.g. `12:35 Manu claimed T03` -->
 `09:53 Manu claimed T-V1`
+`09:57 Saurabh claimed T06`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
