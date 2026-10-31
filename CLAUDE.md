@@ -76,6 +76,14 @@ a design skill available in your session may inform your work but NEVER contradi
   responsive — name each file in PROGRESS), ensure RUN_CMD works from a clean clone,
   record LAST-GOOD SHA at the bottom of PROGRESS.md, push everything. Stop by 16:05.
 
+## Self-update (once per cycle, first thing after pulling)
+If `harness/agent-cycle.ps1` exists in this repo and differs from your local copy,
+copy the repo version over the local one. Local copy is normally
+`C:\dev\harness\agent-cycle.ps1`; if unsure, find your launcher's path from the
+parent process command line. This is how the supervisor ships mechanical fixes
+(v4: union-merging re-lands that no longer drop shared-file lines). Copying affects
+only FUTURE cycles — never the one currently running.
+
 ## Style
 Match the existing codebase's conventions. Understand every line you commit — your
 human will be personally quizzed on it. When you finish, your final output is data
