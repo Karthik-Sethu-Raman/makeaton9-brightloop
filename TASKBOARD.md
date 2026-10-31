@@ -110,7 +110,7 @@ OPEN → CLAIMED @<time> by <member> → DONE | PARTIAL <note> | BLOCKED <reason
   they light up automatically as those page modules land. ✅ BOOT SEAM closed @10:26 by
   Avanthik: index.html loads router.js before </body>; boot import graph (11 URLs — styles,
   router, overview/products pages, components, validators) verified 200 over HTTP.
-- [ ] **T07** (P1, owner: Avanthik, ~15m) PARTIAL @09:52 by Avanthik — validators.js + form CSS complete and
+- [ ] **T07** (P1, owner: Avanthik, ~15m) CLAIMED @11:05 by Avanthik (resuming own PARTIAL for close-out) — validators.js + form CSS complete and
   adversarially verified (all rules: email, password >8/upper/lower/special, price/qty ≥0, dateOrder, usageLimit;
   blur inline errors, form-level render+focus-first-error; TEST_CMD 4/4). REMAINING: (a) wire into the signup form
   — no form exists yet, pages are Saurabh's module (signup lands with T08/T31; hookup is 3 lines via
@@ -267,6 +267,7 @@ Reporting
 `10:42 Karthik claimed T01`
 `10:42 Avanthik claimed T44`
 `10:52 Manu claimed T03`
+`11:05 Avanthik claimed T07 (resume own PARTIAL — verify wiring landed, close out)`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
