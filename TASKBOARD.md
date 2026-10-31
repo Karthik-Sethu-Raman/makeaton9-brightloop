@@ -305,8 +305,8 @@ Invoicing
 - [ ] **T23** (P2, owner: Karthik, ~10m) Tax rules API (admin-only): rate % scoped by
   product/type; applied automatically at billing.
 Discounts
-- [ ] **T24** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) Discounts page (admin-only): rules table + create
-  form (fixed/%, min purchase/qty, dates, usage limit, scope).
+- [ ] **T24** (P2, owner: Avanthik [absorbed from Saurabh @12:50], ~10m) CLAIMED @13:20 by Avanthik —
+  Discounts page (admin-only): rules table + create form (fixed/%, min purchase/qty, dates, usage limit, scope).
 - [ ] **T25** (P2, owner: Karthik, ~15m) Discount rules API: fixed or percentage, minimum
   purchase/quantity, start/end, usage limit, product or whole-subscription scope;
   admin-only guard + tests.
@@ -483,6 +483,7 @@ Reporting
 
 `13:05 Avanthik claimed T22 (absorbed module per integrator 12:50 ABSORB enactment)``12:51 Karthik claimed T14 (integrator cycle â€” executor for Karthik-owned tasks)`
 `13:10 Manu claimed T13`
+`13:20 Avanthik claimed T24`
 
 ## Integrator log
 <!-- integrator cycles append: what was fixed/groomed, every cross-module touch, LAST-GOOD SHA in FINAL -->
