@@ -135,7 +135,7 @@ def seed_if_empty(conn: sqlite3.Connection) -> bool:
             ("INV-0002", 2, 2, _d(-31), _d(-1), "confirmed",
              4495.0, 0.0, 809.1, 5304.1, now),
             ("INV-0003", 3, 3, _d(-10), _d(20), "confirmed",
-             15590.0, 1559.0, 2526.78, 16557.78, now),   # 10% multi-seat discount applied
+             15590.0, 1559.0, 2525.58, 16556.58, now),   # 10% multi-seat discount applied
             ("INV-0004", 2, 2, _d(0), _d(15), "draft",
              4495.0, 0.0, 809.1, 5304.1, now),
         ],
@@ -166,7 +166,7 @@ def seed_if_empty(conn: sqlite3.Connection) -> bool:
     cur.executemany(
         "INSERT INTO discounts (name,kind,value,min_purchase,min_quantity,start_date,"
         " end_date,usage_limit,used_count,scope,product_id,active)"
-        " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
         [
             ("Multi-seat 10%", "percentage", 10.0, None, 5, _d(-30), _d(60), None,
              3, "subscription", None, 1),
